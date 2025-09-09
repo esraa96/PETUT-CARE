@@ -12,6 +12,13 @@ const ClinicDetailsScreen = () => {
   const { state } = useLocation();
   const clinic = state?.clinic;
   const [doctorData, setDoctorData] = useState(null);
+  
+  // دالة مساعدة لتحويل الوقت إلى دقائق
+  const timeToMinutes = (timeStr) => {
+    if (!timeStr) return 0;
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return hours * 60 + minutes;
+  };
 
   useEffect(() => {
     const fetchDoctorData = async () => {
@@ -44,52 +51,21 @@ const ClinicDetailsScreen = () => {
         const slots = snapshot.docs.map((doc) => {
           const data = doc.data();
           return {
-            date: data.date,
+            date: data.day || data.date, // استخدام day أولاً ثم date كبديل
+            day: data.day,
             time: data.time,
-            datetime: new Date(`${data.date} ${data.time}`),
+            datetime: data.day && data.time ? new Date(`${data.day} ${data.time}`) : null,
           };
         });
-        setBookedSlots(slots);
+        setBookedSlots(slots.filter(slot => slot.datetime)); // فلترة المواعيد الصحيحة فقط
       } catch (err) {
         console.error("Error fetching booked slots:", err);
       }
     };
     fetchBookedSlots();
-  }, [clinic.uid]);
+  }, [clinic.id]);
 
-  const checkBookingAvailability = async () => {
-    setError("");
-    setLoading(true);
-    try {
-      const bookingsRef = collection(db, "bookings");
-      const q = query(
-        bookingsRef,
-        where("clinicId", "==", clinic.id),
-        where(
-          "date",
-          "==",
-          selectedDateTime ? selectedDateTime.toDateString() : ""
-        ),
-        where(
-          "time",
-          "==",
-          selectedDateTime
-            ? selectedDateTime.toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })
-            : ""
-        )
-      );
-      const snapshot = await getDocs(q);
-      setLoading(false);
-      return snapshot.empty;
-    } catch (e) {
-      setLoading(false);
-      setError("An error occurred while checking slot availability.");
-      return false;
-    }
-  };
+
 
   const isSlotBooked = (date) => {
     if (!date) return false;
@@ -99,37 +75,82 @@ const ClinicDetailsScreen = () => {
       minute: "2-digit",
     });
     return bookedSlots.some(
-      (slot) => slot.date === dateStr && slot.time === timeStr
+      (slot) => (slot.date === dateStr || slot.day === dateStr) && slot.time === timeStr
     );
   };
 
   const filterAvailableTimes = (date) => {
     if (date < new Date()) return false;
+    
+    // التحقق من وجود ساعات العمل
+    if (!clinic?.workingHours || clinic.workingHours.length === 0) {
+      return !isSlotBooked(date);
+    }
+    
+    // التحقق من أن اليوم ضمن أيام العمل
+    const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+    const todayWorkingHours = clinic.workingHours.find(wh => wh.day === dayName);
+    
+    if (!todayWorkingHours) return false;
+    
+    // التحقق من أن الوقت ضمن ساعات العمل
+    const selectedTime = date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    const selectedTimeMinutes = timeToMinutes(selectedTime);
+    const openTimeMinutes = timeToMinutes(todayWorkingHours.openTime);
+    const closeTimeMinutes = timeToMinutes(todayWorkingHours.closeTime);
+    
+    if (selectedTimeMinutes < openTimeMinutes || selectedTimeMinutes >= closeTimeMinutes) {
+      return false;
+    }
+    
     return !isSlotBooked(date);
   };
 
   const handleBook = async () => {
     if (!selectedDateTime) {
-      setError("Please select date and time.");
+      setError("يرجى اختيار التاريخ والوقت.");
       return;
     }
-    if (isSlotBooked(selectedDateTime)) {
-      setError("This slot is already booked. Please choose another time.");
+    
+    // التحقق من أن الموعد في المستقبل
+    if (selectedDateTime < new Date()) {
+      setError("لا يمكن حجز موعد في الماضي. يرجى اختيار وقت مستقبلي.");
       return;
     }
-    const available = await checkBookingAvailability();
-    if (!available) {
-      setError("This slot is not available. Please choose another time.");
-      return;
+    
+    // التحقق المبسط من المواعيد المحجوزة
+    const selectedDay = selectedDateTime.toDateString();
+    const selectedTime = selectedDateTime.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    
+    try {
+      const bookingsRef = collection(db, "bookings");
+      const q = query(
+        bookingsRef,
+        where("clinicId", "==", clinic.id),
+        where("day", "==", selectedDay),
+        where("time", "==", selectedTime)
+      );
+      const snapshot = await getDocs(q);
+      
+      if (!snapshot.empty) {
+        setError("هذا الموعد محجوز بالفعل. يرجى اختيار وقت آخر.");
+        return;
+      }
+    } catch (e) {
+      console.error("Error checking booking:", e);
     }
+    
     navigate("/booking-confirmation", {
       state: {
         clinic,
-        selectedDay: selectedDateTime.toDateString(),
-        selectedTime: selectedDateTime.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
+        selectedDay,
+        selectedTime,
         selectedDate: selectedDateTime,
       },
     });

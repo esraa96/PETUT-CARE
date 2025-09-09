@@ -102,42 +102,63 @@ export default function EditClinicModal({ clinic, modalId, fetchClinics }) {
     };
 
     const handleSave = async () => {
+        if (loading) return; // منع التنفيذ المتعدد
+        
         try {
             setLoading(true);
-            if (!name || !phone || !email || !price || !status || workingHours.length === 0 || !selectedLocation.latitude) {
-                toast.error("Please fill all required fields and select a location.", { autoClose: 3000 });
-                setLoading(false);
+            
+            if (!name || !phone || !email || !price || !status || workingHours.length === 0) {
+                toast.error("Please fill all required fields.", { autoClose: 3000 });
                 return;
             }
 
             const clinicRef = doc(db, 'clinics', clinic.id);
-            await updateDoc(clinicRef, {
-                name,
-                phone,
-                email,
-                price,
-                doctorName,
+            const updateData = {
+                name: name.trim(),
+                phone: phone.trim(),
+                email: email.trim(),
+                price: parseFloat(price),
                 status,
                 workingHours,
-                address: `${selectedLocation?.governorate || ''} - ${selectedLocation?.city || ''} - ${selectedLocation?.street || ''}`,
-                city: selectedLocation?.city,
-                governorate: selectedLocation?.governorate,
-                latitude: selectedLocation?.latitude,
-                longitude: selectedLocation?.longitude,
-                street: selectedLocation?.street,
-                doctorId: isAdmin ? selectedDoctor?.id : auth.currentUser.uid,
-                doctorName: isAdmin ? selectedDoctor?.fullName : userData?.fullName || '',
-            });
-            toast.success('Clinic updated successfully', { autoClose: 3000 });
+                updatedAt: new Date()
+            };
 
+            // إضافة بيانات الموقع إذا كانت متوفرة
+            if (selectedLocation.latitude) {
+                updateData.address = `${selectedLocation?.governorate || ''} - ${selectedLocation?.city || ''} - ${selectedLocation?.street || ''}`;
+                updateData.city = selectedLocation?.city;
+                updateData.governorate = selectedLocation?.governorate;
+                updateData.latitude = selectedLocation?.latitude;
+                updateData.longitude = selectedLocation?.longitude;
+                updateData.street = selectedLocation?.street;
+            }
+
+            // إضافة بيانات الطبيب للأدمن
+            if (isAdmin && selectedDoctor) {
+                updateData.doctorId = selectedDoctor.id;
+                updateData.doctorName = selectedDoctor.fullName;
+            }
+
+            await updateDoc(clinicRef, updateData);
+            
+            toast.success('Clinic updated successfully', { autoClose: 2000 });
+            
+            // إغلاق المودال
             if (modalInstance) {
                 modalInstance.hide();
             }
-
-            fetchClinics();
+            
+            // تحديث البيانات
+            if (fetchClinics) {
+                await fetchClinics();
+            }
+            
+            // إعادة تعيين حالة التحرير
+            setnotEditable(true);
 
         } catch (error) {
-            toast.error("Failed to update clinic, error:" + error.message, { autoClose: 3000 });
+            console.error('Update error:', error);
+            toast.error("Failed to update clinic: " + error.message, { autoClose: 3000 });
         } finally {
             setLoading(false);
         }

@@ -16,6 +16,14 @@ const Notification = () => {
 
     const initializeOneSignal = () => {
       try {
+        // Skip OneSignal in development or if not on production domain
+        if (window.location.hostname === 'localhost' || 
+            window.location.hostname === '127.0.0.1' ||
+            !window.location.hostname.includes('petutpetcare.vercel.app')) {
+          console.log('OneSignal skipped - not on production domain');
+          return;
+        }
+        
         // التأكد من وجود OneSignal
         if (typeof window.OneSignal === "undefined") {
           throw new Error("OneSignal SDK غير محمل - أضف script في index.html");
@@ -121,9 +129,11 @@ const Notification = () => {
       }
 
       if (currentUserId) {
-        console.log("✅ جاهز لاستقبال الإشعارات! User ID:", currentUserId);
+        // Sanitize user ID before logging
+        const sanitizedUserId = encodeURIComponent(currentUserId);
+        console.log("✅ جاهز لاستقبال الإشعارات! User ID:", sanitizedUserId);
         alert(
-          `الإشعارات جاهزة! ✅\nUser ID: ${currentUserId}\n\nيمكنك الآن إرسال إشعار من OneSignal Dashboard`
+          `الإشعارات جاهزة! ✅\nUser ID: ${sanitizedUserId}\n\nيمكنك الآن إرسال إشعار من OneSignal Dashboard`
         );
       } else {
         alert("لم يتم العثور على معرف المستخدم. تأكد من منح إذن الإشعارات.");

@@ -18,22 +18,48 @@ export default function MapModal({ onLocationConfirmed, onClose, initialLocation
     const [position, setPosition] = useState(initialLocation ? { lat: initialLocation.latitude, lng: initialLocation.longitude } : null);
 
 useEffect(() => {
-    const modalElement = document.getElementById('map-modal');
-    if (modalElement) {
-        const modal = new window.bootstrap.Modal(modalElement, {
-            keyboard: false,
-            // 💡 أضف هذا السطر لجعل الخلفية ثابتة
-            backdrop: 'static'
-        });
-        modal.show();
-    }
+    const showModal = () => {
+        const modalElement = document.getElementById('map-modal');
+        if (modalElement) {
+            // Manual modal display
+            modalElement.classList.add('show');
+            modalElement.style.display = 'block';
+            document.body.classList.add('modal-open');
+            
+            const backdrop = document.createElement('div');
+            backdrop.className = 'modal-backdrop fade show';
+            backdrop.id = 'map-modal-backdrop';
+            document.body.appendChild(backdrop);
+        }
+    };
+
+    const timer = setTimeout(showModal, 100);
+    
+    return () => {
+        clearTimeout(timer);
+        const modalElement = document.getElementById('map-modal');
+        const backdrop = document.getElementById('map-modal-backdrop');
+        if (modalElement) {
+            modalElement.classList.remove('show');
+            modalElement.style.display = 'none';
+            document.body.classList.remove('modal-open');
+        }
+        if (backdrop) {
+            backdrop.remove();
+        }
+    };
 }, []);
 
     useEffect(() => {
-        if (!mapRef.current) {
+        const initMap = () => {
+            const mapContainer = document.getElementById('map-container');
+            if (!mapContainer || mapRef.current) return;
+            
             setLoading(true);
             const initialCoords = initialLocation ? [initialLocation.latitude, initialLocation.longitude] : [30.0444, 31.2357];
-            const map = L.map('map-container').setView(initialCoords, 13);
+            
+            try {
+                const map = L.map('map-container').setView(initialCoords, 13);
             
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -78,26 +104,52 @@ useEffect(() => {
                 handleMarkerUpdate(e.latlng.lat, e.latlng.lng);
             });
 
-            mapRef.current = map;
-            setLoading(false);
-        }
+                mapRef.current = map;
+                setLoading(false);
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                setLoading(false);
+            }
+        };
+        
+        // Wait for modal to be fully shown
+        const timer = setTimeout(initMap, 500);
+        return () => clearTimeout(timer);
+    }, [initialLocation]);
+
+    // Cleanup map on unmount
+    useEffect(() => {
+        return () => {
+            if (mapRef.current) {
+                mapRef.current.remove();
+                mapRef.current = null;
+            }
+        };
     }, []);
 
     return (
-        <div className="modal fade" id="map-modal" tabIndex={-1} aria-labelledby="mapModalLabel" aria-hidden="true" data-bs-backdrop="static">
+        <div className="modal fade" id="map-modal" tabIndex={-1} aria-labelledby="mapModalLabel" aria-hidden="true">
             <div className="modal-dialog modal-xl">
                 <div className="modal-content" style={{ height: '90vh' }}>
                     <div className="modal-header">
                         <h5 className="modal-title" id="mapModalLabel">Select Clinic Location</h5>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" onClick={onClose}></button>
+                        <button type="button" className="btn-close" onClick={() => {
+                            if (mapRef.current) {
+                                mapRef.current.remove();
+                                mapRef.current = null;
+                            }
+                            onClose();
+                        }}></button>
                     </div>
                     <div className="modal-body">
-                        {loading && (
-                            <div className="d-flex justify-content-center align-items-center position-absolute w-100 h-100" >
-                                <BeatLoader color="#007bff" />
-                            </div>
-                        )}
-                        <div id="map-container" style={{ height: '100%', width: '100%' }}></div>
+                        <div className="position-relative" style={{ height: '500px' }}>
+                            {loading && (
+                                <div className="d-flex justify-content-center align-items-center position-absolute w-100 h-100" style={{ zIndex: 1000, backgroundColor: 'rgba(255,255,255,0.8)' }}>
+                                    <BeatLoader color="#D9A741" />
+                                </div>
+                            )}
+                            <div id="map-container" style={{ height: '100%', width: '100%', minHeight: '500px' }}></div>
+                        </div>
                         {selectedLocation && (
                             <div className="mt-3">
                                 <p><strong>Selected Address:</strong> {selectedLocation.governorate}, {selectedLocation.city}, {selectedLocation.street}</p>
@@ -105,8 +157,20 @@ useEffect(() => {
                         )}
                     </div>
                     <div className="modal-footer mt-5">
-                        <button type="button" className="btn btn-secondary" onClick={onClose} data-bs-dismiss="modal">Close</button>
-                        <button type="button" className="btn custom-button" onClick={() => onLocationConfirmed(selectedLocation)} data-bs-dismiss="modal" disabled={loading}>
+                        <button type="button" className="btn btn-secondary" onClick={() => {
+                            if (mapRef.current) {
+                                mapRef.current.remove();
+                                mapRef.current = null;
+                            }
+                            onClose();
+                        }}>Close</button>
+                        <button type="button" className="btn custom-button" onClick={() => {
+                            if (mapRef.current) {
+                                mapRef.current.remove();
+                                mapRef.current = null;
+                            }
+                            onLocationConfirmed(selectedLocation);
+                        }} disabled={loading}>
                             Confirm Location
                         </button>
                     </div>

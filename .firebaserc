@@ -1,6 +1,6 @@
 {
   "projects": {
-    "gradution": "petut-55f40"
+    "default": "petut-pet"
   },
   "targets": {},
   "etags": {}

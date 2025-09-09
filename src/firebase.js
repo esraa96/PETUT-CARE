@@ -12,18 +12,21 @@ import {
   addDoc,
   getDocs,
   updateDoc,
+  enableNetwork,
+  disableNetwork,
+  connectFirestoreEmulator
 } from "firebase/firestore";
 
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyB6pr6a6y63LvKpauCkonCqyV66WAeJEeg",
-  authDomain: "petut-55f40.firebaseapp.com",
-  projectId: "petut-55f40",
-  storageBucket: "petut-55f40.appspot.com",
-  messagingSenderId: "724593819082",
-  appId: "1:724593819082:web:7d5ab9881bc9de39c8a333",
-  measurementId: "G-JDSBQXNWX0",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyDwbQz09uup2aSAbl381hJN2aH-_kjSIDg",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "petut-pet.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "petut-pet",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "petut-pet.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "572292474316",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:572292474316:web:1280a277451ef13d6d6969",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-S2BZ5ZZSE4"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -48,8 +51,19 @@ export async function getUserCart(uid) {
 }
 
 export async function setUserCart(uid, cart) {
+  if (!uid || !cart) return;
+  
   const cartRef = doc(db, "users", uid, "cart", "cart");
-  await setDoc(cartRef, cart);
+  const safeCart = {
+    items: cart.items || [],
+    totalQuantity: cart.totalQuantity || 0,
+    totalAmount: cart.totalAmount || 0
+  };
+  try {
+    await setDoc(cartRef, safeCart);
+  } catch (error) {
+    console.error('Error saving cart:', error);
+  }
 }
 
 export async function deleteUserCart(uid) {

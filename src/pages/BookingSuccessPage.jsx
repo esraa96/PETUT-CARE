@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import DarkModeToggle from "../components/DarkModeToggle";
+
 
 const BookingSuccessPage = () => {
   const navigate = useNavigate();
@@ -46,10 +46,10 @@ const BookingSuccessPage = () => {
   return (
     <div className="min-h-screen bg-secondary-light dark:bg-gray-900 flex flex-col">
       {/* Header with Dark Mode Toggle */}
-      <div className="bg-white dark:bg-gray-800 shadow p-4 flex items-center justify-center relative">
+      <div className="p-4 flex items-center justify-center relative">
         <h2 className="font-bold text-lg dark:text-white">Booking Success</h2>
         <div className="absolute right-4">
-          <DarkModeToggle />
+        
         </div>
       </div>
 

@@ -1,39 +1,24 @@
 // src/store/slices/catalogSlice.js
 
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../../firebase"; // Adjust path to your firebase config
 
-/**
- * Async Thunk for fetching products from Firestore.
- * This function will handle the async request and return the data.
- * Redux Toolkit will automatically dispatch actions based on the Promise status.
- */
 export const fetchProducts = createAsyncThunk(
   "catalog/fetchProducts",
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, getState }) => {
     try {
-      const productsCollectionRef = collection(db, "products");
-      const querySnapshot = await getDocs(productsCollectionRef);
-      const formattedProducts = querySnapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          ...data,
-          // Convert price to number if it's a string
-          price:
-            typeof data.price === "string"
-              ? parseFloat(data.price)
-              : data.price,
-          // Convert Firestore timestamps to ISO strings for serialization
-          createdAt:
-            data.createdAt?.toDate?.()?.toISOString?.() || data.createdAt,
-        };
-      });
-      return formattedProducts; // This becomes the `action.payload` on success
+      // Optional: Check if user is authenticated for personalized catalog
+      // This is for public products, so no strict auth required
+      
+      const response = await fetch('/api/products.json');
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data.products;
     } catch (error) {
-      console.error("Error fetching products from Firestore:", error);
-      // Use rejectWithValue to return a specific error payload
+      console.error("Error fetching products from API:", error);
       return rejectWithValue(error.message);
     }
   }

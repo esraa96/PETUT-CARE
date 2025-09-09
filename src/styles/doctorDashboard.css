@@ -1,0 +1,90 @@
+/* Sidebar and Content Layout */
+.sidebar {
+  transition: all 0.3s ease;
+}
+
+.content-area {
+  transition: margin-left 0.3s ease;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .content-area {
+    margin-left: 0 !important;
+  }
+  
+  .sidebar {
+    transform: translateX(-100%);
+    width: 280px !important;
+  }
+  
+  .sidebar.expanded {
+    transform: translateX(0);
+  }
+}
+
+/* Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .content-area {
+    margin-left: 250px !important;
+  }
+  
+  .sidebar {
+    width: 250px !important;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+  .content-area {
+    margin-left: 280px !important;
+  }
+  
+  .sidebar {
+    width: 280px !important;
+  }
+}
+
+/* Hover Effects */
+.sidebar-nav-item a:hover {
+  background-color: rgba(217, 167, 65, 0.1) !important;
+  transform: translateX(5px);
+}
+
+.sidebar-nav-item.active a:hover {
+  background-color: #D9A741 !important;
+  transform: translateX(0);
+}
+
+/* Dashboard Cards */
+.dashboard-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  border: 1px solid rgba(0,0,0,0.05);
+  margin-bottom: 1.5rem;
+}
+
+.breadcrumb-container {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(217, 167, 65, 0.2);
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.search-box .form-control {
+  padding-right: 45px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.search-box .form-control:focus {
+  border-color: #D9A741;
+  box-shadow: 0 0 0 0.2rem rgba(217, 167, 65, 0.25);
+}

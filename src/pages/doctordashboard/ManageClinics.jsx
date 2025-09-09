@@ -67,40 +67,51 @@ export default function Manageclinics() {
   }
   return (
     <Fragment>
-      <nav aria-label="breadcrumb" className='container-fluid d-flex align-items-center justify-content-between ' style={{ boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', marginTop: '20px', padding: '10px 40px', borderRadius: '8px' }} >
-        <span className='fw-bold'>Clinics</span>
-        <ol className="breadcrumb mb-0 py-3 text-align-center" >
-          <li className="breadcrumb-item"><Link to="/" className='text-decoration-none' style={{ color: '#D9A741' }}>Home</Link></li>
-          <li className="breadcrumb-item active" aria-current="page">Dashboard</li>
-          <li className="breadcrumb-item active" aria-current="page">Clinics</li>
+      <nav aria-label="breadcrumb" className='breadcrumb-petut'>
+        <span className='font-bold text-lg'>Clinics</span>
+        <ol className="flex items-center space-x-2 text-sm">
+          <li><Link to="/" className='text-[#D9A741] hover:underline'>Home</Link></li>
+          <li className="text-gray-500">/</li>
+          <li className="text-gray-500">Dashboard</li>
+          <li className="text-gray-500">/</li>
+          <li className="text-gray-700 font-medium">Clinics</li>
         </ol>
       </nav>
-      <div className="container-fluid mt-4">
-        <div className="row align-items-center">
-          <div className="left col-10">
-            <h1 className='fw-bold fs-5'>Associated clinics</h1>
-            <p>Managing and monitoring the clinics you work in</p>
+      
+      <div className="px-6 mt-6">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className='font-bold text-xl text-gray-800'>Associated clinics</h1>
+            <p className='text-gray-600 mt-1'>Managing and monitoring the clinics you work in</p>
           </div>
-          <div className="right col-2">
-            <button type="button" className="custom-button" data-bs-toggle="modal" data-bs-target="#addclinic" ><RiAddLine size={20} />New Clinic</button>
+          <div>
+            <button type="button" className="btn-primary-petut flex items-center gap-2" data-bs-toggle="modal" data-bs-target="#addclinic">
+              <RiAddLine size={20} />New Clinic
+            </button>
           </div>
-          <AddClinicModal loading={loading} setLoading={setLoading} getClinics={() => getClinics(auth.currentUser.uid)} />
         </div>
+        <AddClinicModal loading={loading} setLoading={setLoading} fetchClinics={() => getClinics(auth.currentUser?.uid)} />
       </div>
 
-
-      {loading ? (<h3 className='text-center mt-5'><BeatLoader color="#D9A741" /></h3>) : clinics.length === 0 ? (<h3 className='text-center'>No clinics found</h3>) : (
-
-        <div className="container-fluid my-4 ">
-          <div className="row gap-4 justify-content-start">
+      {loading ? (
+        <div className='flex justify-center mt-12'>
+          <BeatLoader color="#D9A741" />
+        </div>
+      ) : clinics.length === 0 ? (
+        <div className='text-center mt-12'>
+          <h3 className='text-xl text-gray-600'>No clinics found</h3>
+        </div>
+      ) : (
+        <div className="px-6 my-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {clinics.map((clinic) => (
               <Clinic
                 key={clinic.id}
                 clinic={clinic}
                 onDelete={handleDeleteClinic}
+                fetchClinics={() => getClinics(auth.currentUser?.uid)}
               />
             ))}
-
           </div>
         </div>
       )}

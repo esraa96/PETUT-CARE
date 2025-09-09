@@ -21,22 +21,33 @@ const CreatePostScreen = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!content.trim()) return;
+    
+    if (!content.trim()) {
+      alert('Please enter some content for your post');
+      return;
+    }
+
+    if (!user) {
+      alert('You must be logged in to create a post');
+      return;
+    }
 
     setLoading(true);
+    
     try {
       await addDoc(collection(db, 'posts'), {
         userId: user.uid,
         topic,
         content: content.trim(),
         timestamp: serverTimestamp(),
-        imageUrl: image,
-        location: null,
+        imageUrl: image || null,
+        commentsCount: 0
       });
-
+      
       navigate('/community');
     } catch (error) {
-      alert('Error creating post: ' + error.message);
+      console.error('Error:', error);
+      alert('Error creating post');
     } finally {
       setLoading(false);
     }

@@ -1,0 +1,34 @@
+/* تحسين تحميل الخطوط - Tailwind CSS */
+@font-face {
+  font-family: 'Inter';
+  font-display: swap;
+  src: url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+}
+
+/* تحسين الصور */
+img {
+  @apply loading-lazy;
+}
+
+/* تحسين الأداء العام */
+* {
+  @apply box-border;
+}
+
+/* تقليل reflow و repaint */
+.container {
+  contain: layout style paint;
+}
+
+/* Performance Utilities */
+.loading-lazy {
+  loading: lazy;
+}
+
+.will-change-transform {
+  will-change: transform;
+}
+
+.gpu-accelerated {
+  @apply transform-gpu;
+}

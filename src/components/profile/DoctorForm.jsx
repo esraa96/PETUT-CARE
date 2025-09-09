@@ -125,7 +125,12 @@ const DoctorForm = () => {
         }
 
         const uploadToImgBB = async (file) => {
-            const apiKey = "01a0445653bd47247515dce07a3f1400"; 
+            // Use environment variable for API key
+            const apiKey = import.meta.env.VITE_IMGBB_API_KEY || process.env.REACT_APP_IMGBB_API_KEY;
+            if (!apiKey) {
+                throw new Error('Image upload service not configured');
+            }
+            
             const body = new FormData();
             body.append("image", file);
 

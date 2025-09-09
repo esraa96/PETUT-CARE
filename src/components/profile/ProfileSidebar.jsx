@@ -7,9 +7,9 @@ import {
   HiOutlineLogout,
   HiOutlineCube,
   HiOutlineHeart,
+  HiOutlineCalendar
 } from "react-icons/hi";
 import { FaCat } from "react-icons/fa6";
-import UserAvatar from "../UserAvatar";
 
 const ProfileSidebar = ({
   currentUser,
@@ -21,6 +21,7 @@ const ProfileSidebar = ({
     { id: "profile", label: "Profile", icon: <HiOutlineUserCircle className="h-5 w-5 mr-3" /> },
     { id: "orders", label: "Orders", icon: <HiOutlineShoppingCart className="h-5 w-5 mr-3" /> },
     { id: "pets", label: "My Pets", icon: <FaCat className="h-5 w-5 mr-3" /> },
+    { id: "reservations", label: "Reservations", icon: <HiOutlineCalendar className="h-5 w-5 mr-3" /> },
     { id: "favorites", label: "Favorites", icon: <HiOutlineHeart className="h-5 w-5 mr-3" /> },
     { id: "settings", label: "Settings", icon: <HiOutlineCog className="h-5 w-5 mr-3" /> },
   ];
@@ -45,11 +46,15 @@ const ProfileSidebar = ({
     <div className="md:w-1/4">
       <div className="bg-white dark:bg-[#313340] rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="p-6 text-center border-b border-gray-200 dark:border-gray-300">
-          <div className="mx-auto mb-4">
-            <UserAvatar
-              imageData={profileImage || currentUser?.photoURL}
-              userName={currentUser?.displayName || "User"}
-              size="w-24 h-24"
+          <div className="w-24 h-24 rounded-full overflow-hidden mx-auto mb-4">
+            <img
+              src={
+                profileImage ||
+                currentUser?.photoURL ||
+                "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg"
+              }
+              alt={currentUser?.displayName || "User"}
+              className="w-full h-full object-cover"
             />
           </div>
           <h2 className="text-xl dark:text-white font-bold">

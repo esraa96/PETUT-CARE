@@ -1,0 +1,136 @@
+{
+  "products": [
+    {
+      "id": "1",
+      "productName": "Royal Canin Adult Dog Food",
+      "category": "food",
+      "brand": "Royal Canin",
+      "price": 150,
+      "rating": 4.5,
+      "description": "Complete and balanced nutrition for adult dogs",
+      "imageUrl": "https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=400&h=300&fit=crop",
+      "inStock": true
+    },
+    {
+      "id": "2",
+      "productName": "Whiskas Cat Food Wet",
+      "category": "food",
+      "brand": "Whiskas",
+      "price": 85,
+      "rating": 4.2,
+      "description": "Delicious wet food for cats with real meat",
+      "imageUrl": "https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=400&h=300&fit=crop",
+      "inStock": true
+    },
+    {
+      "id": "3",
+      "productName": "Interactive Cat Toy Ball",
+      "category": "toys",
+      "brand": "PetSafe",
+      "price": 45,
+      "rating": 4.0,
+      "description": "Interactive toy to keep your cat entertained",
+      "imageUrl": "https://images.unsplash.com/photo-1574144611937-0df059b5ef3e?w=400&h=300&fit=crop",
+      "inStock": true
+    },
+    {
+      "id": "4",
+      "productName": "Dog Rope Toy",
+      "category": "toys",
+      "brand": "Kong",
+      "price": 35,
+      "rating": 4.3,
+      "description": "Durable rope toy for dogs to play and chew",
+      "imageUrl": "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&h=300&fit=crop",
+      "inStock": true
+    },
+    {
+      "id": "5",
+      "productName": "Pet Shampoo Gentle Formula",
+      "category": "grooming",
+      "brand": "FURminator",
+      "price": 65,
+      "rating": 4.1,
+      "description": "Gentle shampoo for all pet types",
+      "imageUrl": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop",
+      "inStock": true
+    },
+    {
+      "id": "6",
+      "productName": "Dog Nail Clippers",
+      "category": "grooming",
+      "brand": "Safari",
+      "price": 25,
+      "rating": 4.4,
+      "description": "Professional nail clippers for dogs",
+      "imageUrl": "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=300&fit=crop",
+      "inStock": true
+    },
+    {
+      "id": "7",
+      "productName": "Comfortable Dog Bed",
+      "category": "accessories",
+      "brand": "Comfort Pet",
+      "price": 120,
+      "rating": 4.6,
+      "description": "Soft and comfortable bed for dogs",
+      "imageUrl": "https://images.unsplash.com/photo-1518717758536-85ae29035b6d?w=400&h=300&fit=crop",
+      "inStock": true
+    },
+    {
+      "id": "8",
+      "productName": "Cat Scratching Post",
+      "category": "accessories",
+      "brand": "SmartCat",
+      "price": 95,
+      "rating": 4.2,
+      "description": "Tall scratching post for cats",
+      "imageUrl": "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=300&fit=crop",
+      "inStock": true
+    },
+    {
+      "id": "9",
+      "productName": "Dog Leash Retractable",
+      "category": "accessories",
+      "brand": "Flexi",
+      "price": 55,
+      "rating": 4.0,
+      "description": "Retractable leash for medium dogs",
+      "imageUrl": "https://images.unsplash.com/photo-1551717743-49959800b1f6?w=400&h=300&fit=crop",
+      "inStock": true
+    },
+    {
+      "id": "10",
+      "productName": "Cat Litter Premium",
+      "category": "accessories",
+      "brand": "Tidy Cats",
+      "price": 75,
+      "rating": 4.3,
+      "description": "Premium clumping cat litter",
+      "imageUrl": "https://images.unsplash.com/photo-1415369629372-26f2fe60c467?w=400&h=300&fit=crop",
+      "inStock": true
+    },
+    {
+      "id": "11",
+      "productName": "Puppy Training Treats",
+      "category": "food",
+      "brand": "Zuke's",
+      "price": 40,
+      "rating": 4.5,
+      "description": "Healthy training treats for puppies",
+      "imageUrl": "https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=400&h=300&fit=crop",
+      "inStock": true
+    },
+    {
+      "id": "12",
+      "productName": "Cat Carrier Travel Bag",
+      "category": "accessories",
+      "brand": "Sherpa",
+      "price": 180,
+      "rating": 4.4,
+      "description": "Comfortable travel carrier for cats",
+      "imageUrl": "https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=400&h=300&fit=crop",
+      "inStock": true
+    }
+  ]
+}

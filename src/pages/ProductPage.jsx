@@ -83,9 +83,12 @@ const ProductPage = () => {
         {/* Product Image */}
         <div className="bg-white dark:bg-[#313340] p-4 rounded-lg shadow-md flex items-center justify-center">
           <img
-            src={product.imageURL}
+            src={product.imageUrl || product.imageURL}
             alt={product.productName}
             className="max-w-full h-auto object-contain max-h-96"
+            onError={(e) => {
+              e.target.src = `https://via.placeholder.com/400x300/E0E0E0/666666?text=${encodeURIComponent(product.productName || 'Product')}`;
+            }}
           />
         </div>
 
@@ -162,9 +165,12 @@ const ProductPage = () => {
                 <Link to={`/product/${relatedProduct.id}`}>
                   <div className="relative pb-[100%] overflow-hidden">
                     <img
-                      src={relatedProduct.imageURL}
+                      src={relatedProduct.imageUrl || relatedProduct.imageURL}
                       alt={relatedProduct.productName}
                       className="absolute inset-0 w-full h-full object-contain"
+                      onError={(e) => {
+                        e.target.src = `https://via.placeholder.com/400x300/E0E0E0/666666?text=${encodeURIComponent(relatedProduct.productName || 'Product')}`;
+                      }}
                     />
                   </div>
                 </Link>

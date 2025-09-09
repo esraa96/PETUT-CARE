@@ -173,16 +173,16 @@ const CatalogPage = () => {
   }, [filters, activeTab, inputValue]);
 
   return (
-    <div className="max-w-7xl mx-auto">
+    <div className="container mx-auto px-6 py-8">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl dark:text-white font-bold">Catalog</h1>
         <div className="flex space-x-2">
-          <Link to="/search" className="p-2 text-neutral dark:text-white hover:text-primary transition-colors">
+          <Link to="/search" className="p-2 text-neutral dark:text-white hover:text-primary_app transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </Link>
-          <Link to="/favorites" className="p-2 text-neutral dark:text-white hover:text-primary transition-colors">
+          <Link to="/favorites" className="p-2 text-neutral dark:text-white hover:text-primary_app transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
@@ -195,7 +195,7 @@ const CatalogPage = () => {
         <div className="flex items-center">
           <div className="flex-1">
             <div className="text-2xl font-bold mb-1">20% OFF</div>
-            <div className="text-sm mb-2">on all electronics</div>
+            <div className="text-sm mb-2">on all pet products</div>
             <div className="text-xs">Limited Time Offer</div>
           </div>
           <div className="w-24 h-24 relative">

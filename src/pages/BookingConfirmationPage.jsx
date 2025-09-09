@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import {collection,addDoc,serverTimestamp,doc,updateDoc,
+import {collection,addDoc,serverTimestamp,doc,updateDoc,getDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { useAuth } from "../context/AuthContext";
@@ -19,11 +19,30 @@ const BookingConfirmationPage = () => {
   const [selectedPayment, setSelectedPayment] = useState("card");
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [userData, setUserData] = useState(null);
 
-  if (!clinic || !selectedDay || !selectedTime || !selectedDate) {
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (currentUser?.uid) {
+        try {
+          const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+          if (userDoc.exists()) {
+            setUserData(userDoc.data());
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      }
+    };
+    fetchUserData();
+  }, [currentUser]);
+
+  if (!clinic || !selectedDay || !selectedTime) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-red-500 font-bold">Missing booking data.</div>
+        <div className="text-red-500 font-bold">
+          الموعد غير صحيح أو مفقود. يرجى العودة وإعادة المحاولة.
+        </div>
       </div>
     );
   }
@@ -32,29 +51,29 @@ const BookingConfirmationPage = () => {
     setLoading(true);
     try {
       const userId = currentUser?.uid || "";
-      const userName =
-        currentUser?.displayName || currentUser?.email || "Unknown Customer";
-      const customerEmail = currentUser?.email || "";
-      const customerPhone = currentUser?.phoneNumber || "";
+      const userName = userData?.fullName || userData?.firstName || currentUser?.displayName || currentUser?.email || "Unknown Customer";
+      const customerEmail = userData?.email || currentUser?.email || "";
+      const customerPhone = userData?.phone || userData?.phoneNumber || currentUser?.phoneNumber || "";
 
       const bookingData = {
         clinicId: clinic.id,
-        clinicName: clinic.name || "Unknown Clinic",
+        clinicName: clinic.clinicName || clinic.name || "Unknown Clinic",
         clinicPhone: clinic.phone ?? clinic.phoneNumber ?? "Not Provided",
         clinicLocation:
           clinic.clinicAddress || clinic.location || "Not specified",
-        day: selectedDay,
-        time: selectedTime,
-        date: selectedDate,
+        day: selectedDay, // التاريخ كنص
+        time: selectedTime, // الوقت كنص
+        date: selectedDate, // كائن التاريخ الكامل
         price: clinic.price ?? 0,
         paymentMethod:
           selectedPayment === "card" ? "Visa / Mastercard" : "Cash on arrival",
         status: "booked",
         userId,
         userName,
+        patientName: userName,
         customerPhone,
         customerEmail,
-        doctorId: clinic.userId || clinic.id,
+        doctorId: clinic.doctorId || clinic.userId || clinic.id,
         doctorName: clinic.doctorName || "Unknown Doctor",
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
@@ -77,8 +96,9 @@ const BookingConfirmationPage = () => {
         },
       });
     } catch (e) {
+      console.error("Booking error:", e);
       setLoading(false);
-      alert("Booking failed: " + e.message);
+      alert("فشل في حجز الموعد: " + e.message + ". يرجى المحاولة مرة أخرى.");
     }
   };
 
@@ -162,12 +182,12 @@ const BookingConfirmationPage = () => {
               Billing Details
             </h3>
             <div className="space-y-3">
-              <InfoRow label="Consultation Fee" value={`${clinic.price} EGP`} />
+              <InfoRow label="Consultation Fee" value={`${clinic.price} $`} />
               <InfoRow label="Service Fee & Tax" value="FREE" />
               <div className="pt-3 border-t border-gray-100 dark:border-gray-700">
                 <InfoRow
                   label="Total Amount"
-                  value={`${clinic.price} EGP`}
+                  value={`${clinic.price} $`}
                   isBold
                   textSize="text-lg"
                 />
@@ -205,11 +225,11 @@ const BookingConfirmationPage = () => {
                   Total Amount
                 </div>
                 <div className="text-xl font-bold text-gray-800 dark:text-white">
-                  {clinic.price} EGP
+                  {clinic.price} $
                 </div>
               </div>
               <button
-                className="min-w-[160px] bg-primary text-white font-medium px-6 py-3 rounded-xl hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+                className="min-w-[160px] bg-primary text-white font-medium px-6 py-3 rounded-xl hover: bg-primary_app/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
                 onClick={handleConfirmBooking}
                 disabled={loading}
               >

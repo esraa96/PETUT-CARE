@@ -1,58 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from "../context/AuthContext.jsx";
-import {db, getUserProfile} from "../firebase.js";
-import { Navigate } from "react-router-dom";
+import { useLocation, Navigate } from "react-router-dom";
 import LoadingAnimation from "../components/common/LoadingAnimation.jsx";
 import {doc, getDoc} from "firebase/firestore";
-
-const roles = {
-    admin: "admin",
-    customer: "customer",
-    doctor: "doctor"
-};
+import {db} from "../firebase.js";
 
 const RoleProtectedRoute = ({ children }) => {
     const { currentUser } = useAuth();
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const location = useLocation();
 
     useEffect(() => {
         if (currentUser) {
             const getUserData = async () => {
-                const userRef = doc(db, "users", currentUser.uid);
-                const userSnap = await getDoc(userRef);
-                if (userSnap.exists()) {
-                    setUser(userSnap.data());
-                    console.log("User data found:", userSnap.data())
-                } else {
-                    console.log("No user data found");
+                try {
+                    const userRef = doc(db, "users", currentUser.uid);
+                    const userSnap = await getDoc(userRef);
+                    if (userSnap.exists()) {
+                        setUser(userSnap.data());
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
                 }
-                setLoading(false);
             };
             getUserData();
-        } else {
-            setLoading(false);
         }
     }, [currentUser]);
 
-    // Show loading animation if still loading user profile
-    if (loading) {
-        return <LoadingAnimation />;
+    // Only redirect if not already on the correct dashboard
+    if (user?.role === "admin" && !location.pathname.startsWith('/admin-dashboard')) {
+        return <Navigate to="/admin-dashboard" replace />;
+    }
+    
+    if (user?.role === "doctor" && !location.pathname.startsWith('/doctor-dashboard')) {
+        return <Navigate to="/doctor-dashboard" replace />;
     }
 
-
-
-    // If user is logged in and has a specific role, redirect to the respective dashboard
-    if (user?.role === roles.admin) {
-        return <Navigate to="/admin-dashboard" />;
-    }
-
-    if (user?.role === roles.doctor) {
-        return <Navigate to="/doctor-dashboard" />;
-    }
-
-
-        return children;
+    return children;
 };
 
 export default RoleProtectedRoute;

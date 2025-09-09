@@ -90,9 +90,12 @@ const CartPage = () => {
               <div key={item.id} className="flex border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
                 <div className="w-24 flex-shrink-0">
                   <img 
-                    src={item.imageURL}
+                    src={item.imageUrl || item.imageURL}
                     alt={item.productName}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.src = `https://via.placeholder.com/400x300/E0E0E0/666666?text=${encodeURIComponent(item.productName || 'Product')}`;
+                    }}
                   />
                 </div>
                 <div className="flex-1 p-4 flex flex-col">

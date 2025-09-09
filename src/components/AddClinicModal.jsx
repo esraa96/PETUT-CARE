@@ -11,8 +11,8 @@ import logo from '../assets/petut.png';
 import { BeatLoader } from 'react-spinners';
 import { IoLocation } from "react-icons/io5";
 
-// استدعاء مكون الخريطة الجديد
-import MapModal from './MapModal.jsx';
+// استدعاء مكون الخريطة المبسط
+import SimpleMapModal from './SimpleMapModal.jsx';
 
 export default function AddClinicModal({ fetchClinics, loading, setLoading }) {
     // حالة المودال والبيانات
@@ -74,15 +74,27 @@ export default function AddClinicModal({ fetchClinics, loading, setLoading }) {
 
     // ... (باقي الدوال)
     const handleAddDay = () => {
-        if (day && openTime && closeTime) {
-            const exists = workingHours.some(item => item.day === day);
-            if (!exists) {
-                setWorkingHours([...workingHours, { day, openTime, closeTime }]);
-                setDay('');
-                setOpenTime('');
-                setCloseTime('');
-            }
+        if (!day || !openTime || !closeTime) {
+            toast.error('Please select day and time', { autoClose: 2000 });
+            return;
         }
+        
+        const exists = workingHours.some(item => item.day === day);
+        if (exists) {
+            toast.error('This day is already added', { autoClose: 2000 });
+            return;
+        }
+        
+        if (openTime >= closeTime) {
+            toast.error('Close time must be after open time', { autoClose: 2000 });
+            return;
+        }
+        
+        setWorkingHours(prev => [...prev, { day, openTime, closeTime }]);
+        setDay('');
+        setOpenTime('');
+        setCloseTime('');
+        toast.success('Working day added successfully', { autoClose: 1500 });
     };
 
     const handleDeleteDay = (dayDeleted) => {
@@ -104,41 +116,73 @@ export default function AddClinicModal({ fetchClinics, loading, setLoading }) {
     };
 
     const handleAddClinic = async () => {
-        setLoading(true);
+        // التحقق من صحة البيانات
+        if (!name.trim()) {
+            toast.error('Please enter clinic name', { autoClose: 3000 });
+            return;
+        }
+        if (!phone.trim()) {
+            toast.error('Please enter phone number', { autoClose: 3000 });
+            return;
+        }
+        if (!email.trim()) {
+            toast.error('Please enter email', { autoClose: 3000 });
+            return;
+        }
+        if (!price.trim()) {
+            toast.error('Please enter consultation cost', { autoClose: 3000 });
+            return;
+        }
+        if (!status) {
+            toast.error('Please select clinic status', { autoClose: 3000 });
+            return;
+        }
+        if (!selectedLocation) {
+            toast.error('Please select clinic location', { autoClose: 3000 });
+            return;
+        }
+        if (workingHours.length === 0) {
+            toast.error('Please add at least one working day', { autoClose: 3000 });
+            return;
+        }
         if (isAdmin && !selectedDoctor) {
             toast.error('Please select a doctor', { autoClose: 3000 });
             return;
         }
+        
+        setLoading(true);
 
         try {
             const clinicData = {
-                name,
-                phone,
-                email,
-                workingHours,
+                name: name.trim(),
+                phone: phone.trim(),
+                email: email.trim(),
+                workingHours: workingHours || [],
                 status,
-                price,
+                price: parseFloat(price),
                 address: `${selectedLocation?.governorate || ''} - ${selectedLocation?.city || ''} - ${selectedLocation?.street || ''}`,
-                city: selectedLocation?.city,
-                governorate: selectedLocation?.governorate,
-                latitude: selectedLocation?.latitude,
-                longitude: selectedLocation?.longitude,
-                street: selectedLocation?.street,
-                doctorId: isAdmin ? selectedDoctor?.id : auth.currentUser.uid,
+                city: selectedLocation?.city || '',
+                governorate: selectedLocation?.governorate || '',
+                latitude: selectedLocation?.latitude || 0,
+                longitude: selectedLocation?.longitude || 0,
+                street: selectedLocation?.street || '',
+                doctorId: isAdmin ? selectedDoctor?.id : auth.currentUser?.uid,
                 doctorName: isAdmin ? selectedDoctor?.fullName : userData?.fullName || '',
                 createdAt: Timestamp.now(),
             };
 
             const docRef = await addDoc(collection(db, 'clinics'), clinicData);
             await setDoc(docRef, { ...clinicData, clinicId: docRef.id });
-            await fetchClinics();
             toast.success('Clinic added successfully', { autoClose: 3000 });
             resetFields();
 
             if (modalInstance) {
                 modalInstance.hide();
             }
-            fetchClinics();
+            
+            if (fetchClinics) {
+                await fetchClinics();
+            }
 
         } catch (error) {
             toast.error("Failed to add clinic: " + error.message, { autoClose: 3000 });
@@ -147,12 +191,8 @@ export default function AddClinicModal({ fetchClinics, loading, setLoading }) {
         }
     };
 
-    // دالة لفتح مودال الخريطة وإخفاء المودال الحالي
+    // دالة لفتح مودال الخريطة
     const handleOpenMapModal = () => {
-        // نستخدم النسخة المخزنة لإخفاء المودال
-        if (modalInstance) {
-            modalInstance.hide();
-        }
         setShowMapModal(true);
     };
 
@@ -160,42 +200,54 @@ export default function AddClinicModal({ fetchClinics, loading, setLoading }) {
     const handleLocationConfirmed = (location) => {
         setSelectedLocation(location);
         setShowMapModal(false);
-        // نستخدم النسخة المخزنة لإظهار المودال
-        if (modalInstance) {
-            modalInstance.show();
-        }
     };
 
     // دالة لإغلاق مودال الخريطة دون تغيير الموقع
     const handleCloseMapModal = () => {
         setShowMapModal(false);
-        // نستخدم النسخة المخزنة لإظهار المودال
-        if (modalInstance) {
-            modalInstance.show();
-        }
     };
 
     useEffect(() => {
-        // هذا الكود سيعمل مرة واحدة فقط عند تحميل المكون
-        if (modalRef.current && window.bootstrap) {
-            // ننشئ نسخة جديدة من مودال Bootstrap
-            const modal = new window.bootstrap.Modal(modalRef.current, {
-                keyboard: false,
-                backdrop: 'static'
-            });
-            // نخزنها في حالة المكون
-            setModalInstance(modal);
+        // تحقق من وجود Bootstrap وإنشاء المودال
+        const initModal = () => {
+            if (modalRef.current && window.bootstrap && window.bootstrap.Modal) {
+                const modal = new window.bootstrap.Modal(modalRef.current, {
+                    keyboard: false,
+                    backdrop: 'static'
+                });
+                setModalInstance(modal);
+            }
+        };
+        
+        // انتظار تحميل Bootstrap
+        if (window.bootstrap) {
+            initModal();
+        } else {
+            const timer = setTimeout(initModal, 1000);
+            return () => clearTimeout(timer);
         }
     }, []);
     return (
         <Fragment>
             {/* هذا هو المودال الرئيسي الذي يحتوي على النموذج */}
             <div className="modal fade" id="addclinic" ref={modalRef} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-hidden="true">
-                <div className="modal-dialog modal-lg">
+                <div className="modal-dialog modal-lg" style={{maxHeight: '90vh', overflowY: 'auto'}}>
                     <div className="modal-content">
                         <div className="modal-header d-flex align-items-center justify-content-between py-0 pe-0">
                             <h1 className="modal-title fs-5">Clinic Info</h1>
-                            <img src={logo} width="90px" height="90px" alt="logo" />
+                            <div className="d-flex align-items-center gap-2">
+                                <img src={logo} width="90px" height="90px" alt="logo" />
+                                <button 
+                                    type="button" 
+                                    className="btn-close" 
+                                    onClick={() => {
+                                        resetFields();
+                                        if (modalInstance) {
+                                            modalInstance.hide();
+                                        }
+                                    }}
+                                ></button>
+                            </div>
                         </div>
                         <div className="modal-body">
                             <form>
@@ -247,60 +299,130 @@ export default function AddClinicModal({ fetchClinics, loading, setLoading }) {
                                 {/* هذا هو الزر الذي سيفتح مودال الخريطة */}
                                 <div className="address d-flex align-items-center gap-3 mb-3">
                                     <p className='mb-0'>Choose Location</p>
-                                    <button onClick={handleOpenMapModal} className='custom-button d-flex align-items-center gap-2' type='button' data-bs-toggle="modal" data-bs-target="#map-modal">
+                                    <button onClick={handleOpenMapModal} className='custom-button d-flex align-items-center gap-2' type='button'>
                                         <IoLocation /> choose location
                                     </button>
                                 </div>
                                 {selectedLocation && (
-                                    <p className="mb-0">{selectedLocation.governorate} - {selectedLocation.city} - {selectedLocation.street}</p>
+                                    <div className="alert alert-success mt-2">
+                                        <strong>Selected Location:</strong><br/>
+                                        {selectedLocation.governorate} - {selectedLocation.city}
+                                        {selectedLocation.street && ` - ${selectedLocation.street}`}
+                                    </div>
                                 )}
 
                                 <hr />
                                 <div className="appointment mb-3">
-                                    <p className='fw-bold mb-2'>Working Hours</p>
-                                    <div className="d-flex align-items-center gap-3 flex-wrap">
-                                        <select className="form-select w-auto" value={day} onChange={(e) => setDay(e.target.value)}>
-                                            <option value="">Select Day</option>
-                                            {['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map(d => (
-                                                <option key={d} value={d}>{d}</option>
-                                            ))}
-                                        </select>
-                                        <span>from</span>
-                                        <input type="time" className="form-control w-auto" value={openTime} onChange={(e) => setOpenTime(e.target.value)} />
-                                        <span>to</span>
-                                        <input type="time" className="form-control w-auto" value={closeTime} onChange={(e) => setCloseTime(e.target.value)} />
-                                        <button type="button" className="btn btn-success ms-2" onClick={handleAddDay}>Add</button>
+                                    <div className="d-flex justify-content-between align-items-center mb-3">
+                                        <p className='fw-bold mb-0'>Working Hours</p>
+                                        <small className="text-muted">Add at least one working day</small>
+                                    </div>
+                                    
+                                    <div className="card border-light bg-light p-3 mb-3">
+                                        <div className="row g-2 align-items-end">
+                                            <div className="col-md-3">
+                                                <label className="form-label small">Day</label>
+                                                <select 
+                                                    className="form-select" 
+                                                    value={day} 
+                                                    onChange={(e) => setDay(e.target.value)}
+                                                >
+                                                    <option value="">Select Day</option>
+                                                    {['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+                                                        .filter(d => !workingHours.some(wh => wh.day === d))
+                                                        .map(d => (
+                                                            <option key={d} value={d}>{d}</option>
+                                                        ))
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div className="col-md-3">
+                                                <label className="form-label small">Open Time</label>
+                                                <input 
+                                                    type="time" 
+                                                    className="form-control" 
+                                                    value={openTime} 
+                                                    onChange={(e) => setOpenTime(e.target.value)} 
+                                                />
+                                            </div>
+                                            <div className="col-md-3">
+                                                <label className="form-label small">Close Time</label>
+                                                <input 
+                                                    type="time" 
+                                                    className="form-control" 
+                                                    value={closeTime} 
+                                                    onChange={(e) => setCloseTime(e.target.value)} 
+                                                />
+                                            </div>
+                                            <div className="col-md-3">
+                                                <button 
+                                                    type="button" 
+                                                    className="btn btn-success w-100"
+                                                    onClick={handleAddDay}
+                                                >
+                                                    + Add Day
+                                                </button>
+
+                                            </div>
+                                        </div>
                                     </div>
 
                                     {workingHours.length > 0 && (
-                                        <ul className="mt-3 list-group w-75">
-                                            {workingHours.map((item, index) => (
-                                                <li key={index} className="list-group-item d-flex justify-content-between align-items-center mb-2 border rounded px-3 py-2">
-                                                    <span>{item.day}: {item.openTime} - {item.closeTime}</span>
-                                                    <button className="btn border-0" onClick={() => handleDeleteDay(item.day)}>
-                                                        <MdDelete size={25} className='text-danger' />
-                                                    </button>
-                                                </li>
-                                            ))}
-                                        </ul>
+                                        <div className="mt-3">
+                                            <h6 className="mb-2">Added Working Days ({workingHours.length}):</h6>
+                                            <div className="row g-2">
+                                                {workingHours.map((item, index) => (
+                                                    <div key={index} className="col-12">
+                                                        <div className="card border-success">
+                                                            <div className="card-body p-2 d-flex justify-content-between align-items-center">
+                                                                <div>
+                                                                    <strong className="text-success">{item.day}</strong>
+                                                                    <br/>
+                                                                    <small className="text-muted">{item.openTime} - {item.closeTime}</small>
+                                                                </div>
+                                                                <button 
+                                                                    className="btn btn-outline-danger btn-sm" 
+                                                                    onClick={() => handleDeleteDay(item.day)}
+                                                                    title="Remove this day"
+                                                                >
+                                                                    <MdDelete size={18} />
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
                                     )}
                                 </div>
 
-                                <div className="modal-footer d-flex justify-content-end gap-2">
-                                    <button type="button" className="btn btn-danger" id="close-btn-modal" data-bs-dismiss="modal" style={{ width: '100px' }}>Close</button>
-                                    <button type="button" className="custom-button" style={{ width: '100px' }} onClick={handleAddClinic} disabled={loading}>
-                                        {loading ? <BeatLoader size={10} color='#fff' /> : 'Add Clinic'}
-                                    </button>
-                                </div>
                             </form>
+                        </div>
+                        <div className="modal-footer d-flex justify-content-end gap-2">
+                            <button 
+                                type="button" 
+                                className="btn btn-danger" 
+                                onClick={() => {
+                                    resetFields();
+                                    if (modalInstance) {
+                                        modalInstance.hide();
+                                    }
+                                }}
+                                style={{ width: '100px' }}
+                            >
+                                Close
+                            </button>
+                            <button type="button" className="custom-button" style={{ width: '100px' }} onClick={handleAddClinic} disabled={loading}>
+                                {loading ? <BeatLoader size={10} color='#fff' /> : 'Add Clinic'}
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* هذا هو المودال الجديد الذي سيحتوي على الخريطة */}
+            {/* هذا هو المودال المبسط للموقع */}
             {showMapModal && (
-                <MapModal
+                <SimpleMapModal
                     onLocationConfirmed={handleLocationConfirmed}
                     onClose={handleCloseMapModal}
                     initialLocation={selectedLocation}

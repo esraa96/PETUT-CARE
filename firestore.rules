@@ -17,6 +17,11 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
+    // Allow users to read and write their own cart
+    match /users/{userId}/cart/{cartId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
     // Chat rules - allow participants to read/write
     match /chats/{chatId} {
       allow read, write: if request.auth != null && 
@@ -55,6 +60,27 @@ service cloud.firestore {
     // Reservations rules - allow authenticated users
     match /reservations/{reservationId} {
       allow read, write: if request.auth != null;
+    }
+
+    // Bookings rules - allow doctors to read their own bookings
+    match /bookings/{bookingId} {
+      allow read: if request.auth != null && 
+        (request.auth.uid == resource.data.doctorId || 
+         request.auth.uid == resource.data.userId ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      allow write: if request.auth != null && 
+        (request.auth.uid == resource.data.doctorId || 
+         request.auth.uid == resource.data.userId ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      allow create: if request.auth != null;
+    }
+
+    // Allow doctors to read all users for patient information
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && 
+        (request.auth.uid == userId || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
     }
   }
 }

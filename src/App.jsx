@@ -15,6 +15,8 @@ import FilterPage from "./pages/FilterPage";
 import ProductPage from "./pages/ProductPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import DeliveryPage from "./pages/DeliveryPage";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import CartPage from "./pages/CartPage";
@@ -29,7 +31,6 @@ import BookingConfirmationPage from "./pages/BookingConfirmationPage";
 import BookingLoadingPage from "./pages/BookingLoadingPage";
 import BookingSuccessPage from "./pages/BookingSuccessPage";
 import CompleteProfile from "./pages/CompleteProfile.jsx";
-import NotificationHandler from "./components/Notification/NotificationHandler.jsx";
 import NotFoundPage from "./pages/NotFoundPage";
 import DoctorDashboard from './pages/doctordashboard/DoctorPage'
 import HelloDoctor from './pages/doctordashboard/HelloDoctor'
@@ -96,8 +97,8 @@ function App() {
           totalAmount: 0,
         };
         // Merge guest cart (Redux) and Firestore cart
-        const mergedItems = [...firestoreCart.items];
-        cart.items.forEach((guestItem) => {
+        const mergedItems = [...(firestoreCart.items || [])];
+        (cart.items || []).forEach((guestItem) => {
           const existing = mergedItems.find((item) => item.id === guestItem.id);
           if (existing) {
             existing.quantity += guestItem.quantity;
@@ -169,7 +170,7 @@ function App() {
           <Route path="reviews" element={<Reviews />} />
           <Route path="store" element={<Store />} />
           <Route path="charts" element={<Charts />} />
-          <Route path="support" element={<SupportPage />} />
+           <Route path="support" element={<SupportPage />} />
         </Route>
         <Route
           path="/"
@@ -275,93 +276,94 @@ function App() {
             }
           />
           <Route
-            path="community"
-            element={
-              <ProtectedRoute>
-                <CommunityScreen />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="chats"
-            element={
-              <ProtectedRoute>
-                <ChatsListScreen />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="create-post"
-            element={
-              <ProtectedRoute>
-                <CreatePostScreen />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="post/:postId"
-            element={
-              <ProtectedRoute>
-                <PostDetailsScreen />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="profile/:userId"
-            element={
-              <ProtectedRoute>
-                <ProfileViewScreen />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="edit-post/:postId"
-            element={
-              <ProtectedRoute>
-                <EditPostScreen />
-              </ProtectedRoute>
-            }
-          />
-
-          <Route
-            path="contact-us"
-            element={
-              <ProtectedRoute>
-                <ContactUsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="my-tickets"
-            element={
-              <ProtectedRoute>
-                <MyTicketsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="support-chat/:ticketId"
-            element={
-              <ProtectedRoute>
-                <SupportChatPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="notifications"
-            element={
-              <ProtectedRoute>
-                <NotificationsPage />
-              </ProtectedRoute>
-            }
-          />
+                      path="community"
+                      element={
+                        <ProtectedRoute>
+                          <CommunityScreen />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="chats"
+                      element={
+                        <ProtectedRoute>
+                          <ChatsListScreen />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="create-post"
+                      element={
+                        <ProtectedRoute>
+                          <CreatePostScreen />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="post/:postId"
+                      element={
+                        <ProtectedRoute>
+                          <PostDetailsScreen />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="profile/:userId"
+                      element={
+                        <ProtectedRoute>
+                          <ProfileViewScreen />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="edit-post/:postId"
+                      element={
+                        <ProtectedRoute>
+                          <EditPostScreen />
+                        </ProtectedRoute>
+                      }
+                    />
+          
+                    <Route
+                      path="contact-us"
+                      element={
+                        <ProtectedRoute>
+                          <ContactUsPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="my-tickets"
+                      element={
+                        <ProtectedRoute>
+                          <MyTicketsPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="support-chat/:ticketId"
+                      element={
+                        <ProtectedRoute>
+                          <SupportChatPage />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="notifications"
+                      element={
+                        <ProtectedRoute>
+                          <NotificationsPage />
+                        </ProtectedRoute>
+                      }
+                    />
         </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/complete-profile" element={<CompleteProfile />} />
         <Route path="/role-selection" element={<RoleSelectionPage />} />
       </Routes>
-
     </>
   );
 }

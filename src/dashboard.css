@@ -1,73 +1,299 @@
+/* Modern Dashboard Styles - Converted to Tailwind CSS */
+
+/* Base Styles */
 a {
-  text-decoration: none;
+  @apply no-underline;
 }
 
 ul {
-  list-style: none;
+  @apply list-none;
 }
 
-.x {
-  border: 1px solid red;
-
-}
-
+/* Custom Utilities */
 .flex-1 {
   flex: 1;
 }
 
 .gap-140 {
-  gap: 140px;
+  @apply gap-[140px];
 }
 
+/* Main Background */
 .background {
-  background-color: #F7F3EB;
+  @apply bg-gradient-to-br from-[#F7F3EB] to-[#FEFCF7];
 }
 
-.custom-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  background-color: #D9A741;
-  color: #fff;
-  padding: 6px 12px;
-  border-radius: 4px;
-  border: 1px solid #D9A741;
-  cursor: pointer;
-  transition: 0.3s ease-in-out;
+/* Dashboard Layout */
+.dashboard-container {
+  @apply min-h-screen bg-gradient-to-br from-gray-50 to-gray-200;
 }
 
-.custom-button:hover {
-  background-color: transparent;
-  color: #D9A741;
-  border: 1px solid #D9A741;
+/* Header Styles */
+.header-dash {
+  @apply bg-gradient-to-br from-white to-gray-50 shadow-xl backdrop-blur-sm;
+}
+
+.sidebar {
+  @apply bg-[#F7F3EB];
 }
 
 .sidebar.collapsed {
-  width: 250px;
-  padding: 20px 15px;
-  left: -300px;
-  transition: 0.3s ease-in-out;
-
+  @apply w-64 -left-80 transition-all duration-300 ease-in-out;
 }
 
 .sidebar.expanded {
-  width: 250px;
-  padding: 20px 15px;
-  left: 0;
-  transition: 0.3s ease-in-out;
-
+  @apply w-64 left-0 transition-all duration-300 ease-in-out;
 }
 
-::placeholder {
-  opacity: 0.4 !important;
-  color: #000 !important;
+/* Sidebar Navigation */
+.sidebar-nav-item {
+  @apply mb-2 rounded-xl transition-all duration-300 relative overflow-hidden;
 }
 
-input {
-  font-size: medium !important;
+.sidebar-nav-item:hover {
+  @apply bg-gradient-to-br from-[#D9A741]/10 to-[#D9A741]/5 translate-x-1;
+}
+
+.sidebar-nav-item.active {
+  @apply bg-gradient-to-br from-[#D9A741] to-[#E6B84A] shadow-lg shadow-[#D9A741]/30;
+}
+
+.sidebar-nav-item.active a {
+  @apply text-white;
+}
+
+.sidebar-nav-item a {
+  @apply py-4 px-5 rounded-xl font-semibold text-sm flex items-center gap-3 transition-all duration-300;
+}
+
+/* Responsive Sidebar Navigation */
+@media (max-width: 767px) {
+  .sidebar-nav-item a {
+    @apply py-3 px-4 text-base;
+  }
+}
+
+@media (max-width: 575px) {
+  .sidebar-nav-item a {
+    @apply py-3 px-4 text-sm;
+  }
+}
+
+.content-area {
+  @apply p-8 ml-0;
+}
+
+.dashboard-card {
+  @apply bg-white rounded-lg shadow-md;
+}
+
+.breadcrumb-container {
+  @apply bg-white p-5 mb-5 rounded-lg;
+}
+
+.custom-button {
+  @apply bg-[#D9A741] text-white py-2 px-3 rounded border border-[#D9A741] cursor-pointer transition-all duration-300 hover:bg-transparent hover:text-[#D9A741];
+}
+
+.form-control:focus {
+  @apply border-[#D9A741] ring-4 ring-[#D9A741]/25;
+}
+
+/* Search Box */
+.search-box {
+  @apply relative;
+}
+
+.search-box .form-control {
+  @apply pr-12 bg-white border-2 border-gray-200;
+}
+
+.table tbody tr:hover {
+  @apply bg-[#D9A741]/5;
 }
 
 table tr:last-child td {
-  border-bottom: none !important;
+  @apply border-b-0;
+}
+
+.welcome-section {
+  @apply bg-[#D9A741] text-white p-8 mb-8 rounded-lg;
+}
+
+.stats-card {
+  @apply bg-white p-6 border-l-4 border-[#D9A741] rounded-lg;
+}
+
+/* Responsive Design - Tailwind CSS */
+
+/* Desktop Large (1400px+) */
+@media (min-width: 1400px) {
+  .sidebar.expanded {
+    @apply w-80;
+  }
+  .sidebar.collapsed {
+    @apply w-80 -left-96;
+  }
+  .content-area {
+    @apply p-10;
+  }
+}
+
+/* Desktop (1200px+) */
+@media (min-width: 1200px) {
+  .sidebar.expanded,
+  .sidebar.collapsed {
+    @apply w-72;
+  }
+  .content-area {
+    @apply p-8;
+  }
+}
+
+/* Laptop (992px+) */
+@media (min-width: 992px) {
+  .sidebar.expanded,
+  .sidebar.collapsed {
+    @apply w-64;
+  }
+  .content-area {
+    @apply py-6 px-5;
+  }
+  .header-dash .search-container {
+    @apply max-w-xs;
+  }
+}
+
+/* Tablet (768px+) */
+@media (min-width: 768px) {
+  .sidebar.expanded {
+    @apply w-full left-0 z-50 fixed;
+  }
+  .sidebar.collapsed {
+    @apply w-full -left-full;
+  }
+  .content-area {
+    @apply py-5 px-4 ml-0;
+  }
+  .header-dash .search-container {
+    @apply hidden;
+  }
+  .breadcrumb-container {
+    @apply py-4 px-5 flex flex-col gap-4;
+  }
+  .breadcrumb-container > div {
+    @apply text-center;
+  }
+}
+
+/* Mobile Large (576px+) */
+@media (min-width: 576px) and (max-width: 767px) {
+  .sidebar.expanded {
+    @apply w-full left-0 z-50 fixed;
+  }
+  .sidebar.collapsed {
+    @apply w-full -left-full;
+  }
+  .content-area {
+    @apply py-4 px-3 ml-0;
+  }
+  .header-dash .navbar {
+    @apply py-4 px-5;
+  }
+  .header-dash .search-container {
+    @apply hidden;
+  }
+  .welcome-section {
+    @apply p-5 text-center;
+  }
+  .welcome-section .row {
+    @apply flex flex-col-reverse;
+  }
+  .stats-card {
+    @apply mb-4;
+  }
+  .dashboard-card {
+    @apply mb-4;
+  }
+  .breadcrumb-container {
+    @apply py-3 px-4 flex flex-col gap-3;
+  }
+}
+
+/* Mobile Small (320px - 575px) */
+@media (max-width: 575px) {
+  .sidebar.expanded {
+    @apply w-full left-0 z-50 fixed h-full;
+  }
+  .sidebar.collapsed {
+    @apply w-full -left-full;
+  }
+  .content-area {
+    @apply py-3 px-2 ml-0;
+  }
+  .header-dash .navbar {
+    @apply py-3 px-4 h-20;
+  }
+  .header-dash .search-container {
+    @apply hidden;
+  }
+  .welcome-section {
+    @apply p-4 text-center;
+  }
+  .welcome-section h2 {
+    @apply text-2xl;
+  }
+  .welcome-section .row {
+    @apply flex flex-col-reverse;
+  }
+  .stats-card {
+    @apply mb-3 p-4;
+  }
+  .dashboard-card {
+    @apply mb-3 p-4;
+  }
+  .breadcrumb-container {
+    @apply py-3 px-3 flex flex-col gap-2;
+  }
+  .breadcrumb-container h4 {
+    @apply text-xl;
+  }
+  .table-responsive {
+    @apply text-sm;
+  }
+  .btn {
+    @apply py-2 px-3 text-sm;
+  }
+  .form-control,
+  .form-select {
+    @apply py-2 px-3 text-sm;
+  }
+}
+
+/* Input Placeholders */
+::placeholder {
+  @apply opacity-60 text-gray-500;
+}
+
+input {
+  @apply text-sm;
+}
+
+/* Loading States */
+.loading-container {
+  @apply flex justify-center items-center min-h-[200px];
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { 
+    @apply opacity-0 translate-y-5; 
+  }
+  to { 
+    @apply opacity-100 translate-y-0; 
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
 }

@@ -12,6 +12,7 @@ import OrdersTab from "../components/profile/OrdersTab";
 import PetsTab from "../components/profile/PetsTab.jsx";
 import FavoritesTab from "../components/profile/FavoritesTab";
 import SettingsTab from "../components/profile/SettingsTab";
+import ReservationsTab from "../components/profile/ReservationsTab";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -45,6 +46,8 @@ const ProfilePage = () => {
         return <OrdersTab orders={orders} loading={loading} error={error} />;
       case "pets":
         return <PetsTab currentUser={currentUser} />;
+      case "reservations":
+        return <ReservationsTab />;
       case "favorites":
         return <FavoritesTab />;
       case "settings":

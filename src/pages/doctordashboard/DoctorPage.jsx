@@ -6,6 +6,7 @@ import ContentDoctorDash from './../../components/doctordash/ContentDoctorDash';
 import { auth, db } from '../../firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
+import '../../styles/doctorDashboard.css';
 export default function DoctorDashboard() {
   useBootstrap();
   const [sidebarOpen, setsidebarOpen] = useState(false);
@@ -35,12 +36,13 @@ export default function DoctorDashboard() {
   }, []);
   return (
     <Fragment>
-      <HeaderDoctor toggleSidebar={toggleSidebar}  doctorData={doctorData} />
-      <div className='d-flex'>
-        <Sidebar open={sidebarOpen} toggleSidebar={toggleSidebar}  />
-        <ContentDoctorDash  />
+      <div className="dashboard-container">
+        <HeaderDoctor toggleSidebar={toggleSidebar} doctorData={doctorData} />
+        <div className='d-flex'>
+          <Sidebar open={sidebarOpen} toggleSidebar={toggleSidebar} />
+          <ContentDoctorDash doctorData={doctorData} setDoctorData={setDoctorData} />
+        </div>
       </div>
-
     </Fragment>
   )
 }

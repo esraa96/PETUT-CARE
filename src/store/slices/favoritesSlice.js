@@ -14,6 +14,11 @@ export const fetchFavorites = createAsyncThunk(
   "favorites/fetchFavorites",
   async (userId, { rejectWithValue }) => {
     try {
+      // Authorization check
+      if (!userId) {
+        throw new Error('User authentication required');
+      }
+      
       const favoritesCol = collection(db, "users", userId, "favorites");
       const snapshot = await getDocs(favoritesCol);
       const favoriteIds = snapshot.docs.map((doc) => doc.id);
@@ -53,6 +58,11 @@ export const addFavorite = createAsyncThunk(
   "favorites/addFavorite",
   async ({ userId, product }, { rejectWithValue }) => {
     try {
+      // Authorization check
+      if (!userId) {
+        throw new Error('User authentication required');
+      }
+      
       const favoriteRef = doc(db, "users", userId, "favorites", product.id);
       await setDoc(favoriteRef, { productId: product.id }); // Store a reference
 
@@ -79,6 +89,11 @@ export const removeFavorite = createAsyncThunk(
   "favorites/removeFavorite",
   async ({ userId, productId }, { rejectWithValue }) => {
     try {
+      // Authorization check
+      if (!userId) {
+        throw new Error('User authentication required');
+      }
+      
       const favoriteRef = doc(db, "users", userId, "favorites", productId);
       await deleteDoc(favoriteRef);
       return productId; // Return the ID of the removed product

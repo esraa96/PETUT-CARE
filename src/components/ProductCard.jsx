@@ -25,10 +25,12 @@ const ProductCard = ({
       <Link to={`/product/${product.id}`} className="h-full flex flex-col">
         <div className="relative pb-[100%] overflow-hidden">
           <img
-            src={product.imageURL}
-            alt={product.name}
-            className="absolute inset-0 w-full h-full object-contain object-center  "
-            style={{backgroundColor: 'transparent'}}
+            src={product.imageUrl || product.imageURL}
+            alt={product.productName || product.name}
+            className="absolute inset-0 w-full h-full object-cover object-center"
+            onError={(e) => {
+              e.target.src = `https://via.placeholder.com/400x300/E0E0E0/666666?text=${encodeURIComponent(product.productName || 'Product')}`;
+            }}
           />
         </div>
         <div className="p-4 flex flex-col flex-grow">

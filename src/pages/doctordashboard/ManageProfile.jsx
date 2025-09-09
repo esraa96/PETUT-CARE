@@ -63,33 +63,22 @@ export default function Manageprofile() {
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
+      setLoading(true);
       const uploadedImageUrl = await uploadImageToImgbb(file);
       if (uploadedImageUrl) {
         setSelectImage(uploadedImageUrl);
-        setProfileData(profileData => ({ ...profileData, profileImage: uploadedImageUrl }));
+        setProfileData(prev => ({ ...prev, profileImage: uploadedImageUrl }));
+        toast.success('Image uploaded successfully!');
       }
+      setLoading(false);
     }
   };
 
   //update profile
   const handleUpdate = async () => {
-    if (newPassword !== confirmPassword) {
-      toast.error("New passwords do not match.", { autoClose: 3000 });
-      return;
-    }
-    if (!currentPassword) {
-      toast.error("Please enter your current password.", { autoClose: 3000 });
-      return;
-    }
     setLoading(true);
     try {
-      const auth = getAuth();
       const user = auth.currentUser;
-      const credential = EmailAuthProvider.credential(user.email, currentPassword);
-      await reauthenticateWithCredential(user, credential);
-      if (newPassword) {
-        await updatePassword(user, newPassword);
-      }
       if (user) {
         const userRef = doc(db, "users", user.uid);
         await updateDoc(userRef, {
@@ -99,18 +88,10 @@ export default function Manageprofile() {
           profileImage: selectImage || profileData.profileImage,
         });
         toast.success('Profile updated successfully', { autoClose: 3000 });
-        setNotEditable(!notEditable);
-        setProfileData(profileData => ({ ...profileData, profileImage: selectImage || profileData.profileImage }));
-        setCurrentPassword('');
+        setNotEditable(true);
       }
     } catch (error) {
-      if (error.code === "auth/invalid-credential") {
-        toast.error("The current password you entered is incorrect.", { autoClose: 3000 });
-      } else if (error.code === "auth/too-many-requests") {
-        toast.error("Too many attempts. Please try again later.", { autoClose: 3000 });
-      } else {
-        toast.error("Failed to update profile. Error: " + error.message, { autoClose: 3000 });
-      }
+      toast.error("Failed to update profile. Error: " + error.message, { autoClose: 3000 });
     } finally {
       setLoading(false);
     }
@@ -131,7 +112,7 @@ export default function Manageprofile() {
         <div className='row  '>
           <div className='col-4'>
             <div className="col-12 position-relative d-flex align-items-center justify-content-center">
-              <img className='rounded-3' src={profileData.profileImage || selectImage} alt="profile image" style={{ width: '90%', height: '100%', objectFit: 'cover' }} disabled ={notEditable} />
+              <img className='rounded-3' src={selectImage || profileData.profileImage || 'https://via.placeholder.com/300x300?text=No+Image'} alt="profile image" style={{ width: '90%', height: '300px', objectFit: 'cover' }} />
               <IoIosCamera size={30}
                 onClick={() => document.getElementById("inputfile").click()}
                 style={{
@@ -146,7 +127,7 @@ export default function Manageprofile() {
                 }} />
             </div>
             <div className="input-group my-3 w-75">
-            <input type="file" className="form-control d-none" id="inputfile" onChange={handleImageChange} disabled={notEditable} />
+            <input type="file" className="form-control d-none" id="inputfile" onChange={handleImageChange} accept="image/*" />
             </div>
           </div>
           <div className='col-7 '>

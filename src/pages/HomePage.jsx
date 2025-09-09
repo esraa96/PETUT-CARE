@@ -100,13 +100,13 @@ const HomePage = () => {
     <div className="min-h-screen  ">
       {/* Hero Section */}
       <section
-        className="relative min-h-screen bg-cover bg-center flex items-center"
+        className="relative min-h-screen bg-cover bg-center flex items-center animate-fade-in"
         style={{
           backgroundImage: `url('https://readdy.ai/api/search-image?query=Happy%20golden%20retriever%20and%20persian%20cat%20playing%20together%20in%20a%20bright%20veterinary%20clinic%20with%20modern%20equipment%2C%20soft%20natural%20lighting%2C%20clean%20white%20background%20with%20plants%2C%20professional%20pet%20care%20atmosphere%2C%20warm%20and%20welcoming%20environment%20with%20medical%20tools%20visible%20in%20background&width=1920&height=1080&seq=hero-bg&orientation=landscape')`
         }}
       >
         <div className="absolute inset-0 bg-black/40"></div>
-        <div className="container mx-auto px-6 relative z-10 w-full">
+        <div className="container mx-auto px-6 relative z-10">
           <div className="max-w-2xl">
             <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
               Premium Care for Your Beloved Pets
@@ -115,11 +115,11 @@ const HomePage = () => {
               Professional veterinary services, grooming, and boarding with 24/7 emergency care. Your pet's health and happiness is our top priority.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/clinics" className="btn-primary-app px-8 py-4 rounded-full text-lg font-semibold transition-colors whitespace-nowrap cursor-pointer">
+              <Link to="/clinics" className="btn-primary-app px-8 py-4 rounded-full text-lg font-semibold">
                 Schedule Appointment
               </Link>
-              <Link to="/contact-us" className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-neutral hover:text-neutral-dark transition-colors whitespace-nowrap cursor-pointer">
-                Contact Support
+              <Link to="/clinics" className="border-2 border-white text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-neutral transition-colors">
+                Emergency Care
               </Link>
             </div>
           </div>
@@ -140,12 +140,12 @@ const HomePage = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {services.map((service, index) => (
-              <div key={index} className="bg-white dark:bg-[#313340] rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow cursor-pointer">
+              <div key={index} className="card cursor-pointer hover:shadow-xl transition-shadow">
                 <div className="h-48 overflow-hidden">
                   <img
                     src={service.image}
                     alt={service.title}
-                    className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover object-top hover:scale-110 transition-transform duration-500"
                   />
                 </div>
                 <div className="p-6">
@@ -166,29 +166,29 @@ const HomePage = () => {
       </section>
 
       {/* Featured Products - Integrated from old component */}
-      <section className="mb-12 py-20 px-4">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold dark:text-white">Featured Products</h2>
-          <Link to="/catalog" className="text-primary_app hover:underline">
-            View All
-          </Link>
-        </div>
-
-        {loading ? (
-          <LoadingAnimation />
-        ) : error ? (
-          <div className="text-center text-red-500 py-8">{error}</div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products.slice(0, 4).map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onAddToCart={handleAddToCart}
-              />
-            ))}
+      <section className="py-20">
+        <div className="container mx-auto px-6">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-neutral dark:text-white">Featured Products</h2>
+            <Link to="/catalog" className="text-primary_app hover:underline font-semibold">
+              View All
+            </Link>
           </div>
-        )}
+
+          {error ? (
+            <div className="text-center text-red-500 py-8">{error}</div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {products.slice(0, 4).map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onAddToCart={handleAddToCart}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </section>
 
       {/* Testimonials Section */}
@@ -205,7 +205,7 @@ const HomePage = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-white dark:bg-[#313340] rounded-2xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+              <div key={index} className="card p-6 hover:shadow-xl transition-shadow">
                 <div className="flex items-center mb-4">
                   <div className="w-12 h-12 rounded-full overflow-hidden mr-4">
                     <img
@@ -234,7 +234,7 @@ const HomePage = () => {
           </div>
 
           <div className="text-center mt-12">
-            <button className="btn-primary-app px-8 py-3 rounded-full font-semibold transition-colors whitespace-nowrap cursor-pointer">
+            <button className="btn-primary-app px-8 py-3 font-semibold">
               Read More Reviews
             </button>
           </div>

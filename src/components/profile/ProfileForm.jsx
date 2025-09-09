@@ -7,8 +7,6 @@ import {
 } from "firebase/auth";
 import { useAuth } from "../../context/AuthContext";
 import { getUserProfile, setUserProfile } from "../../firebase";
-import ProfileImageManager from "./ProfileImageManager";
-
 
 const ProfileForm = ({ currentUser }) => {
   const { authUser } = useAuth ? useAuth() : { authUser: null };
@@ -24,7 +22,6 @@ const ProfileForm = ({ currentUser }) => {
   const [loading, setLoading] = useState(false);
   const [profileImage, setProfileImage] = useState( ""); // base64 for preview
   const [profileImageFile, setProfileImageFile] = useState(null);
-
   async function fetchProfile() {
     if (currentUser?.uid) {
       const profile = await getUserProfile(currentUser.uid);
@@ -40,7 +37,8 @@ const ProfileForm = ({ currentUser }) => {
   }, []);
 
   // Handle image upload and convert to base64
-  const handleImageChange = (file) => {
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
     if (!file) return;
 
     setProfileImageFile(file);
@@ -52,13 +50,6 @@ const ProfileForm = ({ currentUser }) => {
     reader.readAsDataURL(file);
   };
 
-  const handleImageDelete = () => {
-    setProfileImage("");
-    setProfileImageFile(null);
-  };
-
-
-
   const handleProfileSave = async (e) => {
     e.preventDefault();
     setProfileMsg("");
@@ -67,7 +58,6 @@ const ProfileForm = ({ currentUser }) => {
       if (currentUser) {
         let imageUrl = profileImage; // Keep existing image if no new one is uploaded
 
-        // Only upload to imgbb if it's a new file (not an avatar ID)
         if (profileImageFile) {
           const apiKey = "01a0445653bd47247515dce07a3f1400";
           const formData = new FormData();
@@ -90,17 +80,12 @@ const ProfileForm = ({ currentUser }) => {
           }
         }
 
-
         // Save to Firestore
-        const profileData = {
-          fullName,
+        await setUserProfile(currentUser.uid, {
           phone,
           profileImage: imageUrl,
           gender,
-        };
-        console.log('Saving profile data:', profileData);
-        await setUserProfile(currentUser.uid, profileData);
-        console.log('Profile saved successfully');
+        });
 
         // Optionally update displayName in Auth
         await updateProfile(currentUser, {
@@ -108,11 +93,11 @@ const ProfileForm = ({ currentUser }) => {
         });
 
         setProfileImage(imageUrl); // Update local state with the new image URL
-        setProfileMsg("تم تحديث الملف الشخصي بنجاح!");
+        setProfileMsg("Profile updated successfully!");
         setProfileImageFile(null); // Reset file input
       }
     } catch (err) {
-      setProfileMsg(err.message || "فشل في تحديث الملف الشخصي.");
+      setProfileMsg(err.message || "Failed to update profile.");
     }
     setLoading(false);
   };
@@ -155,12 +140,24 @@ const ProfileForm = ({ currentUser }) => {
         {/* Image upload */}
         <div className="flex max-lg:flex-col items-center space-x-4 mb-4">
           <div className="max-lg:mb-4">
-            <ProfileImageManager
-              profileImage={profileImage}
-              onImageChange={handleImageChange}
-              onImageDelete={handleImageDelete}
-              onAvatarSelect={null}
-              userName={fullName}
+            {profileImage ? (
+              <img
+                src={profileImage}
+                alt="Profile"
+                className="w-28 h-28 rounded-full object-cover border"
+              />
+            ) : (
+              <div className="w-20 h-20 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-300">
+                No Image
+              </div>
+            )}
+          </div>
+          <div className="flex max-lg:flex-col items-center justify-center">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="max-lg:w-full py-3 px-8 border dark:text-white border-gray-300 dark:border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary_app cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600 hover:ring-1 hover:ring-primary_app"
             />
           </div>
         </div>
@@ -315,7 +312,6 @@ const ProfileForm = ({ currentUser }) => {
           )}
         </div>
       </form>
-
     </div>
   );
 };

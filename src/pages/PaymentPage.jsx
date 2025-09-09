@@ -2,8 +2,7 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { clearCart } from "../store/slices/cartSlice";
-import { doc, collection } from "firebase/firestore"; // Import collection and doc
-import { db } from "../firebase"; // Import db
+// Removed Firebase imports
 
 // Import the new reusable components
 import PaymentHeader from "../components/payment/PaymentHeader";
@@ -125,7 +124,7 @@ const PaymentPage = () => {
       setIsProcessing(true);
 
       // Generate a unique order ID
-      const orderId = doc(collection(db, 'orders')).id;
+      const orderId = 'order_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
       // Prepare order data
       const orderData = {
