@@ -235,14 +235,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="clinics"
-            element={
-              <ProtectedRoute>
-                <ClinicsScreen />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="clinics" element={<ClinicsScreen />} />
           <Route
             path="ClinicDetailsScreen"
             element={

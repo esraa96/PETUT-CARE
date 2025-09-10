@@ -193,12 +193,20 @@
 
   .welcome-section-petut::before {
     @apply content-[''] absolute top-0 right-0 w-24 h-24 rounded-full translate-x-8 -translate-y-8;
-    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.1) 0%,
+      transparent 70%
+    );
   }
 
   .welcome-section-petut::after {
     @apply content-[''] absolute bottom-0 left-0 w-36 h-36 rounded-full -translate-x-12 translate-y-12;
-    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.05) 0%,
+      transparent 70%
+    );
   }
 
   /* Breadcrumb Components */
@@ -364,4 +372,55 @@
   .table-petut td {
     @apply text-gray-200 border-gray-600;
   }
+}
+
+/* Merged from calendar.css */
+@layer components {
+  /* FullCalendar overrides preserved as Tailwind-compatible rules */
+  .fc-button {
+    @apply bg-[#d9a741] text-white font-bold rounded-md px-3 py-1 mx-1;
+  }
+  .fc-button:hover {
+    @apply bg-[#c19933];
+  }
+  .fc-toolbar-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  .fc-button.fc-today-button {
+    @apply bg-gray-700 text-white;
+  }
+  .fc-day-today {
+    background-color: rgba(249, 189, 70, 0.42);
+    font-weight: 700;
+  }
+  .fc-daygrid-day:hover {
+    background-color: rgba(249, 189, 70, 0.42);
+    cursor: pointer;
+  }
+  .fc-event {
+    @apply bg-[#d9a741] text-white rounded px-2 py-0.5 text-sm font-medium cursor-pointer;
+  }
+  .fc .fc-col-header-cell-cushion,
+  .fc-daygrid-day-number {
+    @apply text-gray-800;
+  }
+}
+
+/* Merged from performance.css */
+@font-face {
+  font-family: "Inter";
+  font-display: swap;
+  src: url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+}
+
+/* Performance helpers */
+.loading-lazy {
+  loading: lazy;
+}
+.will-change-transform {
+  will-change: transform;
+}
+.gpu-accelerated {
+  @apply transform-gpu;
 }

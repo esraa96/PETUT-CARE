@@ -54,55 +54,77 @@ const Navbar = () => {
   }, [currentUser]);
   return (
     <>
-      {/* Add spacing div to prevent content from being hidden behind fixed navbar */}
-      <div className="h-20"></div>
-      
-      <nav className="bg-white dark:bg-[#313340] shadow-md fixed top-0 left-0 right-0 z-50 py-2 overflow-visible">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center h-16">
+      <nav className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-md shadow-lg border-b border-gray-200 dark:border-gray-700 fixed top-0 left-0 right-0 z-50">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-20">
             {/* Logo */}
-            <Link to="/" className="flex items-center">
-              <img src={logo} width={'100px'} height={'100px'} alt="logo" className="" />
-              <p className="text-xl font-bold text-neutral dark:text-white">
-                <span className="text-primary_app me-2">Petut</span>
-                Pet Care
-              </p>
+            <Link to="/" className="flex items-center group">
+              <img
+                src={logo}
+                width={85}
+                height={85}
+                alt="Petut Logo"
+                className="transition-transform duration-300 group-hover:scale-110"
+              />
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-6">
-              <Link to="/" className="nav-link whitespace-nowrap">
+            <div className="hidden lg:flex items-center space-x-12">
+              <Link
+                to="/"
+                className="relative px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-primary_app dark:hover:text-primary_app font-medium transition-colors duration-200 group"
+              >
                 Home
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary_app transition-all duration-300 group-hover:w-full"></span>
               </Link>
-              <Link to="/catalog" className="nav-link whitespace-nowrap">
+              <Link
+                to="/catalog"
+                className="relative px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-primary_app dark:hover:text-primary_app font-medium transition-colors duration-200 group"
+              >
                 Catalog
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary_app transition-all duration-300 group-hover:w-full"></span>
               </Link>
               {currentUser && (
-                <Link to="/favorites" className="nav-link whitespace-nowrap">
+                <Link
+                  to="/favorites"
+                  className="relative px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-primary_app dark:hover:text-primary_app font-medium transition-colors duration-200 group"
+                >
                   Favorites
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary_app transition-all duration-300 group-hover:w-full"></span>
                 </Link>
               )}
-              <Link to="/clinics" className="nav-link whitespace-nowrap">
+              <Link
+                to="/clinics"
+                className="relative px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-primary_app dark:hover:text-primary_app font-medium transition-colors duration-200 group"
+              >
                 Health
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary_app transition-all duration-300 group-hover:w-full"></span>
               </Link>
-              <Link to="/community" className="nav-link whitespace-nowrap">
+              <Link
+                to="/community"
+                className="relative px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-primary_app dark:hover:text-primary_app font-medium transition-colors duration-200 group"
+              >
                 Community
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary_app transition-all duration-300 group-hover:w-full"></span>
               </Link>
-              <Link to="/contact-us" className="nav-link whitespace-nowrap">
+              <Link
+                to="/contact-us"
+                className="relative px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-primary_app dark:hover:text-primary_app font-medium transition-colors duration-200 group"
+              >
                 Support
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-primary_app transition-all duration-300 group-hover:w-full"></span>
               </Link>
-
             </div>
 
             {/* Desktop User Actions */}
-            <div className="hidden md:flex items-center space-x-4">
+            <div className="hidden lg:flex items-center space-x-3">
               <button
                 onClick={() => navigate("/cart")}
-                className="relative p-2 text-neutral dark:text-white hover:text-primary_app dark:hover:text-primary_app transition-colors"
+                className="relative p-3 text-gray-700 dark:text-gray-300 hover:text-primary_app dark:hover:text-primary_app hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
+                  className="h-5 w-5"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -115,7 +137,7 @@ const Navbar = () => {
                   />
                 </svg>
                 {totalQuantity > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary_app text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-primary_app text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
                     {totalQuantity}
                   </span>
                 )}
@@ -125,15 +147,26 @@ const Navbar = () => {
               {currentUser && (
                 <button
                   onClick={() => navigate("/chats")}
-                  className="relative p-2 text-neutral dark:text-white hover:text-primary_app dark:hover:text-primary_app transition-colors"
+                  className="relative p-3 text-gray-700 dark:text-gray-300 hover:text-primary_app dark:hover:text-primary_app hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
                   title="Messages"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                    />
                   </svg>
                   {totalUnreadMessages > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                      {totalUnreadMessages > 99 ? '99+' : totalUnreadMessages}
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
+                      {totalUnreadMessages > 99 ? "99+" : totalUnreadMessages}
                     </span>
                   )}
                 </button>
@@ -145,11 +178,14 @@ const Navbar = () => {
               <DarkModeToggle />
 
               {currentUser ? (
-                <div className="flex items-center space-x-4">
-                  <Link to="/profile" className="nav-link">
+                <div className="flex items-center space-x-3">
+                  <Link
+                    to="/profile"
+                    className="p-3 text-gray-700 dark:text-gray-300 hover:text-primary_app dark:hover:text-primary_app hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6"
+                      className="h-5 w-5"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -164,17 +200,23 @@ const Navbar = () => {
                   </Link>
                   <button
                     onClick={handleLogout}
-                    className="btn-secondary text-sm"
+                    className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200 text-sm font-medium"
                   >
                     Logout
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center space-x-2">
-                  <Link to="/login" className="btn-primary-app text-sm">
+                <div className="flex items-center space-x-4">
+                  <Link
+                    to="/login"
+                    className="px-6 py-2.5 text-primary_app hover:bg-primary_app/10 rounded-full transition-all duration-200 font-semibold border border-primary_app hover:scale-105"
+                  >
                     Log In
                   </Link>
-                  <Link to="/signup" className="btn-secondary text-sm">
+                  <Link
+                    to="/signup"
+                    className="px-6 py-2.5 bg-primary_app text-white rounded-full hover:bg-primary_app/90 transition-all duration-200 font-semibold shadow-lg hover:scale-105"
+                  >
                     Sign Up
                   </Link>
                 </div>
@@ -182,14 +224,14 @@ const Navbar = () => {
             </div>
 
             {/* Mobile menu button */}
-            <div className="md:hidden flex items-center space-x-2">
+            <div className="lg:hidden flex items-center space-x-2">
               <button
                 onClick={() => navigate("/cart")}
-                className="relative p-2 text-neutral dark:text-white hover:text-primary_app transition-colors"
+                className="relative p-2 text-gray-700 dark:text-gray-300 hover:text-primary_app hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
+                  className="h-5 w-5"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -202,18 +244,19 @@ const Navbar = () => {
                   />
                 </svg>
                 {totalQuantity > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary_app text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-primary_app text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center animate-pulse">
                     {totalQuantity}
                   </span>
                 )}
               </button>
 
               <NotificationBell />
-              
+              <DarkModeToggle />
+
               <button
                 onClick={toggleMenu}
                 type="button"
-                className="p-2 text-neutral dark:text-white hover:text-primary_app focus:outline-none focus:text-primary_app"
+                className="p-2 text-gray-700 dark:text-gray-300 hover:text-primary_app hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
                 aria-label="Toggle menu"
               >
                 <svg
@@ -243,41 +286,55 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Menu */}
-          <div className={`md:hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
-            <div className="px-2 pt-2 pb-4 space-y-1 sm:px-3 bg-white dark:bg-[#313340] shadow-lg rounded-b-lg">
+          <div
+            className={`lg:hidden transition-all duration-300 ease-in-out ${
+              isMenuOpen
+                ? "max-h-96 opacity-100"
+                : "max-h-0 opacity-0 overflow-hidden"
+            }`}
+          >
+            <div className="px-4 pt-4 pb-6 space-y-2 bg-white dark:bg-gray-800 shadow-xl rounded-b-2xl border-t border-gray-200 dark:border-gray-700">
+              <Link
+                to="/"
+                onClick={toggleMenu}
+                className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary_app font-medium transition-colors duration-200"
+              >
+                Home
+              </Link>
               <Link
                 to="/catalog"
-                className="block px-3 py-2 rounded-md text-base font-medium nav-link"
+                onClick={toggleMenu}
+                className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary_app font-medium transition-colors duration-200"
               >
                 Catalog
               </Link>
-              <Link
-                to="/search"
-                className="block px-3 py-2 rounded-md text-base font-medium nav-link"
-              >
-                Search
-              </Link>
-              <Link
-                to="/favorites"
-                className="block px-3 py-2 rounded-md text-base font-medium nav-link"
-              >
-                Favorites
-              </Link>
+              {currentUser && (
+                <Link
+                  to="/favorites"
+                  onClick={toggleMenu}
+                  className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary_app font-medium transition-colors duration-200"
+                >
+                  Favorites
+                </Link>
+              )}
               <Link
                 to="/clinics"
-                className="block px-3 py-2 rounded-md text-base font-medium nav-link"
+                onClick={toggleMenu}
+                className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary_app font-medium transition-colors duration-200"
               >
                 Health
               </Link>
               <Link
                 to="/community"
-                className="block px-3 py-2 rounded-md text-base font-medium nav-link"
+                onClick={toggleMenu}
+                className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary_app font-medium transition-colors duration-200"
               >
                 Community
               </Link>
               <Link
                 to="/contact-us"
-                className="block px-3 py-2 rounded-md text-base font-medium nav-link"
+                onClick={toggleMenu}
+                className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary_app font-medium transition-colors duration-200"
               >
                 Support
               </Link>
@@ -285,46 +342,52 @@ const Navbar = () => {
               {currentUser && (
                 <Link
                   to="/chats"
-                  className="block px-3 py-2 rounded-md text-base font-medium nav-link"
+                  onClick={toggleMenu}
+                  className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary_app font-medium transition-colors duration-200"
                 >
                   Messages
                 </Link>
               )}
-              {currentUser ? (
-                <>
-                  <Link
-                    to="/profile"
-                    className="block px-3 py-2 rounded-md text-base font-medium nav-link"
-                  >
-                    Profile
-                  </Link>
-                  <button
-                    onClick={() => {
-                      handleLogout();
-                      toggleMenu();
-                    }}
-                    className="block w-full text-left px-3 py-2 rounded-md text-base font-medium nav-link"
-                  >
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    to="/login"
-                    className="block px-3 py-2 rounded-md text-base font-medium nav-link"
-                  >
-                    Log In
-                  </Link>
-                  <Link
-                    to="/signup"
-                    className="block px-3 py-2 rounded-md text-base font-medium nav-link"
-                  >
-                    Sign Up
-                  </Link>
-                </>
-              )}
-              <DarkModeToggle />
+
+              <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+                {currentUser ? (
+                  <>
+                    <Link
+                      to="/profile"
+                      onClick={toggleMenu}
+                      className="block px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary_app font-medium transition-colors duration-200"
+                    >
+                      Profile
+                    </Link>
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        toggleMenu();
+                      }}
+                      className="block w-full text-left px-4 py-3 rounded-lg text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 font-medium transition-colors duration-200"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <div className="space-y-3">
+                    <Link
+                      to="/login"
+                      onClick={toggleMenu}
+                      className="block px-6 py-3 text-center bg-primary_app text-white rounded-full font-semibold hover:bg-primary_app/90 transition-all duration-200 shadow-lg"
+                    >
+                      Log In
+                    </Link>
+                    <Link
+                      to="/signup"
+                      onClick={toggleMenu}
+                      className="block px-6 py-3 text-center border-2 border-primary_app text-primary_app rounded-full font-semibold hover:bg-primary_app/10 transition-all duration-200"
+                    >
+                      Sign Up
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
