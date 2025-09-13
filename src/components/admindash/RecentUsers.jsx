@@ -87,34 +87,68 @@ export default function RecentUsers() {
       <div className="p-4">
         <div className="space-y-4">
           {users.map((user) => (
-            <div key={user.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center text-white font-medium text-sm">
-                  {user.fullName?.charAt(0) || user.email?.charAt(0) || 'U'}
+            <div key={user.id} className="p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              {/* Desktop Layout */}
+              <div className="hidden sm:flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                    {user.fullName?.charAt(0) || user.email?.charAt(0) || 'U'}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-black dark:text-white">{user.fullName || 'Unknown User'}</p>
+                    <p className="text-xs text-black dark:text-white">{user.email}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-medium text-black dark:text-white">{user.fullName || 'Unknown User'}</p>
-                  <p className="text-xs text-black dark:text-white">{user.email}</p>
+                
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
+                    <div className={`w-2 h-2 rounded-full ${
+                      user.status === 'online' ? 'bg-green-500' : 'bg-red-500'
+                    }`}></div>
+                    <span className="text-xs text-black dark:text-white">{user.time}</span>
+                  </div>
+                  <div className="flex space-x-1">
+                    <button 
+                      onClick={() => handleReject(user.id)}
+                      className="px-3 py-1 text-xs bg-red-100 dark:bg-red-600 text-red-600 dark:text-white rounded-full hover:bg-red-200 dark:hover:bg-red-700 transition-colors"
+                    >
+                      Reject
+                    </button>
+                    <button 
+                      onClick={() => handleApprove(user.id)}
+                      className="admin-button text-xs px-3 py-1 rounded-full"
+                    >
+                      Approve
+                    </button>
+                  </div>
                 </div>
               </div>
-              
-              <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-2">
-                  <div className={`w-2 h-2 rounded-full ${
-                    user.status === 'online' ? 'bg-green-500' : 'bg-red-500'
-                  }`}></div>
-                  <span className="text-xs text-black dark:text-white">{user.time}</span>
+
+              {/* Mobile Layout */}
+              <div className="sm:hidden">
+                <div className="text-center mb-3">
+                  <div className="w-12 h-12 bg-yellow-400 rounded-full flex items-center justify-center text-white font-medium text-sm mx-auto mb-2">
+                    {user.fullName?.charAt(0) || user.email?.charAt(0) || 'U'}
+                  </div>
+                  <p className="text-sm font-medium text-black dark:text-white">{user.fullName || 'Unknown User'}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{user.email}</p>
+                  <div className="flex items-center justify-center space-x-2 mt-2">
+                    <div className={`w-2 h-2 rounded-full ${
+                      user.status === 'online' ? 'bg-green-500' : 'bg-red-500'
+                    }`}></div>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">{user.time}</span>
+                  </div>
                 </div>
-                <div className="flex space-x-1">
+                <div className="flex justify-center space-x-2">
                   <button 
                     onClick={() => handleReject(user.id)}
-                    className="px-3 py-1 text-xs bg-red-100 dark:bg-red-600 text-red-600 dark:text-white rounded-full hover:bg-red-200 dark:hover:bg-red-700 transition-colors"
+                    className="px-4 py-2 text-xs bg-red-100 dark:bg-red-600 text-red-600 dark:text-white rounded-full hover:bg-red-200 dark:hover:bg-red-700 transition-colors"
                   >
                     Reject
                   </button>
                   <button 
                     onClick={() => handleApprove(user.id)}
-                    className="admin-button text-xs px-3 py-1 rounded-full"
+                    className="admin-button text-xs px-4 py-2 rounded-full"
                   >
                     Approve
                   </button>

@@ -141,108 +141,205 @@ export default function DoctorsTable({ doctors, setDoctors, fetchDoctors, loadin
                     {doctors.length === 0 ? 'No doctors found' : 'No matching doctors found'}
                 </div>
             ) : (
-                <div className="overflow-x-auto">
-                    <table className="w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Gender</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {filteredDoctors.map((doctor) => (
-                                <tr key={doctor.id} className={`hover:bg-gray-50 ${
-                                    doctor.status === 'pending' ? 'bg-yellow-50 border-l-4 border-yellow-400' : ''
-                                }`}>
-                                    <td className="px-6 py-4 text-sm text-gray-900">
-                                        <div className="flex items-center">
+                <>
+                    {/* Desktop Table */}
+                    <div className="hidden md:block overflow-x-auto">
+                        <table className="w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Gender</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {filteredDoctors.map((doctor) => (
+                                    <tr key={doctor.id} className={`hover:bg-gray-50 ${
+                                        doctor.status === 'pending' ? 'bg-yellow-50 border-l-4 border-yellow-400' : ''
+                                    }`}>
+                                        <td className="px-6 py-4 text-sm text-gray-900">
+                                            <div className="flex items-center">
+                                                {doctor.fullName || doctor.doctorName || 'N/A'}
+                                                {doctor.status === 'pending' && (
+                                                    <span className="ml-2 px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">
+                                                        New
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-900">
+                                            {doctor.email || 'N/A'}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className={`px-3 py-1 rounded-full text-xs font-medium text-white ${
+                                                doctor.gender === 'male' ? 'bg-blue-500' : 'bg-pink-500'
+                                            }`}>
+                                                {doctor.gender || 'N/A'}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className={`px-3 py-1 rounded-full text-xs font-medium text-white ${
+                                                doctor.status === 'approved' ? 'bg-green-500' : 
+                                                doctor.status === 'pending' ? 'bg-yellow-500' : 
+                                                doctor.status === 'rejected' ? 'bg-red-500' : 'bg-gray-500'
+                                            }`}>
+                                                {doctor.status || 'pending'}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center space-x-2">
+                                                <button 
+                                                    className="text-blue-600 hover:text-blue-800" 
+                                                    onClick={() => {
+                                                        setSelectedDoctor(doctor);
+                                                        setShowViewModal(true);
+                                                    }}
+                                                    title="View Details"
+                                                >
+                                                    <FaEye size={16} />
+                                                </button>
+                                                {doctor.status === 'pending' && (
+                                                    <>
+                                                        <button 
+                                                            className="text-green-600 hover:text-green-800" 
+                                                            onClick={() => handleApproveDoctor(doctor.id)}
+                                                            title="Approve Doctor"
+                                                        >
+                                                            <FaCheck size={16} />
+                                                        </button>
+                                                        <button 
+                                                            className="text-red-600 hover:text-red-800" 
+                                                            onClick={() => handleRejectDoctor(doctor.id)}
+                                                            title="Reject Doctor"
+                                                        >
+                                                            <FaTimes size={16} />
+                                                        </button>
+                                                    </>
+                                                )}
+                                                <button 
+                                                    className="text-petut-brown-300 hover:text-petut-brown-500" 
+                                                    onClick={() => {
+                                                        setSelectedDoctor(doctor);
+                                                        setShowEditModal(true);
+                                                    }}
+                                                    title="Edit Doctor"
+                                                >
+                                                    <FaEdit size={16} />
+                                                </button>
+                                                <button 
+                                                    className="text-red-600 hover:text-red-800" 
+                                                    onClick={() => {
+                                                        setSelectedDoctor(doctor);
+                                                        setShowConfirm(true);
+                                                    }}
+                                                    title="Delete Doctor"
+                                                >
+                                                    <FaTrashAlt size={16} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    {/* Mobile Cards */}
+                    <div className="md:hidden space-y-4">
+                        {filteredDoctors.map((doctor) => (
+                            <div key={doctor.id} className={`rounded-lg border p-4 ${
+                                doctor.status === 'pending' ? 'bg-yellow-50 border-yellow-400' : 'bg-white border-gray-200'
+                            }`}>
+                                <div className="text-center mb-4">
+                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-medium text-sm mx-auto mb-2 ${
+                                        doctor.gender === 'male' ? 'bg-blue-500' : 'bg-pink-500'
+                                    }`}>
+                                        {(doctor.fullName || doctor.doctorName || 'D').charAt(0).toUpperCase()}
+                                    </div>
+                                    <div className="flex items-center justify-center gap-2 mb-1">
+                                        <h3 className="font-medium text-gray-900">
                                             {doctor.fullName || doctor.doctorName || 'N/A'}
-                                            {doctor.status === 'pending' && (
-                                                <span className="ml-2 px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">
-                                                    New
-                                                </span>
-                                            )}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 text-sm text-gray-900">
+                                        </h3>
+                                        {doctor.status === 'pending' && (
+                                            <span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">
+                                                New
+                                            </span>
+                                        )}
+                                    </div>
+                                    <p className="text-sm text-gray-500">
                                         {doctor.email || 'N/A'}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-medium text-white ${
+                                    </p>
+                                    <div className="flex items-center justify-center gap-2 mt-2">
+                                        <span className={`px-2 py-1 rounded-full text-xs font-medium text-white ${
                                             doctor.gender === 'male' ? 'bg-blue-500' : 'bg-pink-500'
                                         }`}>
                                             {doctor.gender || 'N/A'}
                                         </span>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-medium text-white ${
+                                        <span className={`px-2 py-1 rounded-full text-xs font-medium text-white ${
                                             doctor.status === 'approved' ? 'bg-green-500' : 
                                             doctor.status === 'pending' ? 'bg-yellow-500' : 
                                             doctor.status === 'rejected' ? 'bg-red-500' : 'bg-gray-500'
                                         }`}>
                                             {doctor.status || 'pending'}
                                         </span>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center space-x-2">
+                                    </div>
+                                </div>
+                                <div className="flex justify-center space-x-2">
+                                    <button 
+                                        className="text-blue-600 hover:text-blue-800 p-2" 
+                                        onClick={() => {
+                                            setSelectedDoctor(doctor);
+                                            setShowViewModal(true);
+                                        }}
+                                        title="View Details"
+                                    >
+                                        <FaEye size={16} />
+                                    </button>
+                                    {doctor.status === 'pending' && (
+                                        <>
                                             <button 
-                                                className="text-blue-600 hover:text-blue-800" 
-                                                onClick={() => {
-                                                    setSelectedDoctor(doctor);
-                                                    setShowViewModal(true);
-                                                }}
-                                                title="View Details"
+                                                className="text-green-600 hover:text-green-800 p-2" 
+                                                onClick={() => handleApproveDoctor(doctor.id)}
+                                                title="Approve Doctor"
                                             >
-                                                <FaEye size={16} />
-                                            </button>
-                                            {doctor.status === 'pending' && (
-                                                <>
-                                                    <button 
-                                                        className="text-green-600 hover:text-green-800" 
-                                                        onClick={() => handleApproveDoctor(doctor.id)}
-                                                        title="Approve Doctor"
-                                                    >
-                                                        <FaCheck size={16} />
-                                                    </button>
-                                                    <button 
-                                                        className="text-red-600 hover:text-red-800" 
-                                                        onClick={() => handleRejectDoctor(doctor.id)}
-                                                        title="Reject Doctor"
-                                                    >
-                                                        <FaTimes size={16} />
-                                                    </button>
-                                                </>
-                                            )}
-                                            <button 
-                                                className="text-petut-brown-300 hover:text-petut-brown-500" 
-                                                onClick={() => {
-                                                    setSelectedDoctor(doctor);
-                                                    setShowEditModal(true);
-                                                }}
-                                                title="Edit Doctor"
-                                            >
-                                                <FaEdit size={16} />
+                                                <FaCheck size={16} />
                                             </button>
                                             <button 
-                                                className="text-red-600 hover:text-red-800" 
-                                                onClick={() => {
-                                                    setSelectedDoctor(doctor);
-                                                    setShowConfirm(true);
-                                                }}
-                                                title="Delete Doctor"
+                                                className="text-red-600 hover:text-red-800 p-2" 
+                                                onClick={() => handleRejectDoctor(doctor.id)}
+                                                title="Reject Doctor"
                                             >
-                                                <FaTrashAlt size={16} />
+                                                <FaTimes size={16} />
                                             </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                                        </>
+                                    )}
+                                    <button 
+                                        className="text-petut-brown-300 hover:text-petut-brown-500 p-2" 
+                                        onClick={() => {
+                                            setSelectedDoctor(doctor);
+                                            setShowEditModal(true);
+                                        }}
+                                        title="Edit Doctor"
+                                    >
+                                        <FaEdit size={16} />
+                                    </button>
+                                    <button 
+                                        className="text-red-600 hover:text-red-800 p-2" 
+                                        onClick={() => {
+                                            setSelectedDoctor(doctor);
+                                            setShowConfirm(true);
+                                        }}
+                                        title="Delete Doctor"
+                                    >
+                                        <FaTrashAlt size={16} />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </>
             )}
 
             {/* Confirm Delete Modal */}

@@ -54,64 +54,120 @@ export default function AdminsTable({ admins, setAdmins, fetchAdmins, loading })
                     {admins.length === 0 ? 'No admins found' : 'No matching admins found'}
                 </div>
             ) : (
-                <div className="overflow-x-auto">
-                    <table className="w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {filteredAdmins.map(admin => (
-                                <tr key={admin.id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 text-sm text-gray-900">
-                                        {admin.fullName || admin.name || 'N/A'}
-                                    </td>
-                                    <td className="px-6 py-4 text-sm text-gray-900">
-                                        {admin.email || 'N/A'}
-                                    </td>
-                                    <td className="px-6 py-4 text-sm text-gray-900">
-                                        {admin.phone || 'N/A'}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center space-x-3">
-                                            <button 
-                                                className="text-blue-600 hover:text-blue-800" 
-                                                onClick={() => {
-                                                    setSelectedAdmin(admin);
-                                                    setShowViewModal(true);
-                                                }}
-                                            >
-                                                <FaEye size={16} />
-                                            </button>
-                                            <button 
-                                                className="text-petut-brown-300 hover:text-petut-brown-500" 
-                                                onClick={() => {
-                                                    setSelectedAdmin(admin);
-                                                    setShowEditModal(true);
-                                                }}
-                                            >
-                                                <FaEdit size={16} />
-                                            </button>
-                                            <button 
-                                                className="text-red-600 hover:text-red-800" 
-                                                onClick={() => {
-                                                    setSelectedAdmin(admin);
-                                                    setShowConfirm(true);
-                                                }}
-                                            >
-                                                <FaTrashAlt size={16} />
-                                            </button>
-                                        </div>
-                                    </td>
+                <>
+                    {/* Desktop Table */}
+                    <div className="hidden md:block overflow-x-auto">
+                        <table className="w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {filteredAdmins.map(admin => (
+                                    <tr key={admin.id} className="hover:bg-gray-50">
+                                        <td className="px-6 py-4 text-sm text-gray-900">
+                                            {admin.fullName || admin.name || 'N/A'}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-900">
+                                            {admin.email || 'N/A'}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-900">
+                                            {admin.phone || 'N/A'}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center space-x-2">
+                                                <button 
+                                                    className="text-blue-600 hover:text-blue-800" 
+                                                    onClick={() => {
+                                                        setSelectedAdmin(admin);
+                                                        setShowViewModal(true);
+                                                    }}
+                                                >
+                                                    <FaEye size={16} />
+                                                </button>
+                                                <button 
+                                                    className="text-petut-brown-300 hover:text-petut-brown-500" 
+                                                    onClick={() => {
+                                                        setSelectedAdmin(admin);
+                                                        setShowEditModal(true);
+                                                    }}
+                                                >
+                                                    <FaEdit size={16} />
+                                                </button>
+                                                <button 
+                                                    className="text-red-600 hover:text-red-800" 
+                                                    onClick={() => {
+                                                        setSelectedAdmin(admin);
+                                                        setShowConfirm(true);
+                                                    }}
+                                                >
+                                                    <FaTrashAlt size={16} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    {/* Mobile Cards */}
+                    <div className="md:hidden space-y-4">
+                        {filteredAdmins.map(admin => (
+                            <div key={admin.id} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 p-4">
+                                <div className="text-center mb-4">
+                                    <div className="w-12 h-12 bg-petut-brown-300 rounded-full flex items-center justify-center text-white font-medium text-sm mx-auto mb-2">
+                                        {(admin.fullName || admin.name || 'A').charAt(0).toUpperCase()}
+                                    </div>
+                                    <h3 className="font-medium text-gray-900 dark:text-white mb-1">
+                                        {admin.fullName || admin.name || 'N/A'}
+                                    </h3>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                        {admin.email || 'N/A'}
+                                    </p>
+                                    {admin.phone && (
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                                            {admin.phone}
+                                        </p>
+                                    )}
+                                </div>
+                                <div className="flex justify-center space-x-2">
+                                    <button 
+                                        className="text-blue-600 hover:text-blue-800 p-2" 
+                                        onClick={() => {
+                                            setSelectedAdmin(admin);
+                                            setShowViewModal(true);
+                                        }}
+                                    >
+                                        <FaEye size={16} />
+                                    </button>
+                                    <button 
+                                        className="text-petut-brown-300 hover:text-petut-brown-500 p-2" 
+                                        onClick={() => {
+                                            setSelectedAdmin(admin);
+                                            setShowEditModal(true);
+                                        }}
+                                    >
+                                        <FaEdit size={16} />
+                                    </button>
+                                    <button 
+                                        className="text-red-600 hover:text-red-800 p-2" 
+                                        onClick={() => {
+                                            setSelectedAdmin(admin);
+                                            setShowConfirm(true);
+                                        }}
+                                    >
+                                        <FaTrashAlt size={16} />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </>
             )}
 
             {/* Confirm Delete Modal */}

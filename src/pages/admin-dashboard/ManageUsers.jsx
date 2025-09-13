@@ -132,31 +132,33 @@ export default function ManageUsers() {
     ];
 
     return (
-        <div className='p-6 bg-white dark:bg-gray-900 min-h-screen'>
-            <div className='mb-6'>
-                <h1 className="text-3xl font-bold text-black dark:text-white">User Management</h1>
-                <p className='text-black dark:text-white'>Manage all doctors, clients and admins in the system</p>
+        <div className='p-4 sm:p-6 bg-white dark:bg-gray-900 min-h-screen'>
+            <div className='mb-4 sm:mb-6 text-center sm:text-left'>
+                <h1 className="text-2xl sm:text-3xl font-bold text-black dark:text-white mb-2">User Management</h1>
+                <p className='text-sm sm:text-base text-gray-600 dark:text-gray-300'>Manage all doctors, clients and admins in the system</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6 mb-8">
                 {statistics.map((statistic, index) => (
-                    <div key={index} className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 border hover:shadow-md transition-shadow ${
+                    <div key={index} className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 lg:p-6 border hover:shadow-md transition-shadow ${
                         statistic.highlight ? 'border-yellow-400 bg-yellow-50 dark:bg-yellow-900/20' : 'border-gray-200 dark:border-gray-600'
                     }`}>
                         <div className="flex items-center justify-between">
-                            <div>
-                                <h3 className={`text-sm font-medium mb-2 ${
-                                    statistic.highlight ? 'text-yellow-700' : 'text-gray-600'
+                            <div className="flex-1 min-w-0">
+                                <h3 className={`text-xs sm:text-sm font-medium mb-1 sm:mb-2 truncate ${
+                                    statistic.highlight ? 'text-yellow-700 dark:text-yellow-600' : 'text-gray-600 dark:text-gray-400'
                                 }`}>{statistic.title}</h3>
-                                <p className={`text-3xl font-bold ${
-                                    statistic.highlight ? 'text-yellow-800' : 'text-gray-900'
+                                <p className={`text-xl sm:text-2xl lg:text-3xl font-bold ${
+                                    statistic.highlight ? 'text-yellow-800 dark:text-yellow-700' : 'text-gray-900 dark:text-white'
                                 }`}>{statistic.count}</p>
                                 {statistic.highlight && statistic.count > 0 && (
-                                    <p className="text-xs text-yellow-600 mt-1">Needs Review</p>
+                                    <p className="text-xs text-yellow-600 mt-1 hidden sm:block">Needs Review</p>
                                 )}
                             </div>
-                            <div className={statistic.highlight ? 'text-yellow-600' : 'text-petut-brown-300'}>
-                                {statistic.icon}
+                            <div className={`flex-shrink-0 ml-2 ${statistic.highlight ? 'text-yellow-600' : 'text-petut-brown-300'}`}>
+                                <div className="w-6 h-6 sm:w-8 sm:h-8">
+                                    {statistic.icon}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -164,7 +166,8 @@ export default function ManageUsers() {
             </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600">
-                <div className="flex border-b border-gray-200 dark:border-gray-600">
+                {/* Desktop Tabs */}
+                <div className="hidden sm:flex border-b border-gray-200 dark:border-gray-600">
                     <button
                         onClick={() => setActiveTab('doctors')}
                         className={`flex items-center px-6 py-3 border-b-2 font-medium text-sm transition-colors ${
@@ -199,8 +202,47 @@ export default function ManageUsers() {
                         Admins
                     </button>
                 </div>
+                
+                {/* Mobile Tabs */}
+                <div className="sm:hidden border-b border-gray-200 dark:border-gray-600">
+                    <div className="grid grid-cols-3 gap-1 p-2">
+                        <button
+                            onClick={() => setActiveTab('doctors')}
+                            className={`flex flex-col items-center py-3 px-2 rounded-lg text-xs font-medium transition-colors ${
+                                activeTab === 'doctors'
+                                    ? 'bg-petut-brown-300 text-white'
+                                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                            }`}
+                        >
+                            <FaUserMd size={16} className='mb-1' />
+                            Doctors
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('clients')}
+                            className={`flex flex-col items-center py-3 px-2 rounded-lg text-xs font-medium transition-colors ${
+                                activeTab === 'clients'
+                                    ? 'bg-petut-brown-300 text-white'
+                                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                            }`}
+                        >
+                            <FaUsers size={16} className='mb-1' />
+                            Clients
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('admins')}
+                            className={`flex flex-col items-center py-3 px-2 rounded-lg text-xs font-medium transition-colors ${
+                                activeTab === 'admins'
+                                    ? 'bg-petut-brown-300 text-white'
+                                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                            }`}
+                        >
+                            <FaUserTie size={16} className='mb-1' />
+                            Admins
+                        </button>
+                    </div>
+                </div>
 
-                <div className="p-6">
+                <div className="p-4 sm:p-6">
                     {activeTab === 'doctors' && stats.pendingDoctors > 0 && (
                         <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                             <div className="flex items-center">
@@ -212,13 +254,18 @@ export default function ManageUsers() {
                         </div>
                     )}
                     
-                    <div className="flex justify-end mb-6">
+                    <div className="flex justify-center sm:justify-end mb-6">
                         <button 
-                            className='bg-petut-brown-300 text-white px-4 py-2 rounded-lg hover:bg-petut-brown-400 transition-colors flex items-center gap-2 font-semibold'
+                            className='bg-petut-brown-300 text-white px-4 py-2 rounded-lg hover:bg-petut-brown-400 transition-colors flex items-center gap-2 font-semibold text-sm sm:text-base w-full sm:w-auto justify-center'
                             onClick={() => setShowAddModal(true)}
                         >
                             <FaPlus size={16} />
-                            {activeTab === 'doctors' ? 'Add Doctor' : activeTab === 'clients' ? 'Add Client' : 'Add Admin'}
+                            <span className="hidden sm:inline">
+                                {activeTab === 'doctors' ? 'Add Doctor' : activeTab === 'clients' ? 'Add Client' : 'Add Admin'}
+                            </span>
+                            <span className="sm:hidden">
+                                Add {activeTab === 'doctors' ? 'Dr.' : activeTab === 'clients' ? 'Client' : 'Admin'}
+                            </span>
                         </button>
                     </div>
 

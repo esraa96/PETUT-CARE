@@ -54,68 +54,122 @@ export default function ProductsTable({ products, setProducts, handleDeleteProdu
             ) : filterProducts?.length === 0 ? (
                 <div className='text-center mt-8 text-gray-600 dark:text-gray-400'>No Match products found</div>
             ) : (
-                <div className="bg-white dark:bg-gray-800 shadow rounded-lg">
-                    <div className="overflow-x-auto">
-                        <table className="w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead className="bg-gray-50 dark:bg-gray-700 sticky top-0">
-                                <tr>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Name</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase hidden sm:table-cell">Image</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase hidden lg:table-cell">Description</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Price</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase hidden md:table-cell">Rate</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase hidden sm:table-cell">Category</th>
-                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                {filterProducts.map(product => (
-                                    <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                                        <td className="px-4 py-4 text-sm text-gray-900 dark:text-gray-100">{product.productName}</td>
-                                        <td className="px-4 py-4 hidden sm:table-cell">
-                                            <img src={product.imageURL} alt="product-image" className="w-16 h-16 object-cover rounded-lg" />
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-900 dark:text-gray-100 hidden lg:table-cell">
-                                            {product.description?.split(' ').length > 3
-                                                ? product.description.split(' ').slice(0, 3).join(' ') + '...'
-                                                : product.description}
-                                        </td>
-                                        <td className="px-4 py-4 text-sm text-gray-900 dark:text-gray-100">${product.price}</td>
-                                        <td className="px-4 py-4 text-sm text-gray-900 dark:text-gray-100 hidden md:table-cell">{product.rate}</td>
-                                        <td className="px-4 py-4 hidden sm:table-cell">
-                                            <span className={`px-2 py-1 rounded-full text-xs font-medium text-white ${
-                                                product.category === 'cat' ? 'bg-purple-500' :
-                                                product.category === 'dog' ? 'bg-blue-500' :
-                                                product.category === 'bird' ? 'bg-green-500' :
-                                                product.category === 'toys' ? 'bg-orange-500' : 'bg-purple-500'
-                                            }`}>
-                                                {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
-                                            </span>
-                                        </td>
-                                        <td className="px-4 py-4 text-sm font-medium">
-                                            <div className="flex items-center space-x-2">
-                                                <button type="button" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100" onClick={() => {
-                                                    setSelectedProduct(product);
-                                                    setViewModalOpen(true);
-                                                }}>
-                                                    <FaEye className="w-4 h-4" />
-                                                </button>
-                                                <button type="button" className="text-petut-brown-300 hover:text-petut-brown-400">
-                                                    <TbEdit className="w-4 h-4" />
-                                                </button>
-
-                                                <button type="button" className="text-red-600 hover:text-red-800" onClick={() => {
-                                                    setShowConfirm(true);
-                                                    setSelectedProductId(product.id);
-                                                }}>
-                                                    <MdDelete className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        </td>
+                <>
+                    {/* Desktop Table */}
+                    <div className="hidden md:block bg-white dark:bg-gray-800 shadow rounded-lg">
+                        <div className="overflow-x-auto">
+                            <table className="w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead className="bg-gray-50 dark:bg-gray-700 sticky top-0">
+                                    <tr>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Name</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Image</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Description</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Price</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Rate</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Category</th>
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Action</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                    {filterProducts.map(product => (
+                                        <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                            <td className="px-4 py-4 text-sm text-gray-900 dark:text-gray-100">{product.productName}</td>
+                                            <td className="px-4 py-4">
+                                                <img src={product.imageURL} alt="product-image" className="w-16 h-16 object-cover rounded-lg" />
+                                            </td>
+                                            <td className="px-4 py-4 text-sm text-gray-900 dark:text-gray-100">
+                                                {product.description?.split(' ').length > 3
+                                                    ? product.description.split(' ').slice(0, 3).join(' ') + '...'
+                                                    : product.description}
+                                            </td>
+                                            <td className="px-4 py-4 text-sm text-gray-900 dark:text-gray-100">${product.price}</td>
+                                            <td className="px-4 py-4 text-sm text-gray-900 dark:text-gray-100">{product.rate}</td>
+                                            <td className="px-4 py-4">
+                                                <span className={`px-2 py-1 rounded-full text-xs font-medium text-white ${
+                                                    product.category === 'cat' ? 'bg-purple-500' :
+                                                    product.category === 'dog' ? 'bg-blue-500' :
+                                                    product.category === 'bird' ? 'bg-green-500' :
+                                                    product.category === 'toys' ? 'bg-orange-500' : 'bg-purple-500'
+                                                }`}>
+                                                    {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
+                                                </span>
+                                            </td>
+                                            <td className="px-4 py-4 text-sm font-medium">
+                                                <div className="flex items-center space-x-2">
+                                                    <button type="button" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100" onClick={() => {
+                                                        setSelectedProduct(product);
+                                                        setViewModalOpen(true);
+                                                    }}>
+                                                        <FaEye className="w-4 h-4" />
+                                                    </button>
+                                                    <button type="button" className="text-petut-brown-300 hover:text-petut-brown-400">
+                                                        <TbEdit className="w-4 h-4" />
+                                                    </button>
+                                                    <button type="button" className="text-red-600 hover:text-red-800" onClick={() => {
+                                                        setShowConfirm(true);
+                                                        setSelectedProductId(product.id);
+                                                    }}>
+                                                        <MdDelete className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    {/* Mobile Cards */}
+                    <div className="md:hidden space-y-4">
+                        {filterProducts.map(product => (
+                            <div key={product.id} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 p-4">
+                                <div className="flex gap-4 mb-3">
+                                    <img src={product.imageURL} alt="product-image" className="w-20 h-20 object-cover rounded-lg flex-shrink-0" />
+                                    <div className="flex-1 min-w-0">
+                                        <h3 className="font-medium text-gray-900 dark:text-white mb-1 truncate">
+                                            {product.productName}
+                                        </h3>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-2 line-clamp-2">
+                                            {product.description}
+                                        </p>
+                                        <div className="flex items-center gap-2 mb-2">
+                                            <span className="font-semibold text-gray-900 dark:text-white">
+                                                ${product.price}
+                                            </span>
+                                            <span className="text-sm text-gray-500 dark:text-gray-400">
+                                                Rate: {product.rate}
+                                            </span>
+                                        </div>
+                                        <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium text-white ${
+                                            product.category === 'cat' ? 'bg-purple-500' :
+                                            product.category === 'dog' ? 'bg-blue-500' :
+                                            product.category === 'bird' ? 'bg-green-500' :
+                                            product.category === 'toys' ? 'bg-orange-500' : 'bg-purple-500'
+                                        }`}>
+                                            {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="flex justify-end items-center space-x-2 pt-3 border-t border-gray-200 dark:border-gray-600">
+                                    <button type="button" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 p-2" onClick={() => {
+                                        setSelectedProduct(product);
+                                        setViewModalOpen(true);
+                                    }}>
+                                        <FaEye className="w-4 h-4" />
+                                    </button>
+                                    <button type="button" className="text-petut-brown-300 hover:text-petut-brown-400 p-2">
+                                        <TbEdit className="w-4 h-4" />
+                                    </button>
+                                    <button type="button" className="text-red-600 hover:text-red-800 p-2" onClick={() => {
+                                        setShowConfirm(true);
+                                        setSelectedProductId(product.id);
+                                    }}>
+                                        <MdDelete className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                     {showConfirm && (<ConfirmModal onDelete={() => handleDeleteProduct(selectedProductId)} setShowConfirm={setShowConfirm} selectedId={selectedProductId} whatDelete="Product" />)}
                     {viewModalOpen && selectedProduct && (
@@ -128,7 +182,7 @@ export default function ProductsTable({ products, setProducts, handleDeleteProdu
                             }} 
                         />
                     )}
-                </div>
+                </>
             )}
         </Fragment>
     )

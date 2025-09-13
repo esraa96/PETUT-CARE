@@ -7,7 +7,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FaTimes } from 'react-icons/fa';
 import logo from '../../assets/petut.png';
 import axios from 'axios';
-export default function AddDoctorModal({ fetchDoctors }) {
+export default function AddDoctorModal({ fetchDoctors, showModal, setShowModal }) {
     const [isOpen, setIsOpen] = useState(false);
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
@@ -49,16 +49,17 @@ export default function AddDoctorModal({ fetchDoctors }) {
     const openModal = () => setIsOpen(true);
     const closeModal = () => {
         setIsOpen(false);
+        setShowModal(false);
         resetFields();
     };
 
     useEffect(() => {
-        const button = document.querySelector('[data-bs-target="#adddoctor"]');
-        if (button) {
-            button.addEventListener('click', openModal);
-            return () => button.removeEventListener('click', openModal);
+        if (showModal) {
+            setIsOpen(true);
+        } else {
+            setIsOpen(false);
         }
-    }, []);
+    }, [showModal]);
 
 
 
@@ -127,9 +128,9 @@ export default function AddDoctorModal({ fetchDoctors }) {
     }
     return (
         <Fragment>
-            {isOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            {(isOpen || showModal) && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-0 sm:p-4">
+                    <div className="bg-white rounded-none sm:rounded-lg shadow-xl w-full h-full sm:max-w-4xl sm:w-full sm:max-h-[90vh] sm:h-auto overflow-y-auto">
                         {/* Header */}
                         <div className="flex items-center justify-between p-6 border-b border-gray-200">
                             <div className="flex items-center gap-3">

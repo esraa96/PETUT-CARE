@@ -92,13 +92,13 @@ export default function AddProductModal({setProducts, loading, setLoading }) {
     return (
         <Fragment>
             {isOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-0 sm:p-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-none sm:rounded-lg shadow-xl w-full h-full sm:max-w-2xl sm:w-full sm:max-h-[90vh] sm:h-auto overflow-y-auto">
                         {/* Header */}
-                        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-600">
                             <div className="flex items-center gap-3">
                                 <img src={logo} width={60} height={60} alt="logo" className="rounded-lg" />
-                                <h2 className="text-xl font-bold text-gray-800">Add New Product</h2>
+                                <h2 className="text-xl font-bold text-gray-800 dark:text-white">Add New Product</h2>
                             </div>
                             <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors">
                                 <FaTimes className="w-5 h-5" />
@@ -109,28 +109,28 @@ export default function AddProductModal({setProducts, loading, setLoading }) {
                         <div className="p-6 space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
-                                    <input type="text" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" placeholder="Enter Product Name" value={productName} onChange={(e) => setProductName(e.target.value)} />
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Product Name</label>
+                                    <input type="text" className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" placeholder="Enter Product Name" value={productName} onChange={(e) => setProductName(e.target.value)} />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Price ($)</label>
-                                    <input type="number" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" placeholder="Enter Price" value={price} onChange={(e) => setPrice(e.target.value)} />
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Price ($)</label>
+                                    <input type="number" className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" placeholder="Enter Price" value={price} onChange={(e) => setPrice(e.target.value)} />
                                 </div>
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                                <textarea className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" rows={3} placeholder="Enter Description" value={description} onChange={(e) => setDescription(e.target.value)} />
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Description</label>
+                                <textarea className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" rows={3} placeholder="Enter Description" value={description} onChange={(e) => setDescription(e.target.value)} />
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Weight</label>
-                                    <input type="text" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" placeholder="Enter Weight" value={weight} onChange={(e) => setWeight(e.target.value)} />
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Weight</label>
+                                    <input type="text" className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" placeholder="Enter Weight" value={weight} onChange={(e) => setWeight(e.target.value)} />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" value={category} onChange={(e) => setCategory(e.target.value)}>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
+                                    <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" value={category} onChange={(e) => setCategory(e.target.value)}>
                                         <option value="">Select Category</option>
                                         <option value="cat">Cat</option>
                                         <option value="dog">Dog</option>
@@ -139,8 +139,8 @@ export default function AddProductModal({setProducts, loading, setLoading }) {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Rating</label>
-                                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" value={rate} onChange={(e) => setRate(e.target.value)}>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Rating</label>
+                                    <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" value={rate} onChange={(e) => setRate(e.target.value)}>
                                         <option value="">Select Rating</option>
                                         <option value="1">1 Star</option>
                                         <option value="1.5">1.5 Stars</option>
@@ -156,21 +156,21 @@ export default function AddProductModal({setProducts, loading, setLoading }) {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Product Image</label>
-                                <input type="file" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" accept="image/*" onChange={(e) => setImageFile(e.target.files[0])} />
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Product Image</label>
+                                <input type="file" className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" accept="image/*" onChange={(e) => setImageFile(e.target.files[0])} />
                             </div>
 
                             {imageUrl && (
                                 <div className="mt-4">
-                                    <p className="text-sm font-medium text-gray-700 mb-2">Image Preview:</p>
+                                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Image Preview:</p>
                                     <img src={imageUrl} alt="preview" className="w-24 h-24 object-cover rounded-lg border border-gray-200" />
                                 </div>
                             )}
                         </div>
 
                         {/* Footer */}
-                        <div className="flex justify-end gap-3 p-6 border-t border-gray-200">
-                            <button type="button" onClick={closeModal} className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                        <div className="flex justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-600">
+                            <button type="button" onClick={closeModal} className="px-4 py-2 text-gray-700 dark:text-white bg-gray-100 dark:bg-black hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg transition-colors">
                                 Cancel
                             </button>
                             <button type="button" onClick={handleAddProduct} disabled={loading} className="px-6 py-2 bg-petut-brown-300 text-white rounded-lg hover:bg-petut-brown-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">

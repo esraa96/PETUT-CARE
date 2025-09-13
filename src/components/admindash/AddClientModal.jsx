@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react'
+import React, { Fragment, useState, useEffect } from 'react'
 import { doc, setDoc, Timestamp } from 'firebase/firestore';
 import { auth, db } from '../../firebase.js';
 import { toast } from 'react-toastify';
@@ -8,7 +8,7 @@ import { BeatLoader } from 'react-spinners';
 import { FaTimes } from 'react-icons/fa';
 import axios from 'axios';
 
-export default function AddClientModal({clients, fetchClients, setClients}) {
+export default function AddClientModal({clients, fetchClients, setClients, showModal, setShowModal}) {
     const [isOpen, setIsOpen] = useState(false);
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
@@ -33,6 +33,7 @@ export default function AddClientModal({clients, fetchClients, setClients}) {
     const openModal = () => setIsOpen(true);
     const closeModal = () => {
         setIsOpen(false);
+        setShowModal(false);
         resetFields();
     };
     const handleAddClient = async () => {
@@ -74,25 +75,24 @@ export default function AddClientModal({clients, fetchClients, setClients}) {
         }
     }
 
-    // تفعيل المودال عند الضغط على الزر
-    React.useEffect(() => {
-        const button = document.querySelector('[data-bs-target="#addclient"]');
-        if (button) {
-            button.addEventListener('click', openModal);
-            return () => button.removeEventListener('click', openModal);
+    useEffect(() => {
+        if (showModal) {
+            setIsOpen(true);
+        } else {
+            setIsOpen(false);
         }
-    }, []);
+    }, [showModal]);
 
     return (
         <Fragment>
-            {isOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            {(isOpen || showModal) && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-0 sm:p-4">
+                    <div className="bg-white dark:bg-gray-800 rounded-none sm:rounded-lg shadow-xl w-full h-full sm:max-w-2xl sm:w-full sm:max-h-[90vh] sm:h-auto overflow-y-auto">
                         {/* Header */}
-                        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-600">
                             <div className="flex items-center gap-3">
                                 <img src={logo} width={60} height={60} alt="logo" className="rounded-lg" />
-                                <h2 className="text-xl font-bold text-gray-800">Add New Client</h2>
+                                <h2 className="text-xl font-bold text-gray-800 dark:text-white">Add New Client</h2>
                             </div>
                             <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors">
                                 <FaTimes className="w-5 h-5" />
@@ -103,20 +103,20 @@ export default function AddClientModal({clients, fetchClients, setClients}) {
                         <div className="p-6 space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Full Name</label>
                                     <input 
                                         type="text" 
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" 
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" 
                                         placeholder="Enter Client Name" 
                                         value={fullName} 
                                         onChange={(e) => setFullName(e.target.value)} 
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email Address</label>
                                     <input 
                                         type="email" 
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" 
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" 
                                         placeholder="Enter Email Address" 
                                         value={email} 
                                         onChange={(e) => setEmail(e.target.value)} 
@@ -126,20 +126,20 @@ export default function AddClientModal({clients, fetchClients, setClients}) {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Password</label>
                                     <input 
                                         type="password" 
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" 
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" 
                                         placeholder="Enter Password" 
                                         value={password} 
                                         onChange={(e) => setPassword(e.target.value)} 
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Phone Number</label>
                                     <input 
                                         type="tel" 
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" 
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" 
                                         placeholder="Enter Phone Number" 
                                         value={phone} 
                                         onChange={(e) => setPhone(e.target.value)} 
@@ -149,9 +149,9 @@ export default function AddClientModal({clients, fetchClients, setClients}) {
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Gender</label>
                                     <select 
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" 
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" 
                                         value={gender} 
                                         onChange={(e) => setGender(e.target.value)}
                                     >
@@ -161,10 +161,10 @@ export default function AddClientModal({clients, fetchClients, setClients}) {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">Profile Image</label>
+                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Profile Image</label>
                                     <input 
                                         type="file" 
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300"
+                                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300"
                                         accept="image/*"
                                         onChange={(e) => setProfileImage(e.target.files[0])}
                                     />
@@ -173,18 +173,18 @@ export default function AddClientModal({clients, fetchClients, setClients}) {
 
                             {imageUrl && (
                                 <div className="mt-4">
-                                    <p className="text-sm font-medium text-gray-700 mb-2">Image Preview:</p>
+                                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Image Preview:</p>
                                     <img src={imageUrl} alt="preview" className="w-24 h-24 object-cover rounded-lg border border-gray-200" />
                                 </div>
                             )}
                         </div>
 
                         {/* Footer */}
-                        <div className="flex justify-end gap-3 p-6 border-t border-gray-200">
+                        <div className="flex justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-600">
                             <button 
                                 type="button" 
                                 onClick={closeModal}
-                                className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                                className="px-4 py-2 text-gray-700 dark:text-white bg-gray-100 dark:bg-black hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg transition-colors"
                             >
                                 Cancel
                             </button>

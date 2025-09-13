@@ -53,7 +53,7 @@ const NotificationBell = () => {
         <div className="relative">
             <button
                 onClick={() => setShowDropdown(!showDropdown)}
-                className="relative p-2 text-gray-600 hover:text-gray-800 focus:outline-none"
+                className="relative p-2 text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100 focus:outline-none"
             >
                 <FaBell size={20} />
                 {unreadCount > 0 && (
@@ -64,13 +64,13 @@ const NotificationBell = () => {
             </button>
 
             {showDropdown && (
-                <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
-                    <div className="p-4 border-b border-gray-200 flex justify-between items-center">
-                        <h3 className="font-semibold text-gray-800">Notifications</h3>
+                <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-600 z-50">
+                    <div className="p-4 border-b border-gray-200 dark:border-gray-600 flex justify-between items-center">
+                        <h3 className="font-semibold text-gray-800 dark:text-white">Notifications</h3>
                         {unreadCount > 0 && (
                             <button
                                 onClick={markAllAsRead}
-                                className="text-sm text-blue-600 hover:text-blue-800"
+                                className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                             >
                                 Mark all as read
                             </button>
@@ -79,14 +79,14 @@ const NotificationBell = () => {
                     
                     <div className="max-h-96 overflow-y-auto">
                         {notifications.length === 0 ? (
-                            <div className="p-4 text-center text-gray-500">
+                            <div className="p-4 text-center text-gray-500 dark:text-gray-400">
                                 No new notifications
                             </div>
                         ) : (
                             notifications.map((notification) => (
                                 <div
                                     key={notification.id}
-                                    className="p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+                                    className="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                                     onClick={() => markAsRead(notification.id)}
                                 >
                                     <div className="flex items-start space-x-3">
@@ -94,13 +94,13 @@ const NotificationBell = () => {
                                             <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                                         </div>
                                         <div className="flex-1">
-                                            <p className="text-sm font-medium text-gray-800">
+                                            <p className="text-sm font-medium text-gray-800 dark:text-white">
                                                 New Doctor Registration
                                             </p>
-                                            <p className="text-sm text-gray-600 mt-1">
+                                            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                                                 {notification.message}
                                             </p>
-                                            <p className="text-xs text-gray-400 mt-2">
+                                            <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
                                                 {notification.createdAt?.toDate?.()?.toLocaleDateString() || 'Just now'}
                                             </p>
                                         </div>

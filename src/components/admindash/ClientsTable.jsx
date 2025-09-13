@@ -65,72 +65,135 @@ export default function Clientstable({ clients, setClients, fetchClients, loadin
                     {clients.length === 0 ? 'No clients found' : 'No matching clients found'}
                 </div>
             ) : (
-                <div className="overflow-x-auto">
-                    <table className="w-full divide-y divide-gray-200 dark:divide-gray-600">
-                        <thead className="bg-gray-50 dark:bg-gray-700">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Gender</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-600">
-                            {filteredClients.map(client => (
-                                <tr key={client.id} className="hover:bg-gray-50">
-                                    <td className="px-6 py-4 text-sm text-gray-900">
-                                        {client.fullName || client.name || 'N/A'}
-                                    </td>
-                                    <td className="px-6 py-4 text-sm text-gray-900">
-                                        {client.email || 'N/A'}
-                                    </td>
-                                    <td className="px-6 py-4 text-sm text-gray-900">
-                                        {client.phone || 'N/A'}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <span className={`px-3 py-1 rounded-full text-xs font-medium text-white ${
-                                            client.gender === 'male' ? 'bg-blue-500' : 'bg-pink-500'
-                                        }`}>
-                                            {client.gender || 'N/A'}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center space-x-3">
-                                            <button 
-                                                className="text-blue-600 hover:text-blue-800" 
-                                                onClick={() => {
-                                                    setSelectedClient(client);
-                                                    setShowViewModal(true);
-                                                }}
-                                            >
-                                                <FaEye size={16} />
-                                            </button>
-                                            <button 
-                                                className="text-yellow-400 hover:text-yellow-500" 
-                                                onClick={() => {
-                                                    setSelectedClient(client);
-                                                    setShowEditModal(true);
-                                                }}
-                                            >
-                                                <FaEdit size={16} />
-                                            </button>
-                                            <button 
-                                                className="text-red-600 hover:text-red-800" 
-                                                onClick={() => {
-                                                    setSelectedClient(client);
-                                                    setShowConfirm(true);
-                                                }}
-                                            >
-                                                <FaTrashAlt size={16} />
-                                            </button>
-                                        </div>
-                                    </td>
+                <>
+                    {/* Desktop Table */}
+                    <div className="hidden md:block overflow-x-auto">
+                        <table className="w-full divide-y divide-gray-200 dark:divide-gray-600">
+                            <thead className="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Gender</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                            </thead>
+                            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-600">
+                                {filteredClients.map(client => (
+                                    <tr key={client.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+                                            {client.fullName || client.name || 'N/A'}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+                                            {client.email || 'N/A'}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-100">
+                                            {client.phone || 'N/A'}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className={`px-3 py-1 rounded-full text-xs font-medium text-white ${
+                                                client.gender === 'male' ? 'bg-blue-500' : 'bg-pink-500'
+                                            }`}>
+                                                {client.gender || 'N/A'}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center space-x-2">
+                                                <button 
+                                                    className="text-blue-600 hover:text-blue-800" 
+                                                    onClick={() => {
+                                                        setSelectedClient(client);
+                                                        setShowViewModal(true);
+                                                    }}
+                                                >
+                                                    <FaEye size={16} />
+                                                </button>
+                                                <button 
+                                                    className="text-yellow-400 hover:text-yellow-500" 
+                                                    onClick={() => {
+                                                        setSelectedClient(client);
+                                                        setShowEditModal(true);
+                                                    }}
+                                                >
+                                                    <FaEdit size={16} />
+                                                </button>
+                                                <button 
+                                                    className="text-red-600 hover:text-red-800" 
+                                                    onClick={() => {
+                                                        setSelectedClient(client);
+                                                        setShowConfirm(true);
+                                                    }}
+                                                >
+                                                    <FaTrashAlt size={16} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    {/* Mobile Cards */}
+                    <div className="md:hidden space-y-4">
+                        {filteredClients.map(client => (
+                            <div key={client.id} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 p-4">
+                                <div className="text-center mb-4">
+                                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-medium text-sm mx-auto mb-2 ${
+                                        client.gender === 'male' ? 'bg-blue-500' : 'bg-pink-500'
+                                    }`}>
+                                        {(client.fullName || client.name || 'C').charAt(0).toUpperCase()}
+                                    </div>
+                                    <h3 className="font-medium text-gray-900 dark:text-white mb-1">
+                                        {client.fullName || client.name || 'N/A'}
+                                    </h3>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                                        {client.email || 'N/A'}
+                                    </p>
+                                    {client.phone && (
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                                            {client.phone}
+                                        </p>
+                                    )}
+                                    <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium text-white mt-2 ${
+                                        client.gender === 'male' ? 'bg-blue-500' : 'bg-pink-500'
+                                    }`}>
+                                        {client.gender || 'N/A'}
+                                    </span>
+                                </div>
+                                <div className="flex justify-center space-x-2">
+                                    <button 
+                                        className="text-blue-600 hover:text-blue-800 p-2" 
+                                        onClick={() => {
+                                            setSelectedClient(client);
+                                            setShowViewModal(true);
+                                        }}
+                                    >
+                                        <FaEye size={16} />
+                                    </button>
+                                    <button 
+                                        className="text-yellow-400 hover:text-yellow-500 p-2" 
+                                        onClick={() => {
+                                            setSelectedClient(client);
+                                            setShowEditModal(true);
+                                        }}
+                                    >
+                                        <FaEdit size={16} />
+                                    </button>
+                                    <button 
+                                        className="text-red-600 hover:text-red-800 p-2" 
+                                        onClick={() => {
+                                            setSelectedClient(client);
+                                            setShowConfirm(true);
+                                        }}
+                                    >
+                                        <FaTrashAlt size={16} />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </>
             )}
 
             {/* Confirm Delete Modal */}

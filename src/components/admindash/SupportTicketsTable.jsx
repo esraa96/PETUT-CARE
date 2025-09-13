@@ -148,31 +148,31 @@ export default function SupportTicketsTable() {
       <div className="p-6 pt-0">
         {/* Desktop / Tablet */}
         <div className="hidden md:block overflow-x-auto">
-          <div className="max-h-[60vh] lg:max-h-[70vh] overflow-y-auto border border-gray-100 rounded-md">
+          <div className="max-h-[60vh] lg:max-h-[70vh] overflow-y-auto border border-gray-100 dark:border-gray-600 rounded-md">
             <table className="w-full table-auto">
               <thead>
                 <tr>
-                  <th className="sticky top-0 bg-gray-50 px-4 py-3 text-left text-sm font-medium text-gray-700">
+                  <th className="sticky top-0 bg-gray-50 dark:bg-gray-700 px-4 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">
                     User
                   </th>
-                  <th className="sticky top-0 bg-gray-50 px-4 py-3 text-left text-sm font-medium text-gray-700">
+                  <th className="sticky top-0 bg-gray-50 dark:bg-gray-700 px-4 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">
                     Subject
                   </th>
-                  <th className="sticky top-0 bg-gray-50 px-4 py-3 text-left text-sm font-medium text-gray-700">
+                  <th className="sticky top-0 bg-gray-50 dark:bg-gray-700 px-4 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">
                     Priority
                   </th>
-                  <th className="sticky top-0 bg-gray-50 px-4 py-3 text-left text-sm font-medium text-gray-700">
+                  <th className="sticky top-0 bg-gray-50 dark:bg-gray-700 px-4 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">
                     Status
                   </th>
-                  <th className="sticky top-0 bg-gray-50 px-4 py-3 text-left text-sm font-medium text-gray-700">
+                  <th className="sticky top-0 bg-gray-50 dark:bg-gray-700 px-4 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">
                     Date
                   </th>
-                  <th className="sticky top-0 bg-gray-50 px-4 py-3 text-left text-sm font-medium text-gray-700">
+                  <th className="sticky top-0 bg-gray-50 dark:bg-gray-700 px-4 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-600">
                 {filteredTickets.map((ticket) => (
                   <tr
                     key={ticket.id}
@@ -201,7 +201,7 @@ export default function SupportTicketsTable() {
                               <span className="w-2 h-2 bg-yellow-400 rounded-full"></span>
                             )}
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-sm text-gray-500 dark:text-gray-400">
                             {ticket.userEmail}
                           </div>
                         </div>
@@ -239,7 +239,7 @@ export default function SupportTicketsTable() {
                         <option value="closed">Closed</option>
                       </select>
                     </td>
-                    <td className="px-4 py-4 text-sm text-gray-500">
+                    <td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-400">
                       <div className="flex items-center gap-1">
                         <RiTimeLine />
                         {formatDate(ticket.createdAt)}
@@ -280,7 +280,7 @@ export default function SupportTicketsTable() {
           {filteredTickets.map((ticket) => (
             <div
               key={ticket.id}
-              className="p-4 border rounded-lg shadow-sm bg-white space-y-2"
+              className="p-4 border border-gray-200 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-800 space-y-2"
             >
               <div className="flex items-center gap-3">
                 {ticket.userImage ? (
@@ -295,14 +295,14 @@ export default function SupportTicketsTable() {
                   </div>
                 )}
                 <div>
-                  <p className="font-medium">{ticket.userName}</p>
-                  <p className="text-sm text-gray-500">{ticket.userEmail}</p>
+                  <p className="font-medium text-gray-900 dark:text-white">{ticket.userName}</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{ticket.userEmail}</p>
                 </div>
               </div>
 
               <div>
-                <p className="font-medium">Subject:</p>
-                <p className="text-sm text-gray-700">{ticket.subject}</p>
+                <p className="font-medium text-gray-900 dark:text-white">Subject:</p>
+                <p className="text-sm text-gray-700 dark:text-gray-300">{ticket.subject}</p>
               </div>
 
               <div className="flex justify-between">
@@ -322,7 +322,7 @@ export default function SupportTicketsTable() {
                 </span>
               </div>
 
-              <div className="flex items-center gap-1 text-sm text-gray-500">
+              <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
                 <RiTimeLine />
                 {formatDate(ticket.createdAt)}
               </div>

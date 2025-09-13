@@ -198,8 +198,8 @@ export default function AddClinicModal({ fetchClinics, loading, setLoading, show
     return (
         <Fragment>
             {showModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={closeModal}>
-                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-0 sm:p-4" onClick={closeModal}>
+                    <div className="bg-white dark:bg-gray-800 rounded-none sm:rounded-lg shadow-xl w-full h-full sm:max-w-4xl sm:w-full sm:max-h-[90vh] sm:h-auto overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                         {/* Header */}
                         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-600">
                             <div className="flex items-center gap-3">
@@ -311,7 +311,7 @@ export default function AddClinicModal({ fetchClinics, loading, setLoading, show
                                             <input type="time" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" value={closeTime} onChange={(e) => setCloseTime(e.target.value)} />
                                         </div>
                                         <div className="flex items-end">
-                                            <button type="button" className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors" onClick={handleAddDay}>
+                                            <button type="button" className="w-full px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors" onClick={handleAddDay}>
                                                 + Add Day
                                             </button>
                                         </div>
@@ -341,7 +341,7 @@ export default function AddClinicModal({ fetchClinics, loading, setLoading, show
 
                         {/* Footer */}
                         <div className="flex justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-600">
-                            <button type="button" onClick={closeModal} className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                            <button type="button" onClick={closeModal} className="px-4 py-2 text-gray-700 dark:text-white bg-gray-100 dark:bg-black hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg transition-colors">
                                 Cancel
                             </button>
                             <button type="button" onClick={handleAddClinic} disabled={loading} className="px-6 py-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
