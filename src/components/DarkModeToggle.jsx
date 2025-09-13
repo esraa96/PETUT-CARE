@@ -11,24 +11,33 @@ const DarkModeToggle = () => {
       (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches)
     ) {
       document.documentElement.classList.add("dark");
+      document.body.classList.add("dark");
       setIsDark(true);
     } else {
       document.documentElement.classList.remove("dark");
+      document.body.classList.remove("dark");
       setIsDark(false);
     }
   }, []);
 
   const toggleDarkMode = () => {
     const html = document.documentElement;
+    const body = document.body;
+    
     if (html.classList.contains("dark")) {
       html.classList.remove("dark");
+      body.classList.remove("dark");
       localStorage.setItem("theme", "light");
       setIsDark(false);
     } else {
       html.classList.add("dark");
+      body.classList.add("dark");
       localStorage.setItem("theme", "dark");
       setIsDark(true);
     }
+    
+    // Force re-render of all components
+    window.dispatchEvent(new Event('storage'));
   };
 
   return (

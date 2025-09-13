@@ -1,95 +1,165 @@
-import { collection, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
-import React, { Fragment, useEffect, useState } from 'react'
-import { db } from '../../firebase.js';
+import React, { useState } from 'react'
+import { FaEdit, FaTrashAlt, FaSearch, FaEye } from "react-icons/fa";
 import { toast } from 'react-toastify';
 import { BeatLoader } from 'react-spinners';
-import ConfirmModal from '../ConfirmModal';
-import { MdDelete } from 'react-icons/md';
-import { TbEdit } from 'react-icons/tb';
-import EditAdminModal from './EditAdminModal';
-import { FaEye } from 'react-icons/fa';
-import ViewAdminModal from './ViewAdminModal.jsx';
+import { deleteDoc, doc } from 'firebase/firestore';
+import { db } from '../../firebase.js';
 
 export default function AdminsTable({ admins, setAdmins, fetchAdmins, loading }) {
-
+    const [searchTerm, setSearchTerm] = useState('');
     const [showConfirm, setShowConfirm] = useState(false);
-    const [selectedAdminId, setSelectedAdminId] = useState(null);
+    const [showViewModal, setShowViewModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [selectedAdmin, setSelectedAdmin] = useState(null);
 
-
-    // get admins from firestore
-    useEffect(() => {
-        fetchAdmins();
-    }, []);
-
-    // delete admin from firestore
     const handleDeleteAdmin = async (adminId) => {
         try {
             await deleteDoc(doc(db, 'users', adminId));
-            setAdmins(admins => admins.filter(admin => admin.id !== adminId))
+            setAdmins(admins => admins.filter(admin => admin.id !== adminId));
             toast.success('Admin deleted successfully', { autoClose: 3000 });
         } catch (err) {
-            toast.error("Failed to delete admin, error:" + err.message, { autoClose: 3000 });
+            toast.error("Failed to delete admin: " + err.message, { autoClose: 3000 });
+        } finally {
+            setShowConfirm(false);
         }
     }
 
+    const filteredAdmins = admins.filter((admin) => {
+        const nameMatch = (admin.fullName || admin.name || '').toLowerCase().includes(searchTerm.toLowerCase());
+        const emailMatch = (admin.email || '').toLowerCase().includes(searchTerm.toLowerCase());
+        return nameMatch || emailMatch;
+    });
+
     return (
-        <Fragment>
+        <div>
+            <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                <div className="relative flex-1">
+                    <input
+                        className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300"
+                        type="text"
+                        placeholder="Search by name or email"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                    <FaSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+                </div>
+            </div>
 
-
-            {loading ? <h3 className='text-center mt-5'><BeatLoader color='#D9A741' /></h3> : admins?.length === 0 ? <h3 className='text-center mt-5'>No Admins found</h3> : (
-
-
-                <div className="admin-table mt-4 bg-white shadow rounded w-100" style={{ maxHeight: '395px', overflowY: 'auto' }} >
-                    <table className="table">
-                        <thead className="table-light py-3  position-sticky top-0">
-                            <tr className="">
-                                <th className="px-4 py-3">Full Name</th>
-                                <th className="px-4 py-3">Email</th>
-                                <th className="px-4 py-3">Phone</th>
-                                <th className="px-4 py-3">Action</th>
+            {loading ? (
+                <div className='text-center py-8'>
+                    <BeatLoader color='#D9A741' />
+                </div>
+            ) : filteredAdmins.length === 0 ? (
+                <div className='text-center py-8 text-black dark:text-white'>
+                    {admins.length === 0 ? 'No admins found' : 'No matching admins found'}
+                </div>
+            ) : (
+                <div className="overflow-x-auto">
+                    <table className="w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {Array.isArray(admins) && admins.map((admin) => (
-                                <tr key={admin.id}>
-                                    <td className="px-4 py-3">{admin?.fullName || 'N/A'}</td>
-                                    <td className="px-4 py-3">{admin?.email || 'N/A'}</td>
-                                    <td className="px-4 py-3">{admin?.phone || 'N/A'}</td>
-
-                                    <td className="px-4 py-3 d-flex align-items-center gap-2 ">
-                                        <button type="button" className="btn border-0 p-0" data-bs-toggle="modal" data-bs-target={`#viewadmin-${admin.id}`}>
-                                            <FaEye cursor={"pointer"} />
-                                        </button>
-                                        <ViewAdminModal admin={admin}  modalId={admin.id} />
-                                        <button type="button" className="btn border-0 p-0" data-bs-toggle="modal" data-bs-target={`#editadmin-${admin.id}`}>
-                                            <TbEdit className='' cursor={"pointer"} size={20} />
-                                        </button>
-                                        <EditAdminModal admin={admin} admins={admins} setAdmins={setAdmins} modalId={admin.id} />
-
-                                        <button type="button" className="btn border-0 p-0" >
-                                            <MdDelete cursor={"pointer"} size={20} className='text-danger'
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            {filteredAdmins.map(admin => (
+                                <tr key={admin.id} className="hover:bg-gray-50">
+                                    <td className="px-6 py-4 text-sm text-gray-900">
+                                        {admin.fullName || admin.name || 'N/A'}
+                                    </td>
+                                    <td className="px-6 py-4 text-sm text-gray-900">
+                                        {admin.email || 'N/A'}
+                                    </td>
+                                    <td className="px-6 py-4 text-sm text-gray-900">
+                                        {admin.phone || 'N/A'}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center space-x-3">
+                                            <button 
+                                                className="text-blue-600 hover:text-blue-800" 
                                                 onClick={() => {
-                                                    setShowConfirm(true);
-                                                    setSelectedAdminId(admin.id);
+                                                    setSelectedAdmin(admin);
+                                                    setShowViewModal(true);
                                                 }}
-                                            />
-                                        </button>
-
+                                            >
+                                                <FaEye size={16} />
+                                            </button>
+                                            <button 
+                                                className="text-petut-brown-300 hover:text-petut-brown-500" 
+                                                onClick={() => {
+                                                    setSelectedAdmin(admin);
+                                                    setShowEditModal(true);
+                                                }}
+                                            >
+                                                <FaEdit size={16} />
+                                            </button>
+                                            <button 
+                                                className="text-red-600 hover:text-red-800" 
+                                                onClick={() => {
+                                                    setSelectedAdmin(admin);
+                                                    setShowConfirm(true);
+                                                }}
+                                            >
+                                                <FaTrashAlt size={16} />
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
-
-
                         </tbody>
                     </table>
-                    {showConfirm && (<ConfirmModal onDelete={() => handleDeleteAdmin(selectedAdminId)} setShowConfirm={setShowConfirm} selectedId={selectedAdminId} whatDelete="Admin" />)}
                 </div>
+            )}
 
-            )
+            {/* Confirm Delete Modal */}
+            {showConfirm && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Confirm Delete</h3>
+                        <p className="text-gray-600 mb-6">Are you sure you want to delete this admin?</p>
+                        <div className="flex justify-end space-x-3">
+                            <button 
+                                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+                                onClick={() => setShowConfirm(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button 
+                                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                                onClick={() => handleDeleteAdmin(selectedAdmin.id)}
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
-
-            }
-
-        </Fragment>
+            {/* View Admin Modal */}
+            {showViewModal && selectedAdmin && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Admin Details</h3>
+                        <div className="space-y-3">
+                            <p><strong>Name:</strong> {selectedAdmin.fullName || selectedAdmin.name}</p>
+                            <p><strong>Email:</strong> {selectedAdmin.email}</p>
+                            <p><strong>Phone:</strong> {selectedAdmin.phone}</p>
+                            <p><strong>Role:</strong> Admin</p>
+                        </div>
+                        <div className="flex justify-end mt-6">
+                            <button 
+                                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+                                onClick={() => setShowViewModal(false)}
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
     )
 }

@@ -1,46 +1,77 @@
-import React, { Fragment } from 'react'
-import logo from '../../assets/petut.png'
+import React, { Fragment } from "react";
+import logo from "../../assets/petut.png";
 
-export default function ViewAdminModal({ admin, modalId }) {
-    const { profileImage, fullName, email, phone, gender, role } = admin;
-    if (!admin) return null;
-    return (
-        <Fragment>
-            <div className="modal fade" id={`viewadmin-${modalId}`} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div className="modal-dialog modal-lg">
-                    <div className="modal-content">
-                        <div className="modal-header d-flex align-items-center justify-content-between py-0 pe-0">
-                            <h1 className="modal-title fs-5" id="staticBackdropLabel">Admin Details</h1>
-                            <img src={logo} width={'90px'} height={'90px'} alt="logo" />
-                        </div>
-                        <div className="modal-body d-flex align-items-center gap-5 ">
-                            <div className="left user-image text-center mb-3">
-                                <img src={admin.profileImage} alt="user-image" style={{ width: '250px', height: '250px' }} />
-                            </div>
-                            <div className="right user-details d-flex flex-1 align-items-start gap-3">
-                                <div className="">
-                                    <p>Name :</p>
-                                    <p>Email :</p>
-                                    <p>Phone :</p>
-                                    <p >Role :</p>
-                                </div>
-                                <div className="flex-1">
-                                    <p>{admin.fullName || ''}</p>
-                                    <p>{admin.email || ''}</p>
-                                    <p>{admin.phone || ''}</p>
-                                    <p style={{ color: 'white', backgroundColor: admin.role === 'customer' ? '#12101285 ' : '#007BFF ', fontSize: '14px' }} className='px-3 py-1 mb-0 rounded rounded-5 w-25 text-center'>{admin.role || ''}</p>
-                                </div>
-                            </div>
+export default function ViewAdminModal({ admin, modalId, onClose }) {
+  if (!admin) return null;
 
-                        </div>
+  return (
+    <Fragment>
+      {/* Backdrop */}
+      <div
+        id={`viewadmin-${modalId}`}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      >
+        {/* Modal Box */}
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg w-full max-w-3xl overflow-hidden">
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-slate-700">
+            <h1 className="text-lg font-semibold text-slate-800 dark:text-white">
+              Admin Details
+            </h1>
+            <img src={logo} width="70" height="70" alt="logo" />
+          </div>
 
-                        <div className="modal-footer d-flex justify-content-end gap-2">
-                            <button type="button" className="btn btn-danger" id='close-btn-edit' data-bs-dismiss="modal" style={{ width: '100px' }}>Close</button>
-
-                        </div>
-                    </div>
-                </div>
+          {/* Body */}
+          <div className="flex flex-col md:flex-row items-start gap-6 p-6">
+            {/* Left: Image */}
+            <div className="flex-shrink-0 mx-auto md:mx-0">
+              <img
+                src={admin.profileImage}
+                alt="user"
+                className="w-48 h-48 rounded-lg object-cover shadow-md"
+              />
             </div>
-        </Fragment>
-    )
+
+            {/* Right: Details */}
+            <div className="flex flex-col gap-2 flex-1 text-slate-700 dark:text-slate-200">
+              <div className="flex gap-3">
+                <span className="font-medium w-20">Name:</span>
+                <span>{admin.fullName || "-"}</span>
+              </div>
+              <div className="flex gap-3">
+                <span className="font-medium w-20">Email:</span>
+                <span>{admin.email || "-"}</span>
+              </div>
+              <div className="flex gap-3">
+                <span className="font-medium w-20">Phone:</span>
+                <span>{admin.phone || "-"}</span>
+              </div>
+              <div className="flex gap-3 items-center">
+                <span className="font-medium w-20">Role:</span>
+                <span
+                  className={`px-3 py-1 rounded-full text-sm text-white ${
+                    admin.role === "customer"
+                      ? "bg-gray-600"
+                      : "bg-blue-600"
+                  }`}
+                >
+                  {admin.role || "-"}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="flex justify-end gap-2 px-6 py-4 border-t border-slate-200 dark:border-slate-700">
+            <button
+              onClick={onClose}
+              className="w-24 px-4 py-2 bg-slate-700 text-white rounded-md hover:bg-slate-600 transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </Fragment>
+  );
 }

@@ -1,7 +1,7 @@
-import { Fragment } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import { Fragment } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { FaUsers } from "react-icons/fa6";
-import { FaChartBar, FaClinicMedical } from "react-icons/fa";
+import { FaChartBar, FaClinicMedical, FaBell } from "react-icons/fa";
 import { FaCalendarAlt } from "react-icons/fa";
 import { TbLogout2 } from "react-icons/tb";
 import { GrOverview } from "react-icons/gr";
@@ -9,10 +9,10 @@ import { IoStatsChart } from "react-icons/io5";
 import { MdReviews } from "react-icons/md";
 import { BiSupport } from "react-icons/bi";
 import { HiShoppingBag } from "react-icons/hi2";
-import { auth } from '../../firebase';
-import { signOut } from 'firebase/auth';
-import { toast } from 'react-toastify';
-import logo from '../../assets/petut.png';
+import { auth } from "../../firebase";
+import { signOut } from "firebase/auth";
+import { toast } from "react-toastify";
+import logo from "../../assets/petut.png";
 
 export default function Sidebar({ open, toggleSidebar }) {
   const navigate = useNavigate();
@@ -28,9 +28,26 @@ export default function Sidebar({ open, toggleSidebar }) {
 
   const menuItems = [
     { to: "/admin-dashboard/overview", icon: GrOverview, label: "Overview" },
-    { to: "/admin-dashboard/manage-users", icon: FaUsers, label: "Manage Users" },
-    { to: "/admin-dashboard/manage-clinics", icon: FaClinicMedical, label: "Manage Clinics" },
-    { to: "/admin-dashboard/manage-reservations", icon: FaCalendarAlt, label: "Reservations" },
+    {
+      to: "/admin-dashboard/manage-users",
+      icon: FaUsers,
+      label: "Manage Users",
+    },
+    {
+      to: "/admin-dashboard/manage-clinics",
+      icon: FaClinicMedical,
+      label: "Manage Clinics",
+    },
+    {
+      to: "/admin-dashboard/manage-reservations",
+      icon: FaCalendarAlt,
+      label: "Reservations",
+    },
+    {
+      to: "/admin-dashboard/notifications",
+      icon: FaBell,
+      label: "Notifications",
+    },
     { to: "/admin-dashboard/reviews", icon: MdReviews, label: "Reviews" },
     { to: "/admin-dashboard/store", icon: HiShoppingBag, label: "Store" },
     { to: "/admin-dashboard/charts", icon: IoStatsChart, label: "Charts" },
@@ -39,53 +56,124 @@ export default function Sidebar({ open, toggleSidebar }) {
 
   return (
     <Fragment>
-      <div className={`fixed top-0 left-0 h-full bg-white dark:bg-gray-800 shadow-xl transition-all duration-300 z-50 ${
-        open ? 'w-64 translate-x-0' : 'w-64 -translate-x-full'
-      } lg:translate-x-0 lg:static lg:h-screen`}>
+      <div
+        className={`fixed top-0 left-0 h-screen bg-slate-800 dark:bg-gray-900 shadow-xl transition-all duration-300 z-50 flex flex-col ${
+          open ? "w-64 translate-x-0" : "w-64 -translate-x-full"
+        } lg:translate-x-0 lg:fixed lg:top-0 lg:left-0 lg:w-64 lg:flex-shrink-0`}
+      >
         {/* Sidebar Header */}
-        <div className="flex items-center justify-center h-20 px-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center px-6 h-16 border-b border-slate-700 dark:border-gray-700">
           <div className="flex items-center space-x-3">
-            <img src={logo} alt="Petut Logo" className="w-10 h-10" />
-            <div className="flex flex-col">
-              <span className="text-lg font-bold text-petut-brown-300">Petut</span>
-              <span className="text-xs text-gray-500 dark:text-gray-400">Admin Panel</span>
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center">
+              <img src={logo} alt="Petut Logo" className="w-12 h-12" />
             </div>
+            <span className="text-lg font-bold text-white">Petut Admin</span>
           </div>
         </div>
 
-        {/* Navigation Menu */}
-        <nav className="flex-1 px-4 py-6 space-y-2">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                onClick={toggleSidebar}
-                className={({ isActive }) =>
-                  `flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 group ${
-                    isActive
-                      ? 'bg-gradient-to-r from-petut-brown-300 to-petut-brown-400 text-white shadow-lg shadow-petut-brown-300/30'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-petut-brown-300'
-                  }`
-                }
-              >
-                <Icon className="w-5 h-5 mr-3 transition-transform duration-200 group-hover:scale-110" />
-                <span>{item.label}</span>
-              </NavLink>
-            );
-          })}
-        </nav>
+        {/* Navigation Sections */}
+        <div className="flex-1 py-4 overflow-y-auto">
+          <div className="px-4 mb-4">
+            <h3 className="text-xs font-semibold text-slate-400 dark:text-gray-400 uppercase tracking-wider mb-3">
+              NAVIGATION
+            </h3>
+            <nav className="space-y-1">
+              {menuItems.slice(0, 1).map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    onClick={() => window.innerWidth < 1024 && toggleSidebar()}
+                    className={({ isActive }) =>
+                      `flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                        isActive
+                          ? "bg-petut-brown-300 text-white"
+                          : "text-slate-300 hover:bg-slate-700 hover:text-white"
+                      }`
+                    }
+                  >
+                    <Icon className="w-4 h-4 mr-3" />
+                    <span>{item.label}</span>
+                  </NavLink>
+                );
+              })}
+            </nav>
+          </div>
 
-        {/* Logout Button */}
-        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
-          <button
-            onClick={handleLogout}
-            className="flex items-center w-full px-4 py-3 text-sm font-medium text-red-600 dark:text-red-400 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-all duration-200 group"
-          >
-            <TbLogout2 className="w-5 h-5 mr-3 transition-transform duration-200 group-hover:scale-110" />
-            <span>Logout</span>
-          </button>
+          <div className="px-4 mb-4">
+            <h3 className="text-xs font-semibold text-slate-400 dark:text-gray-400 uppercase tracking-wider mb-3">
+              MANAGEMENT
+            </h3>
+            <nav className="space-y-1">
+              {menuItems.slice(1, 7).map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    onClick={() => window.innerWidth < 1024 && toggleSidebar()}
+                    className={({ isActive }) =>
+                      `flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                        isActive
+                          ? "bg-petut-brown-300 text-white"
+                          : "text-slate-300 hover:bg-slate-700 hover:text-white"
+                      }`
+                    }
+                  >
+                    <Icon className="w-4 h-4 mr-3" />
+                    <span>{item.label}</span>
+                  </NavLink>
+                );
+              })}
+            </nav>
+          </div>
+
+          <div className="px-4">
+            <h3 className="text-xs font-semibold text-slate-400 dark:text-gray-400 uppercase tracking-wider mb-3">
+              ANALYTICS
+            </h3>
+            <nav className="space-y-1">
+              {menuItems.slice(7).map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    onClick={() => window.innerWidth < 1024 && toggleSidebar()}
+                    className={({ isActive }) =>
+                      `flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                        isActive
+                          ? "bg-petut-brown-300 text-white"
+                          : "text-slate-300 hover:bg-slate-700 hover:text-white"
+                      }`
+                    }
+                  >
+                    <Icon className="w-4 h-4 mr-3" />
+                    <span>{item.label}</span>
+                  </NavLink>
+                );
+              })}
+            </nav>
+          </div>
+        </div>
+
+        {/* Logout Section */}
+        <div className="px-4 pb-4 mt-auto">
+          <div className="border-t border-slate-700 pt-4">
+            <h3 className="text-xs font-semibold text-slate-400 dark:text-gray-400 uppercase tracking-wider mb-3">
+              ACCOUNT
+            </h3>
+            <nav className="space-y-1">
+              <button
+                onClick={handleLogout}
+                className="flex items-center w-full px-3 py-2 text-sm font-medium text-slate-300 rounded-lg hover:bg-slate-700 hover:text-white transition-all duration-200"
+              >
+                <TbLogout2 className="w-4 h-4 mr-3" />
+                <span>Logout</span>
+              </button>
+            </nav>
+          </div>
         </div>
       </div>
 
@@ -97,5 +185,5 @@ export default function Sidebar({ open, toggleSidebar }) {
         />
       )}
     </Fragment>
-  )
+  );
 }

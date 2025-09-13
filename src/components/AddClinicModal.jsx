@@ -1,21 +1,15 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { MdDelete } from "react-icons/md";
+import { FaTimes } from 'react-icons/fa';
 import { collection, addDoc, Timestamp, setDoc, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useLocation, useNavigate } from 'react-router-dom';
-
-import 'leaflet/dist/leaflet.css';
 import { db, auth } from '../firebase.js';
 import logo from '../assets/petut.png';
 import { BeatLoader } from 'react-spinners';
 import { IoLocation } from "react-icons/io5";
-
-// استدعاء مكون الخريطة المبسط
 import SimpleMapModal from './SimpleMapModal.jsx';
 
-export default function AddClinicModal({ fetchClinics, loading, setLoading }) {
-    // حالة المودال والبيانات
+export default function AddClinicModal({ fetchClinics, loading, setLoading, showModal, setShowModal }) {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
@@ -29,15 +23,11 @@ export default function AddClinicModal({ fetchClinics, loading, setLoading }) {
     const [doctors, setDoctors] = useState([]);
     const [selectedDoctor, setSelectedDoctor] = useState(null);
     const [userData, setUserData] = useState(null);
-    // حالة ظهور مودال الخريطة
     const [showMapModal, setShowMapModal] = useState(false);
 
-    const navigate = useNavigate();
     const isAdmin = userData?.role === 'admin';
-    const location = useLocation();
 
-    const modalRef = useRef(null);
-    const [modalInstance, setModalInstance] = useState(null);
+
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -72,7 +62,6 @@ export default function AddClinicModal({ fetchClinics, loading, setLoading }) {
         }
     }, [isAdmin]);
 
-    // ... (باقي الدوال)
     const handleAddDay = () => {
         if (!day || !openTime || !closeTime) {
             toast.error('Please select day and time', { autoClose: 2000 });
@@ -115,8 +104,14 @@ export default function AddClinicModal({ fetchClinics, loading, setLoading }) {
         setSelectedLocation('');
     };
 
+    const closeModal = () => {
+        if (setShowModal) {
+            setShowModal(false);
+        }
+        resetFields();
+    };
+
     const handleAddClinic = async () => {
-        // التحقق من صحة البيانات
         if (!name.trim()) {
             toast.error('Please enter clinic name', { autoClose: 3000 });
             return;
@@ -174,11 +169,7 @@ export default function AddClinicModal({ fetchClinics, loading, setLoading }) {
             const docRef = await addDoc(collection(db, 'clinics'), clinicData);
             await setDoc(docRef, { ...clinicData, clinicId: docRef.id });
             toast.success('Clinic added successfully', { autoClose: 3000 });
-            resetFields();
-
-            if (modalInstance) {
-                modalInstance.hide();
-            }
+            closeModal();
             
             if (fetchClinics) {
                 await fetchClinics();
@@ -191,88 +182,64 @@ export default function AddClinicModal({ fetchClinics, loading, setLoading }) {
         }
     };
 
-    // دالة لفتح مودال الخريطة
     const handleOpenMapModal = () => {
         setShowMapModal(true);
     };
 
-    // دالة لاستقبال الموقع من مودال الخريطة
     const handleLocationConfirmed = (location) => {
         setSelectedLocation(location);
         setShowMapModal(false);
     };
 
-    // دالة لإغلاق مودال الخريطة دون تغيير الموقع
     const handleCloseMapModal = () => {
         setShowMapModal(false);
     };
 
-    useEffect(() => {
-        // تحقق من وجود Bootstrap وإنشاء المودال
-        const initModal = () => {
-            if (modalRef.current && window.bootstrap && window.bootstrap.Modal) {
-                const modal = new window.bootstrap.Modal(modalRef.current, {
-                    keyboard: false,
-                    backdrop: 'static'
-                });
-                setModalInstance(modal);
-            }
-        };
-        
-        // انتظار تحميل Bootstrap
-        if (window.bootstrap) {
-            initModal();
-        } else {
-            const timer = setTimeout(initModal, 1000);
-            return () => clearTimeout(timer);
-        }
-    }, []);
     return (
         <Fragment>
-            {/* هذا هو المودال الرئيسي الذي يحتوي على النموذج */}
-            <div className="modal fade" id="addclinic" ref={modalRef} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-hidden="true">
-                <div className="modal-dialog modal-lg" style={{maxHeight: '90vh', overflowY: 'auto'}}>
-                    <div className="modal-content">
-                        <div className="modal-header d-flex align-items-center justify-content-between py-0 pe-0">
-                            <h1 className="modal-title fs-5">Clinic Info</h1>
-                            <div className="d-flex align-items-center gap-2">
-                                <img src={logo} width="90px" height="90px" alt="logo" />
-                                <button 
-                                    type="button" 
-                                    className="btn-close" 
-                                    onClick={() => {
-                                        resetFields();
-                                        if (modalInstance) {
-                                            modalInstance.hide();
-                                        }
-                                    }}
-                                ></button>
+            {showModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={closeModal}>
+                    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                        {/* Header */}
+                        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-600">
+                            <div className="flex items-center gap-3">
+                                <img src={logo} width={60} height={60} alt="logo" className="rounded-lg" />
+                                <h2 className="text-xl font-bold text-black dark:text-white">Add New Clinic</h2>
                             </div>
+                            <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors">
+                                <FaTimes className="w-5 h-5" />
+                            </button>
                         </div>
-                        <div className="modal-body">
-                            <form>
-                                <div className="clinic-name d-flex align-items-center gap-3 mb-3">
-                                    <label className="form-label">Clinic Name</label>
-                                    <input type="text" className="form-control w-75" value={name} onChange={(e) => setName(e.target.value)} />
-                                </div>
-                                <div className="clinic-phone d-flex align-items-center gap-3 mb-3">
-                                    <label className="form-label">Phone</label>
-                                    <input type="tel" className="form-control w-75" value={phone} onChange={(e) => setPhone(e.target.value)} />
-                                </div>
-                                <div className="clinic-email d-flex align-items-center gap-3 mb-3">
-                                    <label className="form-label">Email</label>
-                                    <input type="email" className="form-control w-75" value={email} onChange={(e) => setEmail(e.target.value)} />
-                                </div>
-                                <div className="clinic-price d-flex align-items-center gap-3 mb-3">
-                                    <label className="form-label">Cost</label>
-                                    <input type="number" className="form-control w-75" value={price} onChange={(e) => setPrice(e.target.value)} />
-                                </div>
 
+                        {/* Body */}
+                        <div className="p-6 space-y-6">
+                            {/* Basic Info */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Clinic Name</label>
+                                    <input type="text" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" placeholder="Enter Clinic Name" value={name} onChange={(e) => setName(e.target.value)} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                    <input type="tel" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" placeholder="Enter Phone Number" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                    <input type="email" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" placeholder="Enter Email Address" value={email} onChange={(e) => setEmail(e.target.value)} />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Consultation Cost ($)</label>
+                                    <input type="number" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" placeholder="Enter Cost" value={price} onChange={(e) => setPrice(e.target.value)} />
+                                </div>
+                            </div>
+
+                            {/* Doctor Selection & Status */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {isAdmin && (
-                                    <div className="mb-3 d-flex align-items-center gap-3">
-                                        <label className="form-label">Doctor</label>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Assign Doctor</label>
                                         <select
-                                            className="form-select w-50"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300"
                                             value={selectedDoctor ? `${selectedDoctor.id}|${selectedDoctor.fullName}` : ''}
                                             onChange={(e) => {
                                                 const [id, fullName] = e.target.value.split('|');
@@ -286,141 +253,105 @@ export default function AddClinicModal({ fetchClinics, loading, setLoading }) {
                                         </select>
                                     </div>
                                 )}
-
-                                <div className="status d-flex align-items-center gap-3 mb-3">
-                                    <p className='mb-0'>Choose Status</p>
-                                    <select className="form-select w-50" value={status} onChange={(e) => setStatus(e.target.value)}>
-                                        <option value="">Choose Status</option>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" value={status} onChange={(e) => setStatus(e.target.value)}>
+                                        <option value="">Select Status</option>
                                         <option value="active">Active</option>
                                         <option value="inactive">Inactive</option>
                                     </select>
                                 </div>
+                            </div>
 
-                                {/* هذا هو الزر الذي سيفتح مودال الخريطة */}
-                                <div className="address d-flex align-items-center gap-3 mb-3">
-                                    <p className='mb-0'>Choose Location</p>
-                                    <button onClick={handleOpenMapModal} className='custom-button d-flex align-items-center gap-2' type='button'>
-                                        <IoLocation /> choose location
-                                    </button>
-                                </div>
+                            {/* Location */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Clinic Location</label>
+                                <button onClick={handleOpenMapModal} className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-colors" type="button">
+                                    <IoLocation className="w-4 h-4" />
+                                    Choose Location
+                                </button>
                                 {selectedLocation && (
-                                    <div className="alert alert-success mt-2">
-                                        <strong>Selected Location:</strong><br/>
-                                        {selectedLocation.governorate} - {selectedLocation.city}
-                                        {selectedLocation.street && ` - ${selectedLocation.street}`}
+                                    <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+                                        <p className="text-sm font-medium text-green-800">Selected Location:</p>
+                                        <p className="text-sm text-green-700">
+                                            {selectedLocation.governorate} - {selectedLocation.city}
+                                            {selectedLocation.street && ` - ${selectedLocation.street}`}
+                                        </p>
                                     </div>
                                 )}
+                            </div>
 
-                                <hr />
-                                <div className="appointment mb-3">
-                                    <div className="d-flex justify-content-between align-items-center mb-3">
-                                        <p className='fw-bold mb-0'>Working Hours</p>
-                                        <small className="text-muted">Add at least one working day</small>
-                                    </div>
-                                    
-                                    <div className="card border-light bg-light p-3 mb-3">
-                                        <div className="row g-2 align-items-end">
-                                            <div className="col-md-3">
-                                                <label className="form-label small">Day</label>
-                                                <select 
-                                                    className="form-select" 
-                                                    value={day} 
-                                                    onChange={(e) => setDay(e.target.value)}
-                                                >
-                                                    <option value="">Select Day</option>
-                                                    {['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
-                                                        .filter(d => !workingHours.some(wh => wh.day === d))
-                                                        .map(d => (
-                                                            <option key={d} value={d}>{d}</option>
-                                                        ))
-                                                    }
-                                                </select>
-                                            </div>
-                                            <div className="col-md-3">
-                                                <label className="form-label small">Open Time</label>
-                                                <input 
-                                                    type="time" 
-                                                    className="form-control" 
-                                                    value={openTime} 
-                                                    onChange={(e) => setOpenTime(e.target.value)} 
-                                                />
-                                            </div>
-                                            <div className="col-md-3">
-                                                <label className="form-label small">Close Time</label>
-                                                <input 
-                                                    type="time" 
-                                                    className="form-control" 
-                                                    value={closeTime} 
-                                                    onChange={(e) => setCloseTime(e.target.value)} 
-                                                />
-                                            </div>
-                                            <div className="col-md-3">
-                                                <button 
-                                                    type="button" 
-                                                    className="btn btn-success w-100"
-                                                    onClick={handleAddDay}
-                                                >
-                                                    + Add Day
-                                                </button>
-
-                                            </div>
+                            {/* Working Hours */}
+                            <div className="border-t border-gray-200 pt-6">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h3 className="text-lg font-medium text-gray-800">Working Hours</h3>
+                                    <span className="text-sm text-gray-500">Add at least one working day</span>
+                                </div>
+                                
+                                <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Day</label>
+                                            <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" value={day} onChange={(e) => setDay(e.target.value)}>
+                                                <option value="">Select Day</option>
+                                                {['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+                                                    .filter(d => !workingHours.some(wh => wh.day === d))
+                                                    .map(d => (
+                                                        <option key={d} value={d}>{d}</option>
+                                                    ))
+                                                }
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Open Time</label>
+                                            <input type="time" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" value={openTime} onChange={(e) => setOpenTime(e.target.value)} />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Close Time</label>
+                                            <input type="time" className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300" value={closeTime} onChange={(e) => setCloseTime(e.target.value)} />
+                                        </div>
+                                        <div className="flex items-end">
+                                            <button type="button" className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors" onClick={handleAddDay}>
+                                                + Add Day
+                                            </button>
                                         </div>
                                     </div>
-
-                                    {workingHours.length > 0 && (
-                                        <div className="mt-3">
-                                            <h6 className="mb-2">Added Working Days ({workingHours.length}):</h6>
-                                            <div className="row g-2">
-                                                {workingHours.map((item, index) => (
-                                                    <div key={index} className="col-12">
-                                                        <div className="card border-success">
-                                                            <div className="card-body p-2 d-flex justify-content-between align-items-center">
-                                                                <div>
-                                                                    <strong className="text-success">{item.day}</strong>
-                                                                    <br/>
-                                                                    <small className="text-muted">{item.openTime} - {item.closeTime}</small>
-                                                                </div>
-                                                                <button 
-                                                                    className="btn btn-outline-danger btn-sm" 
-                                                                    onClick={() => handleDeleteDay(item.day)}
-                                                                    title="Remove this day"
-                                                                >
-                                                                    <MdDelete size={18} />
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
                                 </div>
 
-                            </form>
+                                {workingHours.length > 0 && (
+                                    <div>
+                                        <h4 className="text-sm font-medium text-gray-700 mb-3">Added Working Days ({workingHours.length}):</h4>
+                                        <div className="space-y-2">
+                                            {workingHours.map((item, index) => (
+                                                <div key={index} className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                                                    <div>
+                                                        <span className="font-medium text-green-800">{item.day}</span>
+                                                        <span className="text-sm text-green-600 ml-2">{item.openTime} - {item.closeTime}</span>
+                                                    </div>
+                                                    <button className="text-red-600 hover:text-red-800 transition-colors" onClick={() => handleDeleteDay(item.day)} title="Remove this day">
+                                                        <MdDelete className="w-5 h-5" />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        <div className="modal-footer d-flex justify-content-end gap-2">
-                            <button 
-                                type="button" 
-                                className="btn btn-danger" 
-                                onClick={() => {
-                                    resetFields();
-                                    if (modalInstance) {
-                                        modalInstance.hide();
-                                    }
-                                }}
-                                style={{ width: '100px' }}
-                            >
-                                Close
+
+                        {/* Footer */}
+                        <div className="flex justify-end gap-3 p-6 border-t border-gray-200 dark:border-gray-600">
+                            <button type="button" onClick={closeModal} className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                                Cancel
                             </button>
-                            <button type="button" className="custom-button" style={{ width: '100px' }} onClick={handleAddClinic} disabled={loading}>
+                            <button type="button" onClick={handleAddClinic} disabled={loading} className="px-6 py-2 bg-yellow-400 text-black rounded-lg hover:bg-yellow-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
                                 {loading ? <BeatLoader size={10} color='#fff' /> : 'Add Clinic'}
                             </button>
                         </div>
                     </div>
                 </div>
-            </div>
+            )}
 
-            {/* هذا هو المودال المبسط للموقع */}
             {showMapModal && (
                 <SimpleMapModal
                     onLocationConfirmed={handleLocationConfirmed}

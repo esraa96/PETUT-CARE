@@ -6,6 +6,9 @@ import PrivacyPolicy from '../legal/PrivacyPolicy';
 const SignUpForm = ({ handleSubmit, handleChange, formData, formErrors, loading, error }) => {
     const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
     const [isPolicyModalOpen, setIsPolicyModalOpen] = useState(false);
+    
+    console.log('SignUpForm rendered - loading:', loading);
+    console.log('SignUpForm rendered - formData:', formData);
 
     return (
         <>
@@ -172,6 +175,20 @@ const SignUpForm = ({ handleSubmit, handleChange, formData, formErrors, loading,
                     <button
                         type="submit"
                         disabled={loading}
+                        style={{ pointerEvents: loading ? 'none' : 'auto' }}
+                        onClick={(e) => {
+                            console.log('Button clicked!');
+                            console.log('Loading state:', loading);
+                            console.log('Form data:', formData);
+                            
+                            // Fallback: if form doesn't submit, call handleSubmit directly
+                            if (!loading) {
+                                setTimeout(() => {
+                                    console.log('Calling handleSubmit directly...');
+                                    handleSubmit(e);
+                                }, 100);
+                            }
+                        }}
                         className="group relative w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-primary_app hover:bg-primary_app/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary_app disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
                     >
                         {loading ? (

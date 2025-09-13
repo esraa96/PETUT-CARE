@@ -89,11 +89,11 @@ const NotificationBell = () => {
     <div className="relative">
       <button
         onClick={() => setShowDropdown(!showDropdown)}
-        className="relative p-2 text-neutral dark:text-white hover:text-primary_app dark:hover:text-primary_app transition-colors"
+        className="relative p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
       >
-        <FiBell className="h-6 w-6" />
+        <FiBell className="h-5 w-5" />
         {notificationCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-4 w-4 flex items-center justify-center">
             {notificationCount > 99 ? "99+" : notificationCount}
           </span>
         )}

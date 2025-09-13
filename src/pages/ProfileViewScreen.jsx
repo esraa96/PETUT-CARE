@@ -22,18 +22,14 @@ const ProfileViewScreen = () => {
         return;
       }
       
-      console.log('Fetching profile for userId:', userId);
-      
       try {
         const userDoc = await getDoc(doc(db, 'users', userId));
-        console.log('User doc exists:', userDoc.exists());
         
         if (userDoc.exists()) {
           const userData = userDoc.data();
-          console.log('User data:', userData);
           setProfileData(userData);
           
-          // Set privacy settings
+          // Set privacy settings with defaults
           setPrivacySettings(userData.privacy || {
             showPhone: true,
             showEmail: true,
@@ -42,24 +38,25 @@ const ProfileViewScreen = () => {
             allowMessages: true,
           });
           
-          // Load user pets
-          const petsSnapshot = await getDocs(collection(db, 'users', userId, 'pets'));
-          const pets = petsSnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-          }));
-          setUserPets(pets);
-          console.log('User pets:', pets);
+          // Load user pets with error handling
+          try {
+            const petsSnapshot = await getDocs(collection(db, 'users', userId, 'pets'));
+            const pets = petsSnapshot.docs.map(doc => ({
+              id: doc.id,
+              ...doc.data()
+            }));
+            setUserPets(pets);
+          } catch (petsError) {
+            console.log('Could not load pets:', petsError);
+            setUserPets([]);
+          }
           
         } else {
-          console.log('User not found');
-          alert('User not found');
-          navigate('/community');
+          setProfileData(null);
         }
       } catch (error) {
         console.error('Error fetching profile:', error);
-        alert('Error loading profile');
-        navigate('/community');
+        setProfileData(null);
       } finally {
         setLoading(false);
       }
@@ -78,7 +75,7 @@ const ProfileViewScreen = () => {
           selectedChat: {
             id: chatId,
             otherUserId: userId,
-            otherUserName: profileData?.fullName || 'Unknown User',
+            otherUserName: profileData?.fullName || profileData?.name || profileData?.displayName || 'Unknown User',
             otherUserImage: profileData?.profileImage
           }
         }
@@ -100,9 +97,27 @@ const ProfileViewScreen = () => {
 
   if (!profileData) {
     return (
-      <div className="text-center py-8 bg-secondary-light dark:bg-secondary-dark text-gray-900 dark:text-white min-h-screen">
-        <p>Profile not found</p>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">User ID: {userId}</p>
+      <div className="min-h-screen bg-secondary-light dark:bg-secondary-dark">
+        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+          <button onClick={() => navigate(-1)} className="text-primary_app hover:text-opacity-70">
+            ← Back
+          </button>
+        </div>
+        <div className="text-center py-8 text-gray-900 dark:text-white">
+          <div className="max-w-md mx-auto">
+            <svg className="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+            <h2 className="text-xl font-semibold mb-2">Profile Not Found</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-4">This user profile could not be loaded or does not exist.</p>
+            <button 
+              onClick={() => navigate('/community')}
+              className="bg-primary_app text-white px-6 py-2 rounded-lg hover:bg-opacity-90"
+            >
+              Back to Community
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -127,7 +142,7 @@ const ProfileViewScreen = () => {
         />
         
         <h2 className="text-2xl font-bold mt-4 mb-2 text-gray-900 dark:text-white">
-          {profileData.fullName || 'Unknown User'}
+          {profileData.fullName || profileData.name || profileData.displayName || 'Unknown User'}
         </h2>
         
         <div className="space-y-3 mb-6">

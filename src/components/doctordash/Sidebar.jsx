@@ -3,12 +3,25 @@ import { MdManageAccounts, MdDashboard } from "react-icons/md";
 import { GrSchedules } from "react-icons/gr";
 import { FaClinicMedical } from "react-icons/fa";
 import { IoPersonSharp } from "react-icons/io5";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { TbLogout2 } from "react-icons/tb";
+import { auth } from '../../firebase';
+import { signOut } from 'firebase/auth';
+import { toast } from 'react-toastify';
 import petutLogo from "../../assets/petut.png";
 
 export default function Sidebar({ open, toggleSidebar }) {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/login");
+    } catch (error) {
+      toast.error("Failed to log out", { autoClose: 3000 });
+    }
+  };
 
   const menuItems = [
     {
@@ -41,82 +54,126 @@ export default function Sidebar({ open, toggleSidebar }) {
 
   return (
     <Fragment>
-      <div
-        className={`sidebar fixed top-[clamp(80px,12vh,100px)] left-0 overflow-y-auto bg-white border-r border-yellow-200/40 shadow-[2px_0_10px_rgba(0,0,0,0.08)] z-50 flex flex-col h-[calc(100vh-clamp(80px,12vh,100px))] ${
-          open ? "w-[260px]" : "w-[72px]"
-        }`}
-      >
-        {/* Logo Section */}
-        <div
-          className="text-center py-4 border-b"
-          style={{ borderColor: "rgba(217, 167, 65, 0.2)" }}
-        >
-          <img src={petutLogo} alt="Petut Logo" className="w-12 h-12 mx-auto" />
-          <h6
-            className="mt-2 mb-0 font-semibold text-[1rem]"
-            style={{ color: "#D9A741" }}
-          >
-            Petut Dashboard
-          </h6>
+      <div className={`fixed top-0 left-0 h-screen bg-slate-800 shadow-xl transition-all duration-300 z-50 ${
+        open ? 'w-64 translate-x-0' : 'w-64 -translate-x-full'
+      } lg:translate-x-0 lg:static lg:w-64 lg:flex-shrink-0`}>
+        {/* Sidebar Header */}
+        <div className="flex items-center px-6 h-16 border-b border-slate-700">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 rounded-lg flex items-center justify-center">
+              <img src={petutLogo} alt="Petut Logo" className="w-12 h-12" />
+            </div>
+            <span className="text-lg font-bold text-white">Petut Doctor</span>
+          </div>
         </div>
 
-        {/* Navigation Menu */}
-        <nav className="flex-1 py-4">
-          <ul className="list-none px-3">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = item.exact
-                ? location.pathname === item.path
-                : location.pathname.startsWith(item.path);
-
-              return (
-                <li
-                  key={item.path}
-                  className={`sidebar-nav-item mb-2 ${
-                    isActive ? "active" : ""
-                  }`}
-                >
+        {/* Navigation Sections */}
+        <div className="flex-1 py-4 overflow-y-auto">
+          <div className="px-4 mb-4">
+            <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">NAVIGATION</h3>
+            <nav className="space-y-1">
+              {menuItems.slice(0, 1).map((item) => {
+                const Icon = item.icon;
+                const isActive = item.exact
+                  ? location.pathname === item.path
+                  : location.pathname.startsWith(item.path);
+                return (
                   <NavLink
+                    key={item.path}
                     to={item.path}
-                    className={`flex items-center py-3 px-3 rounded transition-all duration-200 ${
-                      isActive ? "bg-yellow-400 text-white" : "text-gray-700"
+                    onClick={() => window.innerWidth < 1024 && toggleSidebar()}
+                    className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                      isActive
+                        ? 'bg-yellow-500 text-white'
+                        : 'text-slate-300 hover:bg-slate-700 hover:text-white'
                     }`}
-                    onClick={toggleSidebar}
                   >
-                    <Icon size={20} className="me-3" />
-                    <span className="text-[0.95rem] font-medium">
-                      {item.label}
-                    </span>
+                    <Icon className="w-4 h-4 mr-3" />
+                    <span>{item.label}</span>
                   </NavLink>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
+                );
+              })}
+            </nav>
+          </div>
+          
+          <div className="px-4 mb-4">
+            <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">MANAGEMENT</h3>
+            <nav className="space-y-1">
+              {menuItems.slice(1, 4).map((item) => {
+                const Icon = item.icon;
+                const isActive = item.exact
+                  ? location.pathname === item.path
+                  : location.pathname.startsWith(item.path);
+                return (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => window.innerWidth < 1024 && toggleSidebar()}
+                    className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                      isActive
+                        ? 'bg-yellow-500 text-white'
+                        : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 mr-3" />
+                    <span>{item.label}</span>
+                  </NavLink>
+                );
+              })}
+            </nav>
+          </div>
+          
+          <div className="px-4">
+            <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">ACCOUNT</h3>
+            <nav className="space-y-1">
+              {menuItems.slice(4).map((item) => {
+                const Icon = item.icon;
+                const isActive = item.exact
+                  ? location.pathname === item.path
+                  : location.pathname.startsWith(item.path);
+                return (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => window.innerWidth < 1024 && toggleSidebar()}
+                    className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                      isActive
+                        ? 'bg-yellow-500 text-white'
+                        : 'text-slate-300 hover:bg-slate-700 hover:text-white'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 mr-3" />
+                    <span>{item.label}</span>
+                  </NavLink>
+                );
+              })}
+            </nav>
+          </div>
+        </div>
 
         {/* Logout Section */}
-        <div
-          className="border-t px-3 py-3"
-          style={{ borderColor: "rgba(217, 167, 65, 0.2)" }}
-        >
-          <div className="sidebar-nav-item">
-            <NavLink
-              to="/login"
-              className="text-decoration-none d-flex align-items-center py-3 px-3 rounded"
-              style={{
-                color: "#dc3545",
-                transition: "all 0.3s ease",
-              }}
-              onClick={toggleSidebar}
-            >
-              <TbLogout2 size={20} className="me-3" />
-              <span style={{ fontSize: "0.95rem", fontWeight: "500" }}>
-                Log out
-              </span>
-            </NavLink>
+        <div className="px-4 pb-4">
+          <div className="border-t border-slate-700 pt-4">
+            <nav className="space-y-1">
+              <button
+                onClick={handleLogout}
+                className="flex items-center w-full px-3 py-2 text-sm font-medium text-slate-300 rounded-lg hover:bg-red-600 hover:text-white transition-all duration-200"
+              >
+                <TbLogout2 className="w-4 h-4 mr-3" />
+                <span>Logout</span>
+              </button>
+            </nav>
           </div>
         </div>
       </div>
+
+      {/* Mobile Overlay */}
+      {open && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={toggleSidebar}
+        />
+      )}
     </Fragment>
   );
 }

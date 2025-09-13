@@ -6,30 +6,29 @@ import ViewProductModal from './ViewProductModal';
 import EditProductModal from './EditProductModal';
 import ConfirmModal from '../ConfirmModal';
 import { BeatLoader } from 'react-spinners';
-
-
 import { BiSearchAlt2 } from "react-icons/bi";
+
 export default function ProductsTable({ products, setProducts, handleDeleteProduct, loading }) {
     const [showConfirm, setShowConfirm] = useState(false);
-
     const [searchTerm, setSearchTerm] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [selectedProductId, setSelectedProductId] = useState(null);
+    const [viewModalOpen, setViewModalOpen] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
 
-
-    // filter doctors by name, email, or specialization
     const filterProducts = products?.filter(product => {
         const nameMatch = product?.productName?.toLowerCase().includes(searchTerm.toLowerCase());
         const priceMatch = String(product?.price).includes(searchTerm);
         const categoryMatch = categoryFilter === 'all' || product.category === categoryFilter;
         return (nameMatch || priceMatch) && categoryMatch;
     })
+
     return (
         <Fragment>
-            <div className="d-flex justify-content-between align-items-center my-3">
-                <div className="search-box position-relative" style={{ width: '40%' }}>
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 my-3">
+                <div className="relative w-full sm:w-2/5">
                     <input
-                        className="form-control pe-5"
+                        className="w-full pl-4 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300"
                         type="text"
                         placeholder="Search by name, Price"
                         value={searchTerm}
@@ -37,11 +36,10 @@ export default function ProductsTable({ products, setProducts, handleDeleteProdu
                     />
                     <BiSearchAlt2
                         size={20}
-                        className="position-absolute"
-                        style={{ top: '50%', right: '15px', transform: 'translateY(-50%)', color: '#888' }}
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"
                     />
                 </div>
-                <select className="form-select w-25" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} >
+                <select className="w-full sm:w-1/4 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} >
                     <option value="all" >All</option>
                     <option value="cat" >Cat</option>
                     <option value="dog" >Dog</option>
@@ -49,69 +47,89 @@ export default function ProductsTable({ products, setProducts, handleDeleteProdu
                     <option value="toys" >Toys</option>
                 </select>
             </div>
-            {loading ? <h3 className='text-center mt-5'><BeatLoader color='#D9A741' /></h3> : products?.length === 0 ? <h3 className='text-center mt-5'>No products found</h3> : filterProducts?.length === 0 ? <h3 className='text-center mt-5'>No Match products found</h3> : (
-                <>
-                    <div className="products-table mt-4 mb-5 table-responsive  bg-white shadow rounded w-100 " style={{ maxHeight: '620px', overflowY: 'auto' }}>
-                        <table className="table">
-                            <thead className="table-light py-3 position-sticky top-0">
-                                <tr className="">
-                                    <th className="px-4 py-3">Name</th>
-                                    <th className="px-4 py-3">Image</th>
-                                    <th className="px-4 py-3">Description</th>
-                                    <th className="px-4 py-3">Price</th>
-                                    <th className="px-4 py-3">Rate</th>
-                                    <th className="px-4 py-3">Category</th>
-                                    <th className="px-4 py-3">Action</th>
-
+            {loading ? (
+                <div className='text-center mt-8'><BeatLoader color='#D9A741' /></div>
+            ) : products?.length === 0 ? (
+                <div className='text-center mt-8 text-gray-600 dark:text-gray-400'>No products found</div>
+            ) : filterProducts?.length === 0 ? (
+                <div className='text-center mt-8 text-gray-600 dark:text-gray-400'>No Match products found</div>
+            ) : (
+                <div className="bg-white dark:bg-gray-800 shadow rounded-lg">
+                    <div className="overflow-x-auto">
+                        <table className="w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead className="bg-gray-50 dark:bg-gray-700 sticky top-0">
+                                <tr>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Name</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase hidden sm:table-cell">Image</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase hidden lg:table-cell">Description</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Price</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase hidden md:table-cell">Rate</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase hidden sm:table-cell">Category</th>
+                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase">Action</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                 {filterProducts.map(product => (
-                                    // if (!product || !product.productName || !product.description || !product.imageURL) return null;
+                                    <tr key={product.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <td className="px-4 py-4 text-sm text-gray-900 dark:text-gray-100">{product.productName}</td>
+                                        <td className="px-4 py-4 hidden sm:table-cell">
+                                            <img src={product.imageURL} alt="product-image" className="w-16 h-16 object-cover rounded-lg" />
+                                        </td>
+                                        <td className="px-4 py-4 text-sm text-gray-900 dark:text-gray-100 hidden lg:table-cell">
+                                            {product.description?.split(' ').length > 3
+                                                ? product.description.split(' ').slice(0, 3).join(' ') + '...'
+                                                : product.description}
+                                        </td>
+                                        <td className="px-4 py-4 text-sm text-gray-900 dark:text-gray-100">${product.price}</td>
+                                        <td className="px-4 py-4 text-sm text-gray-900 dark:text-gray-100 hidden md:table-cell">{product.rate}</td>
+                                        <td className="px-4 py-4 hidden sm:table-cell">
+                                            <span className={`px-2 py-1 rounded-full text-xs font-medium text-white ${
+                                                product.category === 'cat' ? 'bg-purple-500' :
+                                                product.category === 'dog' ? 'bg-blue-500' :
+                                                product.category === 'bird' ? 'bg-green-500' :
+                                                product.category === 'toys' ? 'bg-orange-500' : 'bg-purple-500'
+                                            }`}>
+                                                {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
+                                            </span>
+                                        </td>
+                                        <td className="px-4 py-4 text-sm font-medium">
+                                            <div className="flex items-center space-x-2">
+                                                <button type="button" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100" onClick={() => {
+                                                    setSelectedProduct(product);
+                                                    setViewModalOpen(true);
+                                                }}>
+                                                    <FaEye className="w-4 h-4" />
+                                                </button>
+                                                <button type="button" className="text-petut-brown-300 hover:text-petut-brown-400">
+                                                    <TbEdit className="w-4 h-4" />
+                                                </button>
 
-                                    <tr key={product.id} >
-                                        <td className="px-4 py-3 align-middle">{product.productName}</td>
-                                        <td className="px-4 py-3"><img src={product.imageURL} alt="product-image" style={{ width: '80px', height: '80px', objectFit: 'cover' }} /></td>
-                                        <td className="px-4 py-3 align-middle">{product.description?.split(' ').length > 5
-                                            ? product.description.split(' ').slice(0, 5).join(' ') + '...'
-                                            : product.description}</td>
-                                        <td className="px-4 py-3 align-middle">{product.price}</td>
-                                        <td className="px-4 py-3 align-middle">{product.rate}</td>
-                                        <td className="px-4 py-3 align-middle"><span style={{ color: 'white', backgroundColor: product.category === 'cat' ? '#A66DD4   ' : product.category === 'dog' ? '#4DA6FF  ' : product.category === 'bird' ? '#4CAF50 ' : product.category === 'toys' ? '#FFA726' : '#A66DD4', fontSize: '14px' }} className='px-3 py-1 rounded rounded-5 '>{product.category.charAt(0).toUpperCase() + product.category.slice(1)}</span></td>
-                                        <td className="px-4 py-3 align-middle ">
-                                            <button type="button" className="btn border-0 p-0 me-1" data-bs-toggle="modal" data-bs-target={`#viewproduct-${product.id}`}>
-                                                <FaEye />
-                                            </button>
-                                            <ViewProductModal product={product} modalId={product.id} />
-                                            <button type="button" className="btn border-0 p-0" data-bs-toggle="modal" data-bs-target={`#editproduct-${product.id}`}>
-                                                <TbEdit />
-                                            </button>
-                                            <EditProductModal product={product} products={products} modalId={product.id} setProducts={setProducts} onProductUpdate={(updatedProduct) => {
-                                                const updatedList = products.map((p) =>
-                                                    p.id === updatedProduct.id ? updatedProduct : p
-                                                );
-                                                setProducts(updatedList);
-                                            }} />
-                                            <button type="button" className="btn border-0 p-0 " onClick={() => {
-                                                setShowConfirm(true);
-                                                setSelectedProductId(product.id);
-                                            }} >
-                                                <MdDelete size={20} className='text-danger' />
-                                            </button>
-
+                                                <button type="button" className="text-red-600 hover:text-red-800" onClick={() => {
+                                                    setShowConfirm(true);
+                                                    setSelectedProductId(product.id);
+                                                }}>
+                                                    <MdDelete className="w-4 h-4" />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 ))}
-
                             </tbody>
                         </table>
-                        {showConfirm && (<ConfirmModal onDelete={() => handleDeleteProduct(selectedProductId)} setShowConfirm={setShowConfirm} selectedId={selectedProductId} whatDelete="Product" />)}
-
                     </div>
-                </>
+                    {showConfirm && (<ConfirmModal onDelete={() => handleDeleteProduct(selectedProductId)} setShowConfirm={setShowConfirm} selectedId={selectedProductId} whatDelete="Product" />)}
+                    {viewModalOpen && selectedProduct && (
+                        <ViewProductModal 
+                            product={selectedProduct} 
+                            isOpen={viewModalOpen} 
+                            onClose={() => {
+                                setViewModalOpen(false);
+                                setSelectedProduct(null);
+                            }} 
+                        />
+                    )}
+                </div>
             )}
-
-
         </Fragment>
     )
 }

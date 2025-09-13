@@ -109,44 +109,56 @@ const DeliveryPage = () => {
   const deliveryFee = selectedMethod ? selectedMethod.price : 0;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 pb-24 mt-16">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <DeliveryHeader />
+      
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Form Section */}
+          <div className="lg:col-span-2">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <ContactInfoForm
+                deliveryInfo={deliveryInfo}
+                handleChange={handleChange}
+                errors={errors}
+              />
 
-      <div className="py-6">
-        <form onSubmit={handleSubmit}>
-          <ContactInfoForm
-            deliveryInfo={deliveryInfo}
-            handleChange={handleChange}
-            errors={errors}
-          />
+              <AddressForm
+                deliveryInfo={deliveryInfo}
+                handleChange={handleChange}
+                errors={errors}
+              />
 
-          <AddressForm
-            deliveryInfo={deliveryInfo}
-            handleChange={handleChange}
-            errors={errors}
-          />
+              <DeliveryMethodSelector
+                deliveryMethods={deliveryMethods}
+                selectedMethod={deliveryInfo.deliveryMethod}
+                handleChange={handleChange}
+              />
 
-          <DeliveryMethodSelector
-            deliveryMethods={deliveryMethods}
-            selectedMethod={deliveryInfo.deliveryMethod}
-            handleChange={handleChange}
-          />
-
-          <DeliveryTimeSelector
-            deliveryTimes={deliveryTimes}
-            selectedTime={deliveryInfo.deliveryTime}
-            handleChange={handleChange}
-          />
-
-          <OrderSummary totalAmount={totalAmount} deliveryFee={deliveryFee} />
-
-          <button
-            type="submit"
-            className="w-full py-3 bg-primary_app text-white font-semibold rounded-lg hover:bg-primary_app/90 transition-colors"
-          >
-            Continue to Payment
-          </button>
-        </form>
+              <DeliveryTimeSelector
+                deliveryTimes={deliveryTimes}
+                selectedTime={deliveryInfo.deliveryTime}
+                handleChange={handleChange}
+              />
+            </form>
+          </div>
+          
+          {/* Order Summary Sidebar */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-32">
+              <OrderSummary totalAmount={totalAmount} deliveryFee={deliveryFee} />
+              
+              <button
+                type="submit"
+                onClick={handleSubmit}
+                className="w-full mt-6 py-4 bg-gradient-to-r from-primary_app to-primary_app/80 hover:from-primary_app/90 hover:to-primary_app/70 text-white font-bold rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+              >
+                <i className="fas fa-credit-card"></i>
+                Continue to Payment
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

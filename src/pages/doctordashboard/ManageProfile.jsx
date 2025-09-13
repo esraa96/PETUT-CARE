@@ -99,76 +99,144 @@ export default function Manageprofile() {
 
 
   return (
-    <Fragment>
-      <nav aria-label="breadcrumb" className='container-fluid d-flex align-items-center justify-content-between w-100' style={{ boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)', marginTop: '20px', padding: '10px 40px', borderRadius: '8px' }} >
-        <span className='fw-bold'>Profile</span>
-        <ol className="breadcrumb mb-0 py-3 text-align-center" >
-          <li className="breadcrumb-item"><Link to="/" className='text-decoration-none' style={{ color: '#D9A741' }}>Home</Link></li>
-          <li className="breadcrumb-item active" aria-current="page">Dashboard</li>
-          <li className="breadcrumb-item active" aria-current="page">Profile</li>
-        </ol>
-      </nav>
-      <div className='container-fluid my-4'>
-        <div className='row  '>
-          <div className='col-4'>
-            <div className="col-12 position-relative d-flex align-items-center justify-content-center">
-              <img className='rounded-3' src={selectImage || profileData.profileImage || 'https://via.placeholder.com/300x300?text=No+Image'} alt="profile image" style={{ width: '90%', height: '300px', objectFit: 'cover' }} />
-              <IoIosCamera size={30}
-                onClick={() => document.getElementById("inputfile").click()}
-                style={{
-                  position: 'absolute',
-                  top: '5%',
-                  left: '10%',
-                  color: '#D9A741',
-                  backgroundColor: '#fff',
-                  borderRadius: '50%',
-                  padding: '5px',
-                  cursor: 'pointer'
-                }} />
-            </div>
-            <div className="input-group my-3 w-75">
-            <input type="file" className="form-control d-none" id="inputfile" onChange={handleImageChange} accept="image/*" />
-            </div>
-          </div>
-          <div className='col-7 '>
-            <form action="#" className=''>
-              <div className="mb-3 ">
-                <label htmlFor="profile-name" className="form-label">Name</label>
-                <input type="text" className="form-control" id="profile-name" aria-describedby="emailHelp" disabled={notEditable} value={profileData.fullName} onChange={(e) => setProfileData({ ...profileData, fullName: e.target.value })} />
-              </div>
-              <div className="mb-3 ">
-                <label htmlFor="profile-email" className="form-label">Email</label>
-                <input type="email" className="form-control" id="profile-email" disabled={notEditable} value={profileData.email} onChange={(e) => setProfileData({ ...profileData, email: e.target.value })} />
-              </div>
-              <div className="mb-3 ">
-                <label htmlFor="phone" className="form-label">Phone</label>
-                <input type="tel" className="form-control" id="phone" disabled={notEditable} value={profileData.phone} onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })} />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="current-password" className="form-label">Current Password</label>
-                <input type="password" className="form-control" id="current-password" disabled={notEditable} value={currentPassword} onChange={(e) => setCurrentPassword(e.target.value)} />
-              </div>
-              <div className="mb-3 ">
-                <label htmlFor="new-password" className="form-label">New Password</label>
-                <input type="password" className="form-control" id="new-password" disabled={notEditable} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-              </div>
-              <div className="mb-3 ">
-                <label htmlFor="confirm-password" className="form-label">Confirm New Password</label>
-                <input type="password" className="form-control" id="confirm-password" disabled={notEditable} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-              </div>
-              {!notEditable ? (
-                <div className="d-flex gap-5 align-items-center justify-content-between">
-                  <button type="button" className="btn text-white bg-danger w-50" onClick={() => setNotEditable(!notEditable)}>Cancel</button>
-                  <button type="button" className="custom-button w-50" onClick={handleUpdate} disabled={loading}>{loading ? <BeatLoader color='#fff' /> : "Update"}</button>
-                </div>
-              ) : (
-                <button type="button" className="custom-button w-100" onClick={() => setNotEditable(!notEditable)}>Update Profile</button>
-              )
-              }
-            </form>
+    <div className="p-4 sm:p-6 lg:p-8">
+      {/* Page Header */}
+      <nav aria-label="breadcrumb" className='mb-6'>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className='font-bold text-xl text-gray-800 mb-1'>Profile</h1>
+            <ol className="flex items-center space-x-2 text-sm">
+              <li><Link to="/doctor-dashboard" className='text-[#D9A741] hover:underline'>Dashboard</Link></li>
+              <li className="text-gray-500">/</li>
+              <li className="text-gray-700 font-medium">Profile</li>
+            </ol>
           </div>
         </div>
+      </nav>
+      
+      <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+        {/* Profile Image Section */}
+        <div className='bg-white rounded-xl shadow-sm border p-6'>
+          <div className="relative flex items-center justify-center">
+            <img 
+              className='w-full h-80 object-cover rounded-xl' 
+              src={selectImage || profileData.profileImage || 'https://via.placeholder.com/300x300?text=No+Image'} 
+              alt="profile image" 
+            />
+            <button
+              onClick={() => document.getElementById("inputfile").click()}
+              className="absolute top-4 left-4 bg-white rounded-full p-2 shadow-lg hover:bg-gray-50 transition-colors"
+            >
+              <IoIosCamera size={24} className="text-[#D9A741]" />
+            </button>
+          </div>
+          <input type="file" className="hidden" id="inputfile" onChange={handleImageChange} accept="image/*" />
+        </div>
+        
+        {/* Profile Form Section */}
+        <div className='lg:col-span-2 bg-white rounded-xl shadow-sm border p-6'>
+          <h3 className="text-lg font-semibold text-gray-800 mb-6">Profile Information</h3>
+          <form className='space-y-4'>
+            <div>
+              <label htmlFor="profile-name" className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+              <input 
+                type="text" 
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D9A741] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed" 
+                id="profile-name" 
+                disabled={notEditable} 
+                value={profileData.fullName} 
+                onChange={(e) => setProfileData({ ...profileData, fullName: e.target.value })} 
+              />
+            </div>
+            <div>
+              <label htmlFor="profile-email" className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <input 
+                type="email" 
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D9A741] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed" 
+                id="profile-email" 
+                disabled={notEditable} 
+                value={profileData.email} 
+                onChange={(e) => setProfileData({ ...profileData, email: e.target.value })} 
+              />
+            </div>
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+              <input 
+                type="tel" 
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D9A741] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed" 
+                id="phone" 
+                disabled={notEditable} 
+                value={profileData.phone} 
+                onChange={(e) => setProfileData({ ...profileData, phone: e.target.value })} 
+              />
+            </div>
+            <div>
+              <label htmlFor="current-password" className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+              <input 
+                type="password" 
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D9A741] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed" 
+                id="current-password" 
+                disabled={notEditable} 
+                value={currentPassword} 
+                onChange={(e) => setCurrentPassword(e.target.value)} 
+              />
+            </div>
+            <div>
+              <label htmlFor="new-password" className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+              <input 
+                type="password" 
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D9A741] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed" 
+                id="new-password" 
+                disabled={notEditable} 
+                value={newPassword} 
+                onChange={(e) => setNewPassword(e.target.value)} 
+              />
+            </div>
+            <div>
+              <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+              <input 
+                type="password" 
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D9A741] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed" 
+                id="confirm-password" 
+                disabled={notEditable} 
+                value={confirmPassword} 
+                onChange={(e) => setConfirmPassword(e.target.value)} 
+              />
+            </div>
+            
+            {/* Action Buttons */}
+            <div className="pt-4">
+              {!notEditable ? (
+                <div className="flex gap-4">
+                  <button 
+                    type="button" 
+                    className="flex-1 bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg transition-colors" 
+                    onClick={() => setNotEditable(!notEditable)}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="button" 
+                    className="flex-1 btn-primary-petut disabled:opacity-50" 
+                    onClick={handleUpdate} 
+                    disabled={loading}
+                  >
+                    {loading ? <BeatLoader color='#fff' size={8} /> : "Update"}
+                  </button>
+                </div>
+              ) : (
+                <button 
+                  type="button" 
+                  className="w-full btn-primary-petut" 
+                  onClick={() => setNotEditable(!notEditable)}
+                >
+                  Update Profile
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
       </div>
-    </Fragment>
+    </div>
   )
 }

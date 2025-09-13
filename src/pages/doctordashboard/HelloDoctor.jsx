@@ -117,34 +117,34 @@ export default function HelloDoctor() {
 
   if (loading) {
     return (
-      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '400px' }}>
+      <div className="flex justify-center items-center min-h-96">
         <BeatLoader color="#D9A741" />
       </div>
     )
   }
 
   return (
-    <Fragment>
+    <div className="p-4 sm:p-6 lg:p-8">
       {/* Welcome Section */}
-      <div className="welcome-section mb-3 mb-md-4">
-        <div className="row align-items-center">
-          <div className="col-md-8 order-2 order-md-1">
-            <h2 className="mb-2" style={{ fontSize: 'clamp(1.3rem, 4vw, 2rem)' }}>{getGreeting()}, Dr. {doctorName}!</h2>
-            <p className="mb-3 opacity-90" style={{ fontSize: 'clamp(0.9rem, 2.5vw, 1rem)' }}>Welcome back to your dashboard. Here's what's happening today.</p>
-            <div className="d-flex flex-column flex-sm-row align-items-start align-items-sm-center gap-2 gap-sm-3">
-              <div className="d-flex align-items-center gap-2">
-                <FaClock size={14} />
-                <span style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>{getCurrentTime()}</span>
+      <div className="bg-gradient-to-r from-[#D9A741] to-[#E6B84A] rounded-xl p-6 mb-6 text-white">
+        <div className="flex flex-col md:flex-row items-center">
+          <div className="flex-1 order-2 md:order-1">
+            <h2 className="text-2xl md:text-3xl font-bold mb-2">{getGreeting()}, Dr. {doctorName}!</h2>
+            <p className="text-yellow-100 mb-4">Welcome back to your dashboard. Here's what's happening today.</p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex items-center gap-2">
+                <FaClock size={16} />
+                <span className="text-sm">{getCurrentTime()}</span>
               </div>
-              <div className="d-flex align-items-center gap-2">
-                <FaCalendarCheck size={14} />
-                <span className="d-none d-sm-inline" style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                <span className="d-inline d-sm-none" style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+              <div className="flex items-center gap-2">
+                <FaCalendarCheck size={16} />
+                <span className="text-sm hidden sm:inline">{new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                <span className="text-sm sm:hidden">{new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
               </div>
             </div>
           </div>
-          <div className="col-md-4 text-center order-1 order-md-2 mb-3 mb-md-0">
-            <img src={image} alt="Doctor" className="img-fluid rounded-circle" style={{ maxWidth: 'clamp(100px, 20vw, 150px)', border: '4px solid rgba(255,255,255,0.3)' }} />
+          <div className="order-1 md:order-2 mb-4 md:mb-0">
+            <img src={image} alt="Doctor" className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-white/30" />
           </div>
         </div>
       </div>
@@ -153,43 +153,39 @@ export default function HelloDoctor() {
       <DashboardStats />
 
       {/* Quick Actions */}
-      <div className="row g-3 g-md-4">
-        <div className="col-lg-6 col-12">
-          <div className="dashboard-card p-3 p-md-4">
-            <h5 className="mb-3" style={{ fontSize: 'clamp(1rem, 3vw, 1.25rem)' }}>Quick Actions</h5>
-            <div className="d-grid gap-2">
-              <button 
-                className="custom-button d-flex align-items-center justify-content-center gap-2" 
-                onClick={() => navigate('/doctor-dashboard/manage-appointments')}
-                disabled={loading}
-              >
-                <FaCalendarCheck size={14} />
-                <span style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>View Today's Appointments</span>
-              </button>
-              <button 
-                className="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2" 
-                onClick={() => navigate('/doctor-dashboard/manage-clients')}
-                disabled={loading}
-              >
-                <MdPeople size={14} />
-                <span style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>Manage Patients</span>
-              </button>
-            </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+        <div className="bg-white rounded-xl shadow-sm border p-6">
+          <h5 className="text-lg font-semibold mb-4 text-gray-800">Quick Actions</h5>
+          <div className="space-y-3">
+            <button 
+              className="w-full btn-primary-petut flex items-center justify-center gap-2" 
+              onClick={() => navigate('/doctor-dashboard/manage-appointments')}
+              disabled={loading}
+            >
+              <FaCalendarCheck size={16} />
+              <span>View Today's Appointments</span>
+            </button>
+            <button 
+              className="w-full border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors" 
+              onClick={() => navigate('/doctor-dashboard/manage-clients')}
+              disabled={loading}
+            >
+              <MdPeople size={16} />
+              <span>Manage Patients</span>
+            </button>
           </div>
         </div>
         
-        <div className="col-lg-6 col-12">
-          <div className="dashboard-card p-3 p-md-4">
-            <h5 className="mb-3" style={{ fontSize: 'clamp(1rem, 3vw, 1.25rem)' }}>Recent Activity</h5>
-            <div className="text-muted">
-              <p className="mb-2" style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>• {stats.todayAppointments} appointments scheduled for today</p>
-              <p className="mb-2" style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>• {stats.totalPatients} patients in your care</p>
-              <p className="mb-2" style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>• {stats.weekAppointments} appointments this week</p>
-              <p className="mb-0" style={{ fontSize: 'clamp(0.8rem, 2vw, 0.9rem)' }}>• {((stats.completedAppointments / stats.totalAppointments) * 100 || 0).toFixed(1)}% completion rate</p>
-            </div>
+        <div className="bg-white rounded-xl shadow-sm border p-6">
+          <h5 className="text-lg font-semibold mb-4 text-gray-800">Recent Activity</h5>
+          <div className="text-gray-600 space-y-2">
+            <p className="text-sm">• {stats.todayAppointments} appointments scheduled for today</p>
+            <p className="text-sm">• {stats.totalPatients} patients in your care</p>
+            <p className="text-sm">• {stats.weekAppointments} appointments this week</p>
+            <p className="text-sm">• {((stats.completedAppointments / stats.totalAppointments) * 100 || 0).toFixed(1)}% completion rate</p>
           </div>
         </div>
       </div>
-    </Fragment>
+    </div>
   )
 }

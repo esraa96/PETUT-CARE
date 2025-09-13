@@ -1,4 +1,4 @@
-/* Modern Dashboard Styles - Converted to Tailwind CSS */
+/* Tailwind CSS Dashboard Styles */
 
 /* Base Styles */
 a {
@@ -9,40 +9,22 @@ ul {
   @apply list-none;
 }
 
-/* Custom Utilities */
-.flex-1 {
-  flex: 1;
-}
-
-.gap-140 {
-  @apply gap-[140px];
-}
-
 /* Main Background */
 .background {
   @apply bg-gradient-to-br from-[#F7F3EB] to-[#FEFCF7];
 }
 
-/* Dashboard Layout */
+/* Dashboard Layout - Tailwind Only */
 .dashboard-container {
-  @apply min-h-screen bg-gradient-to-br from-gray-50 to-gray-200;
+  @apply min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 dark:from-gray-900 dark:to-gray-800;
 }
 
-/* Header Styles */
 .header-dash {
-  @apply bg-gradient-to-br from-white to-gray-50 shadow-xl backdrop-blur-sm;
+  @apply bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900 shadow-xl backdrop-blur-sm;
 }
 
 .sidebar {
-  @apply bg-[#F7F3EB];
-}
-
-.sidebar.collapsed {
-  @apply w-64 -left-80 transition-all duration-300 ease-in-out;
-}
-
-.sidebar.expanded {
-  @apply w-64 left-0 transition-all duration-300 ease-in-out;
+  @apply bg-[#F7F3EB] dark:bg-gray-800;
 }
 
 /* Sidebar Navigation */
@@ -84,36 +66,15 @@ ul {
 }
 
 .dashboard-card {
-  @apply bg-white rounded-lg shadow-md;
+  @apply bg-white dark:bg-gray-800 rounded-lg shadow-md;
 }
 
 .breadcrumb-container {
-  @apply bg-white p-5 mb-5 rounded-lg;
+  @apply bg-white dark:bg-gray-800 p-5 mb-5 rounded-lg;
 }
 
 .custom-button {
   @apply bg-[#D9A741] text-white py-2 px-3 rounded border border-[#D9A741] cursor-pointer transition-all duration-300 hover:bg-transparent hover:text-[#D9A741];
-}
-
-.form-control:focus {
-  @apply border-[#D9A741] ring-4 ring-[#D9A741]/25;
-}
-
-/* Search Box */
-.search-box {
-  @apply relative;
-}
-
-.search-box .form-control {
-  @apply pr-12 bg-white border-2 border-gray-200;
-}
-
-.table tbody tr:hover {
-  @apply bg-[#D9A741]/5;
-}
-
-table tr:last-child td {
-  @apply border-b-0;
 }
 
 .welcome-section {

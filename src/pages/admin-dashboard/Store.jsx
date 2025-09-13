@@ -98,39 +98,51 @@ export default function Store() {
 
     return (
         <Fragment>
-
-            <div className="head d-flex align-items-center justify-content-between">
-                <div className="left">
-                    <h1>Orders</h1>
-                    <p>Managing all Orders will be done in the store page </p>
+            <div className="p-4 lg:p-6 space-y-8 bg-white dark:bg-gray-900 min-h-screen">
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                    <div>
+                        <h1 className="text-3xl font-bold text-black dark:text-white">Orders</h1>
+                        <p className="text-black dark:text-white">Managing all Orders will be done in the store page</p>
+                    </div>
+                    <div>
+                        <img src={logo} width={80} height={80} alt="logo" className="rounded-lg" />
+                    </div>
                 </div>
-                <div className="right">
-                    <img src={logo} width={'100px'} height={'100px'} alt="logo" />
-                </div>
-            </div>
-            {orderLoading ? (<h3 className='text-center mt-5'><BeatLoader color='#D9A741' /></h3>) : orders.length === 0 ? <h3 className='text-center mt-5'>No orders found</h3> : (
-                <>
+                
+                {orderLoading ? (
+                    <div className='text-center mt-8'><BeatLoader color='#D9A741' /></div>
+                ) : orders.length === 0 ? (
+                    <div className='text-center mt-8 text-black dark:text-white'>No orders found</div>
+                ) : (
                     <OrdersTable orders={orders} setOrders={setOrders} handleDeleteOrder={handleDeleteOrder} loading={orderLoading} setLoading={setOrderLoading} />
-                </>
-            )}
+                )}
 
-            <hr />
-            <div className="left">
-                <h1>Products</h1>
-                <p>Managing all Products will be done in the store page </p>
-
+                <div className="border-t border-gray-200 dark:border-gray-600 pt-8">
+                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+                        <div>
+                            <h1 className="text-3xl font-bold text-black dark:text-white">Products</h1>
+                            <p className="text-black dark:text-white">Managing all Products will be done in the store page</p>
+                        </div>
+                        <button 
+                            className='bg-yellow-400 text-black px-4 py-2 rounded-lg hover:bg-yellow-500 transition-colors flex items-center gap-2 font-semibold'
+                            data-bs-toggle="modal" 
+                            data-bs-target="#addproduct"
+                        >
+                            <RiAddLine size={20} /> Add Product
+                        </button>
+                    </div>
+                    
+                    <AddProductModal products={products} setProducts={setProducts} />
+                    
+                    {productLoading ? (
+                        <div className='text-center mt-8'><BeatLoader color='#D9A741' /></div>
+                    ) : products?.length === 0 ? (
+                        <div className='text-center mt-8 text-black dark:text-white'>No Products found</div>
+                    ) : (
+                        <ProductsTable products={products} setProducts={setProducts} handleDeleteProduct={handleDeleteProduct} loading={productLoading} setLoading={setProductLoading} />
+                    )}
+                </div>
             </div>
-            <div className='d-flex align-items-center justify-content-end mt-4' >
-                <button className='custom-button d-flex align-items-center fw-bold' data-bs-toggle="modal" data-bs-target="#addproduct" > <RiAddLine size={20} /> Add Product</button>
-            </div>
-            <AddProductModal products={products} setProducts={setProducts}  />
-            {productLoading ? (<h3 className='text-center mt-5'><BeatLoader color='#D9A741' /></h3>) : products?.length === 0 ? <h3 className='text-center my-5'>No Products found</h3> : (
-
-                <>
-                    <ProductsTable products={products} setProducts={setProducts} handleDeleteProduct={handleDeleteProduct} loading={productLoading} setLoading={setProductLoading} />
-                </>
-            )}
-
         </Fragment>
     )
 }

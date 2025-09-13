@@ -4,6 +4,7 @@ import { auth, db } from '../firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useNavigate } from 'react-router-dom';
 import UserAvatar from '../components/UserAvatar';
+import UserProfileModal from '../components/UserProfileModal';
 
 const CommunityScreen = () => {
   const [user] = useAuthState(auth);
@@ -12,6 +13,8 @@ const CommunityScreen = () => {
   const [sortBy, setSortBy] = useState('latest');
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [showProfileModal, setShowProfileModal] = useState(false);
   const navigate = useNavigate();
   
   const topics = ['All', 'Adoption', 'Breeding', 'Others'];
@@ -35,7 +38,7 @@ const CommunityScreen = () => {
             const userDoc = await getDoc(doc(db, 'users', post.userId));
             if (userDoc.exists()) {
               const userData = userDoc.data();
-              post.authorName = userData.fullName || 'Unknown User';
+              post.authorName = userData.fullName || userData.name || userData.displayName || 'Unknown User';
               post.authorImage = userData.profileImage;
             }
           } catch (e) {
@@ -144,25 +147,63 @@ const CommunityScreen = () => {
                     className="cursor-pointer hover:opacity-80"
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/profile/${post.userId}`);
+                      if (post.userId && post.userId !== user?.uid) {
+                        setSelectedUserId(post.userId);
+                        setShowProfileModal(true);
+                      }
                     }}
                   >
                     <UserAvatar 
                       imageData={post.authorImage} 
-                      userName={post.authorName} 
+                      userName={post.authorName || 'Unknown User'} 
                       size="w-10 h-10" 
                     />
                   </div>
                   <div>
-                    <p 
-                      className="font-semibold cursor-pointer hover:text-primary_app text-gray-900 dark:text-white"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/profile/${post.userId}`);
-                      }}
-                    >
-                      {post.authorName}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p 
+                        className="font-semibold cursor-pointer hover:text-primary_app text-gray-900 dark:text-white"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (post.userId && post.userId !== user?.uid) {
+                            setSelectedUserId(post.userId);
+                            setShowProfileModal(true);
+                          }
+                        }}
+                      >
+                        {post.authorName || 'Unknown User'}
+                      </p>
+                      {user && user.uid !== post.userId && (
+                        <button
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            try {
+                              const SimpleChatService = (await import('../services/SimpleChatService')).default;
+                              const chatId = await SimpleChatService.createOrGetChat(post.userId);
+                              const userData = await SimpleChatService.getUserData(post.userId);
+                              navigate('/chats', { 
+                                state: { 
+                                  selectedChat: {
+                                    id: chatId,
+                                    otherUserId: post.userId,
+                                    otherUserName: userData?.fullName || userData?.name || userData?.displayName || post.authorName || 'Unknown User',
+                                    otherUserImage: userData?.profileImage || post.authorImage
+                                  }
+                                }
+                              });
+                            } catch (error) {
+                              console.error('Error starting chat:', error);
+                            }
+                          }}
+                          className="text-primary_app hover:text-opacity-70 p-1"
+                          title="Send Message"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
                     <p className="text-sm text-gray-500 dark:text-gray-400">{formatTime(post.timestamp)}</p>
                   </div>
                 </div>
@@ -264,6 +305,16 @@ const CommunityScreen = () => {
           </div>
         </div>
       )}
+      
+      {/* Profile Modal */}
+      <UserProfileModal 
+        userId={selectedUserId}
+        isOpen={showProfileModal}
+        onClose={() => {
+          setShowProfileModal(false);
+          setSelectedUserId(null);
+        }}
+      />
     </div>
   );
 };

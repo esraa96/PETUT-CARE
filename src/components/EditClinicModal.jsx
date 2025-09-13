@@ -1,22 +1,21 @@
-import React, { Fragment, useState, useEffect, useRef } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
+import { FaTimes } from 'react-icons/fa';
 import MapModal from './MapModal.jsx';
 import { toast } from 'react-toastify';
-import { doc, updateDoc, collection, query, where, getDocs, getDoc, Timestamp } from 'firebase/firestore';
+import { doc, updateDoc, collection, query, where, getDocs, getDoc } from 'firebase/firestore';
 import { db, auth } from '../firebase.js';
 import logo from '../assets/petut.png';
 import { BeatLoader } from 'react-spinners';
 import { MdDelete } from 'react-icons/md';
 import { IoLocation } from 'react-icons/io5';
 
-export default function EditClinicModal({ clinic, modalId, fetchClinics }) {
-    const { name: defaultName, phone: defaultPhone, email: defaultEmail,address: defaultAddress, status: defaultStatus, price: defaultPrice, doctorName: defaultDoctorName, workingHours: defaultWorkingHours } = clinic;
-
+export default function EditClinicModal({ clinic, onClose, onUpdate, showModal = false }) {
+    const { name: defaultName, phone: defaultPhone, email: defaultEmail, address: defaultAddress, status: defaultStatus, price: defaultPrice, doctorName: defaultDoctorName, workingHours: defaultWorkingHours } = clinic;
     const [name, setName] = useState(defaultName);
     const [email, setEmail] = useState(defaultEmail);
     const [phone, setPhone] = useState(defaultPhone);
     const [price, setPrice] = useState(defaultPrice || '');
     const [address, setAddress] = useState(defaultAddress);
-
     const [doctorName, setDoctorName] = useState(defaultDoctorName);
     const [status, setStatus] = useState(defaultStatus);
     const [notEditable, setnotEditable] = useState(true);
@@ -25,7 +24,6 @@ export default function EditClinicModal({ clinic, modalId, fetchClinics }) {
     const [closeTime, setCloseTime] = useState('');
     const [workingHours, setWorkingHours] = useState(defaultWorkingHours || []);
     const [loading, setLoading] = useState(false);
-
     const [userData, setUserData] = useState(null);
     const [doctors, setDoctors] = useState([]);
     const [selectedDoctor, setSelectedDoctor] = useState(defaultDoctorName);
@@ -37,22 +35,15 @@ export default function EditClinicModal({ clinic, modalId, fetchClinics }) {
         latitude: clinic.latitude || null,
         longitude: clinic.longitude || null
     });
-    
-    const modalRef = useRef(null);
-    const [modalInstance, setModalInstance] = useState(null);
 
     const isAdmin = userData?.role === 'admin';
 
-
-    useEffect(() => {
-        if (modalRef.current && window.bootstrap) {
-            const modal = new window.bootstrap.Modal(modalRef.current, {
-                keyboard: false,
-                backdrop: 'static'
-            });
-            setModalInstance(modal);
+    const closeModal = () => {
+        if (onClose) {
+            onClose();
         }
-    }, []);
+        resetFields();
+    };
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -102,7 +93,7 @@ export default function EditClinicModal({ clinic, modalId, fetchClinics }) {
     };
 
     const handleSave = async () => {
-        if (loading) return; // منع التنفيذ المتعدد
+        if (loading) return;
         
         try {
             setLoading(true);
@@ -123,7 +114,6 @@ export default function EditClinicModal({ clinic, modalId, fetchClinics }) {
                 updatedAt: new Date()
             };
 
-            // إضافة بيانات الموقع إذا كانت متوفرة
             if (selectedLocation.latitude) {
                 updateData.address = `${selectedLocation?.governorate || ''} - ${selectedLocation?.city || ''} - ${selectedLocation?.street || ''}`;
                 updateData.city = selectedLocation?.city;
@@ -133,7 +123,6 @@ export default function EditClinicModal({ clinic, modalId, fetchClinics }) {
                 updateData.street = selectedLocation?.street;
             }
 
-            // إضافة بيانات الطبيب للأدمن
             if (isAdmin && selectedDoctor) {
                 updateData.doctorId = selectedDoctor.id;
                 updateData.doctorName = selectedDoctor.fullName;
@@ -142,18 +131,12 @@ export default function EditClinicModal({ clinic, modalId, fetchClinics }) {
             await updateDoc(clinicRef, updateData);
             
             toast.success('Clinic updated successfully', { autoClose: 2000 });
+            closeModal();
             
-            // إغلاق المودال
-            if (modalInstance) {
-                modalInstance.hide();
+            if (onUpdate) {
+                await onUpdate();
             }
             
-            // تحديث البيانات
-            if (fetchClinics) {
-                await fetchClinics();
-            }
-            
-            // إعادة تعيين حالة التحرير
             setnotEditable(true);
 
         } catch (error) {
@@ -180,60 +163,92 @@ export default function EditClinicModal({ clinic, modalId, fetchClinics }) {
     };
 
     const handleOpenMapModal = () => {
-        if (modalInstance) {
-            modalInstance.hide();
-        }
         setShowMapModal(true);
     };
 
     const handleLocationConfirmed = (location) => {
         setSelectedLocation(location);
         setShowMapModal(false);
-        if (modalInstance) {
-            modalInstance.show();
-        }
     };
 
     const handleCloseMapModal = () => {
         setShowMapModal(false);
-        if (modalInstance) {
-            modalInstance.show();
-        }
     };
     
+    if (!showModal) return null;
+
     return (
         <Fragment>
-            <div className="modal fade" id={`editclinic-${modalId}`} ref={modalRef} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropLabel" aria-hidden="true">
-                <div className="modal-dialog modal-lg">
-                    <div className="modal-content">
-                        <div className="modal-header d-flex align-items-center justify-content-between">
-                            <h1 className="modal-title fs-5" id="staticBackdropLabel">Clinic Info</h1>
-                            <img src={logo} width={'90px'} height={'90px'} alt="logo" />
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={closeModal}>
+                <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                        {/* Header */}
+                        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+                            <div className="flex items-center gap-3">
+                                <img src={logo} width={60} height={60} alt="logo" className="rounded-lg" />
+                                <h2 className="text-xl font-bold text-gray-800">Edit Clinic</h2>
+                            </div>
+                            <button onClick={closeModal} className="text-gray-400 hover:text-gray-600 transition-colors">
+                                <FaTimes className="w-5 h-5" />
+                            </button>
                         </div>
-                        <div className="modal-body">
-                            <form action="#">
-                                {/* Clinic Info */}
-                                <div className="clinic-name d-flex align-items-center gap-3 mb-3">
-                                    <label className="form-label" htmlFor='clinic-name'>Clinic Name</label>
-                                    <input type="text" className="form-control w-75" id='clinic-name' placeholder='Enter Clinic Name' value={name} onChange={(e) => setName(e.target.value)} disabled={notEditable} />
+
+                        {/* Body */}
+                        <div className="p-6 space-y-6">
+                            {/* Basic Info */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Clinic Name</label>
+                                    <input 
+                                        type="text" 
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300 disabled:bg-gray-100" 
+                                        placeholder="Enter Clinic Name" 
+                                        value={name} 
+                                        onChange={(e) => setName(e.target.value)} 
+                                        disabled={notEditable} 
+                                    />
                                 </div>
-                                <div className="clinic-phone d-flex align-items-center gap-3 mb-3">
-                                    <label className="form-label" htmlFor='clinic-phone'>Phone</label>
-                                    <input type="tel" className="form-control w-75" id='clinic-phone' placeholder='Enter Clinic Phone' value={phone} onChange={(e) => setPhone(e.target.value)} disabled={notEditable} />
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                    <input 
+                                        type="tel" 
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300 disabled:bg-gray-100" 
+                                        placeholder="Enter Phone Number" 
+                                        value={phone} 
+                                        onChange={(e) => setPhone(e.target.value)} 
+                                        disabled={notEditable} 
+                                    />
                                 </div>
-                                <div className="clinic-email d-flex align-items-center gap-3 mb-3">
-                                    <label className="form-label" htmlFor='clinic-email'>Email</label>
-                                    <input type="email" className="form-control w-75" id='clinic-email' placeholder='Enter Clinic Email' value={email} onChange={(e) => setEmail(e.target.value)} disabled={notEditable} />
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                    <input 
+                                        type="email" 
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300 disabled:bg-gray-100" 
+                                        placeholder="Enter Email Address" 
+                                        value={email} 
+                                        onChange={(e) => setEmail(e.target.value)} 
+                                        disabled={notEditable} 
+                                    />
                                 </div>
-                                <div className="clinic-price d-flex align-items-center gap-3 mb-3">
-                                    <label className="form-label" htmlFor='clinic-price'>Cost</label>
-                                    <input type="number" className="form-control w-75" id='clinic-price' placeholder='Enter Cost' value={price} onChange={(e) => setPrice(e.target.value)} disabled={notEditable} />
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Consultation Cost ($)</label>
+                                    <input 
+                                        type="number" 
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300 disabled:bg-gray-100" 
+                                        placeholder="Enter Cost" 
+                                        value={price} 
+                                        onChange={(e) => setPrice(e.target.value)} 
+                                        disabled={notEditable} 
+                                    />
                                 </div>
+                            </div>
+
+                            {/* Doctor Selection & Status */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {isAdmin && (
-                                    <div className="mb-3 d-flex align-items-center gap-3">
-                                        <label className="form-label">Doctor</label>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">Assign Doctor</label>
                                         <select
-                                            className="form-select w-50"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300 disabled:bg-gray-100"
                                             value={selectedDoctor ? `${selectedDoctor.id}|${selectedDoctor.fullName}` : ''}
                                             onChange={(e) => {
                                                 const [id, fullName] = e.target.value.split('|');
@@ -248,70 +263,162 @@ export default function EditClinicModal({ clinic, modalId, fetchClinics }) {
                                         </select>
                                     </div>
                                 )}
-                                {selectedLocation.latitude && (
-                                    <p className="mb-3"><span>Location: </span>{selectedLocation.governorate} - {selectedLocation.city} - {selectedLocation.street}</p>
-                                )}
-                                <div className="address d-flex align-items-center gap-3 mb-3">
-                                    <p className='mb-0'>Choose Location</p>
-                                    <button onClick={handleOpenMapModal} className='custom-button d-flex align-items-center gap-2' type='button' disabled={notEditable}>
-                                        <IoLocation /> choose location
-                                    </button>
-                                </div>
-                                <div className="status d-flex align-items-center gap-3 mb-3">
-                                    <p className='mb-0'>Choose Status</p>
-                                    <select name="status" id="status" className="form-select w-50" value={status} onChange={(e) => setStatus(e.target.value)} disabled={notEditable}>
-                                        <option value="">Choose Status</option>
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                                    <select 
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300 disabled:bg-gray-100" 
+                                        value={status} 
+                                        onChange={(e) => setStatus(e.target.value)} 
+                                        disabled={notEditable}
+                                    >
+                                        <option value="">Select Status</option>
                                         <option value="active">Active</option>
                                         <option value="inactive">Inactive</option>
                                     </select>
                                 </div>
-                                <hr />
-                                <div className="appointment mb-3">
-                                    <p className='fw-bold mb-2'>Working Hours</p>
-                                    <div className="d-flex align-items-center gap-3 flex-wrap">
-                                        <select className="form-select w-auto" value={day} onChange={(e) => setDay(e.target.value)} disabled={notEditable}>
-                                            <option value="">Select Day</option>
-                                            {['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map(d => (
-                                                <option key={d} value={d}>{d}</option>
-                                            ))}
-                                        </select>
-                                        <span>from</span>
-                                        <input type="time" className="form-control w-auto" value={openTime} onChange={(e) => setOpenTime(e.target.value)} disabled={notEditable} />
-                                        <span>to</span>
-                                        <input type="time" className="form-control w-auto" value={closeTime} onChange={(e) => setCloseTime(e.target.value)} disabled={notEditable} />
-                                        <button type="button" className="btn btn-success ms-2" onClick={handleAddDay} disabled={notEditable}>Add</button>
+                            </div>
+
+                            {/* Location */}
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Clinic Location</label>
+                                {selectedLocation.latitude && (
+                                    <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                        <p className="text-sm font-medium text-blue-800">Current Location:</p>
+                                        <p className="text-sm text-blue-700">
+                                            {selectedLocation.governorate} - {selectedLocation.city} - {selectedLocation.street}
+                                        </p>
                                     </div>
-                                    {workingHours.length > 0 && (
-                                        <ul className="mt-3  list-group w-75">
-                                            {workingHours.map((item, index) => (
-                                                <li key={index} className="list-group-item d-flex justify-content-between align-items-center mb-2 border rounded px-3 py-2">
-                                                    <span>{item.day}: {item.openTime} - {item.closeTime}</span>
-                                                    <button className="btn border-0" onClick={() => handleDeleteDay(item.day)} disabled={notEditable}>
-                                                        <MdDelete size={25} className='text-danger' />
-                                                    </button>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
+                                )}
+                                <button 
+                                    onClick={handleOpenMapModal} 
+                                    className="flex items-center gap-2 px-4 py-2 bg-petut-brown-300 text-white rounded-lg hover:bg-petut-brown-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
+                                    type="button" 
+                                    disabled={notEditable}
+                                >
+                                    <IoLocation className="w-4 h-4" />
+                                    Choose Location
+                                </button>
+                            </div>
+
+                            {/* Working Hours */}
+                            <div className="border-t border-gray-200 pt-6">
+                                <h3 className="text-lg font-medium text-gray-800 mb-4">Working Hours</h3>
+                                
+                                <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Day</label>
+                                            <select 
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300 disabled:bg-gray-100" 
+                                                value={day} 
+                                                onChange={(e) => setDay(e.target.value)} 
+                                                disabled={notEditable}
+                                            >
+                                                <option value="">Select Day</option>
+                                                {['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map(d => (
+                                                    <option key={d} value={d}>{d}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Open Time</label>
+                                            <input 
+                                                type="time" 
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300 disabled:bg-gray-100" 
+                                                value={openTime} 
+                                                onChange={(e) => setOpenTime(e.target.value)} 
+                                                disabled={notEditable} 
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Close Time</label>
+                                            <input 
+                                                type="time" 
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300 disabled:bg-gray-100" 
+                                                value={closeTime} 
+                                                onChange={(e) => setCloseTime(e.target.value)} 
+                                                disabled={notEditable} 
+                                            />
+                                        </div>
+                                        <div className="flex items-end">
+                                            <button 
+                                                type="button" 
+                                                className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
+                                                onClick={handleAddDay} 
+                                                disabled={notEditable}
+                                            >
+                                                Add
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
-                            </form>
+
+                                {workingHours.length > 0 && (
+                                    <div>
+                                        <h4 className="text-sm font-medium text-gray-700 mb-3">Current Working Days:</h4>
+                                        <div className="space-y-2">
+                                            {workingHours.map((item, index) => (
+                                                <div key={index} className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                                                    <div>
+                                                        <span className="font-medium text-green-800">{item.day}</span>
+                                                        <span className="text-sm text-green-600 ml-2">{item.openTime} - {item.closeTime}</span>
+                                                    </div>
+                                                    <button 
+                                                        className="text-red-600 hover:text-red-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
+                                                        onClick={() => handleDeleteDay(item.day)} 
+                                                        disabled={notEditable}
+                                                    >
+                                                        <MdDelete className="w-5 h-5" />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        {notEditable ? (
-                            <div className="modal-footer d-flex justify-content-end gap-2">
-                                <button type="button" className="btn btn-danger" id='close-btn-edit' data-bs-dismiss="modal" style={{ width: '100px' }}>Close</button>
-                                <button type="button" className="custom-button" style={{ width: '100px' }} onClick={() => setnotEditable(false)}>Edit</button>
-                            </div>
-                        ) : (
-                            <div className="modal-footer d-flex justify-content-end gap-2">
-                                <button type="button" className="btn btn-danger" id='close-btn-edit' data-bs-dismiss="modal" style={{ width: '100px' }} onClick={() => {
-                                    resetFields();
-                                }}>Cancel</button>
-                                <button type="button" className="custom-button" style={{ width: '100px' }} onClick={handleSave} disabled={notEditable || loading}>{loading ? <BeatLoader size={10} color="#fff" /> : "Save"}</button>
-                            </div>
-                        )}
+
+                        {/* Footer */}
+                        <div className="flex justify-end gap-3 p-6 border-t border-gray-200">
+                            {notEditable ? (
+                                <>
+                                    <button 
+                                        type="button" 
+                                        onClick={closeModal} 
+                                        className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                                    >
+                                        Close
+                                    </button>
+                                    <button 
+                                        type="button" 
+                                        onClick={() => setnotEditable(false)} 
+                                        className="px-6 py-2 bg-petut-brown-300 text-white rounded-lg hover:bg-petut-brown-400 transition-colors"
+                                    >
+                                        Edit
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <button 
+                                        type="button" 
+                                        onClick={closeModal} 
+                                        className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                                    >
+                                        Cancel
+                                    </button>
+                                    <button 
+                                        type="button" 
+                                        onClick={handleSave} 
+                                        disabled={notEditable || loading} 
+                                        className="px-6 py-2 bg-petut-brown-300 text-white rounded-lg hover:bg-petut-brown-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                    >
+                                        {loading ? <BeatLoader size={10} color="#fff" /> : "Save"}
+                                    </button>
+                                </>
+                            )}
+                        </div>
                     </div>
                 </div>
-            </div>
             {showMapModal && (
                 <MapModal
                     onLocationConfirmed={handleLocationConfirmed}

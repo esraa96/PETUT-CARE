@@ -16,6 +16,7 @@ import {
   RiTruckLine,
   RiStarFill,
 } from "react-icons/ri";
+import heroBg from "../assets/banners/hero-dog.png";
 
 const HomePage = () => {
   const dispatch = useDispatch();
@@ -117,10 +118,18 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Hero Section */}
-      <section className="relative min-h-[80vh] bg-gradient-to-br from-primary_app/10 via-white to-petut-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center animate-fade-in">
+      <section 
+        className="relative min-h-[70vh] flex items-center animate-fade-in py-16"
+        style={{
+          backgroundImage: `linear-gradient(rgba(217, 167, 65, 0.1), rgba(255, 255, 255, 0.8)), url(${heroBg})`,
+          backgroundSize: 'contain',
+          backgroundPosition: 'center bottom',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="max-w-2xl">
+          <div className="flex items-center justify-center text-center">
+            <div className="max-w-4xl">
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
                 Premium Care for Your
                 <span className="text-primary_app block">Beloved Pets</span>
@@ -130,7 +139,7 @@ const HomePage = () => {
                 24/7 emergency care. Your pet's health and happiness is our top
                 priority.
               </p>
-              <div className="home-links flex flex-col sm:flex-row gap-4">
+              <div className="home-links flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
                   to="/clinics"
                   className="home-link inline-flex items-center justify-center px-6 py-3 sm:px-8 sm:py-4 bg-primary_app text-white rounded-full text-base sm:text-lg font-semibold hover:bg-primary_app/90 transform hover:scale-105 transition-all duration-300 shadow-lg no-underline"
@@ -143,17 +152,6 @@ const HomePage = () => {
                 >
                   Emergency Care
                 </Link>
-              </div>
-            </div>
-            <div className="block">
-              <div className="relative">
-                <img
-                  src="https://readdy.ai/api/search-image?query=Happy%20golden%20retriever%20and%20persian%20cat%20playing%20together%20in%20a%20bright%20veterinary%20clinic%20with%20modern%20equipment%2C%20soft%20natural%20lighting%2C%20clean%20white%20background%20with%20plants%2C%20professional%20pet%20care%20atmosphere%2C%20warm%20and%20welcoming%20environment%20with%20medical%20tools%20visible%20in%20background&width=600&height=600&seq=hero-pets&orientation=squarish"
-                  alt="Happy pets in veterinary clinic"
-                  className="rounded-2xl shadow-2xl animate-float w-full h-auto max-w-md mx-auto"
-                />
-                <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-primary_app/20 rounded-full blur-xl"></div>
-                <div className="absolute -top-6 -left-6 w-24 h-24 bg-secondary/20 rounded-full blur-xl"></div>
               </div>
             </div>
           </div>

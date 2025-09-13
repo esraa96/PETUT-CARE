@@ -21,10 +21,10 @@ export default function OrdersTable({ orders, handleDeleteOrder, loading }) {
   })
   return (
     <Fragment>
-      <div className="d-flex justify-content-between align-items-center my-3">
-        <div className="search-box position-relative" style={{ width: '40%' }}>
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+        <div className="relative w-full sm:w-2/5">
           <input
-            className="form-control pe-5"
+            className="w-full pl-4 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300"
             type="text"
             placeholder="Search by name, Price"
             value={searchTerm}
@@ -32,70 +32,72 @@ export default function OrdersTable({ orders, handleDeleteOrder, loading }) {
           />
           <BiSearchAlt2
             size={20}
-            className="position-absolute"
-            style={{ top: '50%', right: '15px', transform: 'translateY(-50%)', color: '#888' }}
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"
           />
         </div>
-        <select className="form-select w-25" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} >
+        <select className="w-full sm:w-1/4 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-petut-brown-300" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} >
           <option value="all" >All</option>
-          <option value="pending" >pending</option>
-          <option value="processing" >processing</option>
-          <option value="delivered" >delivered</option>
-          <option value="cancelled" >cancelled</option>
+          <option value="pending" >Pending</option>
+          <option value="processing" >Processing</option>
+          <option value="delivered" >Delivered</option>
+          <option value="cancelled" >Cancelled</option>
         </select>
       </div>
 
-      {loading ? <h3 className='text-center mt-5'><BeatLoader color='#D9A741' /></h3> : orders.length === 0 ? <h3 className='text-center mt-5'>No orders found</h3> : (
-
-        <div className="orders-table mt-4 mb-5  bg-white shadow responsive rounded w-100 " style={{ maxHeight: '620px', overflowY: 'auto' }}>
-          <table className="table">
-            <thead className="table-light py-3">
-              <tr className="">
-                <th className="px-4 py-3 align-middle">Customer Name</th>
-                <th className="px-4 py-3 align-middle">Phone</th>
-                <th className="px-4 py-3 align-middle">Date</th>
-                <th className="px-4 py-3 align-middle">Time</th>
-                <th className="px-4 py-3 align-middle">Total</th>
-                <th className="px-4 py-3 align-middle">Status</th>
-                <th className="px-4 py-3 align-middle">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filterOreders.map(order => (
-                <tr key={order.id}>
-                  <td className="px-4 py-3 align-middle">{order.deliveryInfo.fullName}</td>
-                  <td className="px-4 py-3 align-middle">{order.deliveryInfo.phone}</td>
-                  <td className="px-4 py-3 align-middle">{order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleDateString('en-GB') : ''}</td>
-                  <td className="px-4 py-3 align-middle">{order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleTimeString() : ''}</td>
-                  <td className="px-4 py-3 align-middle">{order.cart.totalAmount} EGP</td>
-                  <td className="px-4 py-3 align-middle">
-                    <select name="status" id="status" className='cursor-pointer border-1 rounded-1'>
-                      <option value="pending">{order.paymentInfo.status}</option>
-                      <option value="processing">Processing</option>
-                      <option value="delivered">Delivered</option>
-                      <option value="cancelled">Cancelled</option>
-                    </select>
-                  </td>
-                  <td className="px-4 py-3 align-middle ">
-                    <button type="button" className="btn border-0 p-0 me-1" data-bs-toggle="modal" data-bs-target={`#vieworder-${order.id}`}>
-                      <FaEye />
-                    </button>
-                    <ViewOrderModal order={order} modalId={order.id} orders={orders} />
-                    <button type="button" className="btn border-0 p-0 " onClick={() => {
-                      setShowConfirm(true);
-                      setSelectedOrderId(order.id);
-                    }} >
-                      <MdDelete size={20} className='text-danger' />
-                    </button>
-
-                  </td>
+      {loading ? (
+        <div className='text-center mt-8'><BeatLoader color='#D9A741' /></div>
+      ) : orders.length === 0 ? (
+        <div className='text-center mt-8 text-gray-600'>No orders found</div>
+      ) : (
+        <div className="bg-white shadow rounded-lg">
+          <div className="overflow-x-auto">
+            <table className="w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Phone</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Date</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden lg:table-cell">Time</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase hidden sm:table-cell">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Action</th>
                 </tr>
-              ))}
-
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filterOreders.map(order => (
+                  <tr key={order.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-4 text-sm text-gray-900">{order.deliveryInfo.fullName}</td>
+                    <td className="px-4 py-4 text-sm text-gray-900 hidden sm:table-cell">{order.deliveryInfo.phone}</td>
+                    <td className="px-4 py-4 text-sm text-gray-900 hidden md:table-cell">{order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleDateString('en-GB') : ''}</td>
+                    <td className="px-4 py-4 text-sm text-gray-900 hidden lg:table-cell">{order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleTimeString() : ''}</td>
+                    <td className="px-4 py-4 text-sm text-gray-900">{order.cart.totalAmount} EGP</td>
+                    <td className="px-4 py-4 hidden sm:table-cell">
+                      <select className='px-2 py-1 border border-gray-300 rounded text-sm'>
+                        <option value="pending">{order.paymentInfo.status}</option>
+                        <option value="processing">Processing</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                      </select>
+                    </td>
+                    <td className="px-4 py-4 text-sm font-medium">
+                      <div className="flex items-center space-x-2">
+                        <button type="button" className="text-gray-600 hover:text-gray-900">
+                          <FaEye className="w-4 h-4" />
+                        </button>
+                        <button type="button" className="text-red-600 hover:text-red-800" onClick={() => {
+                          setShowConfirm(true);
+                          setSelectedOrderId(order.id);
+                        }}>
+                          <MdDelete className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
           {showConfirm && (<ConfirmModal onDelete={() => handleDeleteOrder(selectedOrderId)} setShowConfirm={setShowConfirm} selectedId={selectedOrderId} whatDelete="order" />)}
-
         </div>
       )}
 

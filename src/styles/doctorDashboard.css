@@ -1,87 +1,33 @@
-/* Auto-generated: placeholder styles for Doctor Dashboard
-   Created to fix missing import error during Vite build.
-   Move or expand styles as needed; consider migrating to Tailwind per project guide.
-*/
+/* Simple Doctor Dashboard Styles */
 
-.doctor-dashboard {
-  padding: 1rem;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial;
-  color: #0f172a; /* slate-900 */
+/* Custom scrollbar only */
+*::-webkit-scrollbar {
+  width: 6px;
 }
 
-.doctor-dashboard .topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1rem;
+*::-webkit-scrollbar-track {
+  background: #f1f5f9;
 }
 
-.doctor-dashboard .card {
-  background: #ffffff;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-  padding: 1rem;
+*::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
 }
 
-.doctor-dashboard .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
+*::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
-.doctor-dashboard .muted {
-  color: #64748b; /* slate-500 */
-  font-size: 0.9rem;
+/* Simple fade animation */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
 }
 
-.doctor-dashboard .avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 9999px;
-  object-fit: cover;
-}
-
-/* End of placeholder styles */
-
-/* Layout rules to prevent the fixed sidebar from covering content */
-:root {
-  --sidebar-collapsed-width: 72px;
-  --sidebar-expanded-width: 260px;
-}
-
-/* Ensure sidebar has a predictable width when collapsed/expanded */
-.sidebar {
-  width: var(--sidebar-collapsed-width);
-  transition: width 220ms ease;
-  will-change: width;
-}
-
-.sidebar.expanded {
-  width: var(--sidebar-expanded-width);
-}
-
-.sidebar.collapsed {
-  width: var(--sidebar-collapsed-width);
-}
-
-/* Move main content to the right so the sidebar doesn't overlap it. The
-   selector uses the adjacent sibling relationship since Sidebar and
-   ContentDoctorDash are siblings in the DOM. */
-.sidebar + .content-area {
-  margin-left: var(--sidebar-collapsed-width);
-  transition: margin-left 220ms ease;
-}
-
-.sidebar.expanded + .content-area {
-  margin-left: var(--sidebar-expanded-width);
-}
-
-/* On small screens we usually want the sidebar to overlay the content; keep
-   margin at 0 so content remains full-width beneath the overlay. */
-@media (max-width: 768px) {
-  .sidebar + .content-area,
-  .sidebar.expanded + .content-area {
-    margin-left: 0 !important;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

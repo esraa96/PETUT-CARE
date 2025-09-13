@@ -56,8 +56,8 @@ export default function Calendar({ doctorId }) {
     }
 
     // Color code based on status
-    let backgroundColor = "#D9A741"; // default
-    let borderColor = "#D9A741";
+    let backgroundColor = "#C19635"; // default
+    let borderColor = "#C19635";
 
     switch (book.status) {
       case "completed":
@@ -115,19 +115,19 @@ export default function Calendar({ doctorId }) {
   const getStatusBadgeClass = (status) => {
     switch (status) {
       case "completed":
-        return "bg-success";
+        return "bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-semibold";
       case "cancelled":
-        return "bg-danger";
+        return "bg-red-100 text-red-800 px-2 py-1 rounded text-sm font-semibold";
       case "pending":
-        return "bg-warning text-dark";
+        return "bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-sm font-semibold";
       default:
-        return "bg-info";
+        return "bg-sky-100 text-sky-800 px-2 py-1 rounded text-sm font-semibold";
     }
   };
 
   return (
     <Fragment>
-      <div className="container my-4">
+      <div className="container mx-auto px-4 my-4">
         {loading ? (
           <h3 className="text-center mt-5">
             <BeatLoader color="#D9A741" />
@@ -151,49 +151,51 @@ export default function Calendar({ doctorId }) {
 
       {showModal && (
         <>
+          {/* Modal (Tailwind) */}
           <div
-            className="modal modal-lg large show fade d-block"
-            tabIndex={-1}
+            className="fixed inset-0 z-50 flex items-start justify-center overflow-auto"
+            aria-modal="true"
             role="dialog"
-            style={{ marginTop: "150px" }}
           >
-            <div className="modal-dialog" role="document">
-              <div className="modal-content">
-                <div className="modal-header d-flex align-items-center justify-content-between py-0 pe-0">
-                  <h5 className="modal-title">Day data: {selectedDate}</h5>
+            <div className="w-full max-w-3xl px-4 mt-36">
+              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div className="flex items-center justify-between py-4 px-4 border-b">
+                  <h5 className="text-lg font-medium">
+                    Day data: {selectedDate}
+                  </h5>
                   <img src={logo} width="90" height="90" alt="logo" />
                 </div>
 
-                <div className="modal-body">
+                <div className="p-4">
                   {selectedDayBookings.length > 0 ? (
-                    <div className="row g-3">
+                    <div className="grid gap-3">
                       {selectedDayBookings.map((item, index) => (
-                        <div key={index} className="col-12">
+                        <div key={index} className="w-full">
                           <div
-                            className="card border-start border-4"
+                            className="border-l-4 bg-white rounded"
                             style={{ borderColor: getStatusColor(item.status) }}
                           >
-                            <div className="card-body p-3">
-                              <div className="d-flex justify-content-between align-items-start">
+                            <div className="p-3">
+                              <div className="flex justify-between items-start">
                                 <div>
-                                  <h6 className="card-title mb-1">
+                                  <h6 className="text-sm font-semibold mb-1">
                                     {item.patientName || "Unknown Patient"}
                                   </h6>
-                                  <p className="card-text mb-1">
+                                  <p className="text-sm mb-1">
                                     <strong>Time:</strong>{" "}
                                     {item.time || "Not specified"}
                                   </p>
-                                  <p className="card-text mb-1">
+                                  <p className="text-sm mb-1">
                                     <strong>Clinic:</strong>{" "}
                                     {item.clinicName || "Not specified"}
                                   </p>
-                                  <p className="card-text mb-0">
+                                  <p className="text-sm mb-0">
                                     <strong>Phone:</strong>{" "}
                                     {item.clinicPhone || "Not specified"}
                                   </p>
                                 </div>
                                 <span
-                                  className={`badge ${getStatusBadgeClass(
+                                  className={`${getStatusBadgeClass(
                                     item.status
                                   )}`}
                                 >
@@ -207,17 +209,17 @@ export default function Calendar({ doctorId }) {
                     </div>
                   ) : (
                     <div className="text-center py-4">
-                      <p className="text-muted">
+                      <p className="text-gray-500">
                         No appointments scheduled for this day.
                       </p>
                     </div>
                   )}
                 </div>
 
-                <div className="modal-footer">
+                <div className="flex justify-end gap-2 p-4 border-t">
                   <button
                     type="button"
-                    className="btn btn-danger"
+                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
                     onClick={() => setShowModal(false)}
                   >
                     Close
@@ -226,7 +228,11 @@ export default function Calendar({ doctorId }) {
               </div>
             </div>
           </div>
-          <div className="modal-backdrop fade show"></div>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={() => setShowModal(false)}
+          ></div>
         </>
       )}
     </Fragment>

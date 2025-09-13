@@ -120,35 +120,34 @@ export default function Manageclients() {
 
 
   return (
-    <Fragment>
+    <div className="p-4 sm:p-6 lg:p-8">
       {/* Page Header */}
-      <div className="breadcrumb-container d-flex align-items-center justify-content-between">
-        <div>
-          <h4 className='mb-1 fw-bold' style={{ color: '#495057' }}>Patient Management</h4>
-          <nav aria-label="breadcrumb">
-            <ol className="breadcrumb mb-0">
-              <li className="breadcrumb-item">
-                <Link to="/doctor-dashboard" className='text-decoration-none' style={{ color: '#D9A741' }}>Dashboard</Link>
-              </li>
-              <li className="breadcrumb-item active" aria-current="page">Patients</li>
+      <nav aria-label="breadcrumb" className='mb-6'>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className='font-bold text-xl text-gray-800 mb-1'>Patient Management</h1>
+            <ol className="flex items-center space-x-2 text-sm">
+              <li><Link to="/doctor-dashboard" className='text-[#D9A741] hover:underline'>Dashboard</Link></li>
+              <li className="text-gray-500">/</li>
+              <li className="text-gray-700 font-medium">Patients</li>
             </ol>
-          </nav>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="bg-[#D9A741] text-white px-3 py-2 rounded-lg font-medium text-sm">
+              {filteredBookings?.length || 0} / {bookings?.length || 0} Patients
+            </span>
+          </div>
         </div>
-        <div className="d-flex align-items-center gap-2">
-          <span className="badge" style={{ backgroundColor: '#D9A741', color: 'white', padding: '8px 12px' }}>
-            {filteredBookings?.length || 0} / {bookings?.length || 0} Patients
-          </span>
-        </div>
-      </div>
+      </nav>
 
       {/* Filters and Search */}
-      <div className="dashboard-card p-4 mb-4">
-        <div className="row g-3 align-items-center">
-          <div className="col-md-6">
-            <label className="form-label fw-semibold mb-2">Search Patients</label>
-            <div className="search-box position-relative">
+      <div className="bg-white rounded-xl shadow-sm border p-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Search Patients</label>
+            <div className="relative">
               <input
-                className="form-control"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D9A741] focus:border-transparent"
                 type="text"
                 placeholder="Search by name, email, or clinic..."
                 value={searchTerm}
@@ -156,15 +155,14 @@ export default function Manageclients() {
               />
               <BiSearchAlt2
                 size={20}
-                className="position-absolute"
-                style={{ top: '50%', right: '15px', transform: 'translateY(-50%)', color: '#6c757d' }}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
               />
             </div>
           </div>
-          <div className="col-md-3">
-            <label className="form-label fw-semibold mb-2">Filter by Status</label>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Filter by Status</label>
             <select 
-              className="form-select"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D9A741] focus:border-transparent"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
@@ -175,10 +173,10 @@ export default function Manageclients() {
               <option value="cancelled">Cancelled</option>
             </select>
           </div>
-          <div className="col-md-3">
-            <label className="form-label fw-semibold mb-2">Sort by</label>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Sort by</label>
             <select 
-              className="form-select"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#D9A741] focus:border-transparent"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
             >
@@ -192,28 +190,26 @@ export default function Manageclients() {
 
       {/* Content */}
       {loading ? (
-        <div className="loading-container">
-          <div className="text-center">
-            <BeatLoader color="#D9A741" size={15} />
-            <p className="mt-3 text-muted">Loading patients...</p>
-          </div>
+        <div className="flex flex-col items-center justify-center py-12">
+          <BeatLoader color="#D9A741" size={15} />
+          <p className="mt-4 text-gray-500">Loading patients...</p>
         </div>
       ) : filteredBookings?.length === 0 ? (
-        <div className="dashboard-card p-5 text-center">
+        <div className="bg-white rounded-xl shadow-sm border p-12 text-center">
           <div className="mb-4">
-            <MdPeople size={64} style={{ color: '#D9A741', opacity: 0.5 }} />
+            <MdPeople size={64} className="text-[#D9A741] opacity-50 mx-auto" />
           </div>
-          <h5 className="text-muted mb-3">No Patients Found</h5>
-          <p className="text-muted">You don't have any patients yet. Patients will appear here when they book appointments with you.</p>
+          <h5 className="text-gray-500 text-lg font-semibold mb-3">No Patients Found</h5>
+          <p className="text-gray-400">You don't have any patients yet. Patients will appear here when they book appointments with you.</p>
         </div>
       ) : (
-        <div className="dashboard-card">
-          <div className="p-4 border-bottom">
-            <h5 className="mb-0">Patient List ({filteredBookings.length})</h5>
+        <div className="bg-white rounded-xl shadow-sm border">
+          <div className="p-6 border-b border-gray-200">
+            <h5 className="text-lg font-semibold">Patient List ({filteredBookings.length})</h5>
           </div>
           <BookingsOneDoctor bookings={filteredBookings} onBookingUpdate={handleBookingUpdate} />
         </div>
       )}
-    </Fragment>
+    </div>
   )
 }

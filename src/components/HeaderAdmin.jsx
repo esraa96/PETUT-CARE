@@ -1,9 +1,12 @@
 import { onAuthStateChanged } from 'firebase/auth';
 import { Fragment, useEffect, useState } from 'react'
-import { FaBars, FaBell, FaSearch } from "react-icons/fa";
+import { FaBars, FaSearch } from "react-icons/fa";
 import { auth, db } from '../firebase.js';
 import { doc, getDoc } from 'firebase/firestore';
 import DarkModeToggle from './DarkModeToggle';
+import NotificationBell from './Notification/NotificationBell';
+import AdminNotificationBell from './admindash/NotificationBell';
+import AdminAvatar from './admindash/AdminAvatar';
 
 export default function HeaderAdmin({ toggleSidebar }) {
   const [adminData, setAdminData] = useState(null);
@@ -72,11 +75,8 @@ export default function HeaderAdmin({ toggleSidebar }) {
             {/* Dark Mode Toggle */}
             <DarkModeToggle />
 
-            {/* Notifications */}
-            <button className="relative p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-              <FaBell size={18} />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
+            {/* Dynamic Notifications */}
+            <AdminNotificationBell />
 
             {/* Admin Profile */}
             <div className="flex items-center space-x-3 pl-3 border-l border-gray-200 dark:border-gray-700">
@@ -88,14 +88,7 @@ export default function HeaderAdmin({ toggleSidebar }) {
                   Administrator
                 </p>
               </div>
-              <div className="relative">
-                <img
-                  src={adminData?.profileImage || 'https://via.placeholder.com/40x40?text=A'}
-                  alt="Admin Profile"
-                  className="w-10 h-10 rounded-full border-2 border-gray-200 dark:border-gray-600 object-cover"
-                />
-                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
-              </div>
+              <AdminAvatar size="md" showStatus={true} />
             </div>
           </div>
         </div>

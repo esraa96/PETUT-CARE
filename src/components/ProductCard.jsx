@@ -21,38 +21,45 @@ const ProductCard = ({
     }
   };
   return (
-    <div className="card hover:shadow-lg transition-shadow flex flex-col h-full">
+    <div className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-gray-100 dark:border-gray-700 h-full flex flex-col">
+      {/* Gradient overlay on hover */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 pointer-events-none" />
+      
       <Link to={`/product/${product.id}`} className="h-full flex flex-col">
-        <div className="relative pb-[100%] overflow-hidden">
-          <img
-            src={product.imageUrl || product.imageURL}
-            alt={product.productName || product.name}
-            className="absolute inset-0 w-full h-full object-cover object-center"
-            onError={(e) => {
-              e.target.src = `https://via.placeholder.com/400x300/E0E0E0/666666?text=${encodeURIComponent(product.productName || 'Product')}`;
-            }}
-          />
-        </div>
-        <div className="p-4 flex flex-col flex-grow">
-          <div className="flex justify-between items-start mb-2">
-            <h3
-              className="font-semibold text-lg dark:text-white truncate mr-2"
-              title={product.productName}
-            >
-              {product.productName}
-            </h3>
-            {onToggleFavorite ? (
+        {/* Image Container */}
+        <div className="relative overflow-hidden rounded-t-2xl">
+          <div className="aspect-square relative">
+            <img
+              src={product.imageUrl || product.imageURL}
+              alt={product.productName || product.name}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              onError={(e) => {
+                e.target.src = `https://via.placeholder.com/400x400/F3F4F6/9CA3AF?text=${encodeURIComponent(product.productName || 'Product')}`;
+              }}
+            />
+            
+            {/* Category Badge */}
+            {!onToggleFavorite && (
+              <div className="absolute top-3 left-3 z-20">
+                <span className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full text-xs font-medium shadow-lg">
+                  {product.category}
+                </span>
+              </div>
+            )}
+            
+            {/* Favorite Button */}
+            {onToggleFavorite && (
               <button
                 onClick={handleToggleFavorite}
-                className={`${
+                className={`absolute top-3 right-3 z-20 p-2 rounded-full backdrop-blur-sm transition-all duration-300 transform hover:scale-110 ${
                   isFavorite
-                    ? "text-primary_app"
-                    : "text-gray-400 hover:text-primary_app"
-                } focus:outline-none transition-colors flex-shrink-0`}
+                    ? "bg-red-500 text-white shadow-lg shadow-red-500/30"
+                    : "bg-white/80 dark:bg-gray-800/80 text-gray-600 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 hover:text-red-500"
+                }`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
+                  className="h-5 w-5"
                   fill={isFavorite ? "currentColor" : "none"}
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -65,36 +72,53 @@ const ProductCard = ({
                   />
                 </svg>
               </button>
-            ) : (
-              <span className="badge-secondary whitespace-nowrap">
-                {product.category}
-              </span>
             )}
           </div>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 line-clamp-2 flex-grow min-h-[40px]">
+        </div>
+        
+        {/* Content */}
+        <div className="p-5 flex flex-col flex-grow">
+          {/* Title */}
+          <h3
+            className="font-bold text-lg text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-primary_app transition-colors duration-300"
+            title={product.productName}
+          >
+            {product.productName}
+          </h3>
+          
+          {/* Description */}
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2 flex-grow leading-relaxed">
             {product.description}
           </p>
-          <div className="flex justify-between items-center mt-auto">
-            <span className="font-bold text-lg dark:text-white">
-              $
-              {typeof product.price === "number"
-                ? product.price.toFixed(2)
-                : typeof product.price === "string"
-                ? parseFloat(product.price).toFixed(2)
-                : "0.00"}
-            </span>
-            <button onClick={handleAddToCart} className="btn-primary-app py-1 px-3">
+          
+          {/* Price and Add to Cart */}
+          <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100 dark:border-gray-700">
+            <div className="flex flex-col">
+              <span className="text-2xl font-bold text-primary_app">
+                $
+                {typeof product.price === "number"
+                  ? product.price.toFixed(2)
+                  : typeof product.price === "string"
+                  ? parseFloat(product.price).toFixed(2)
+                  : "0.00"}
+              </span>
+            </div>
+            
+            <button 
+              onClick={handleAddToCart} 
+              className="bg-primary_app hover:bg-primary_app/90 text-white p-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group/btn"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
+                className="h-5 w-5 transition-transform duration-300 group-hover/btn:scale-110"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
+                strokeWidth={2}
               >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2}
                   d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
                 />
               </svg>

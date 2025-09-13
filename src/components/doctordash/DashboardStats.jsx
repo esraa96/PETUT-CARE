@@ -180,19 +180,15 @@ export default function DashboardStats() {
 
   if (loading) {
     return (
-      <div className="row g-3 g-md-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {[...Array(6)].map((_, index) => (
-          <div key={index} className="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6">
-            <div className="stats-card">
-              <div className="d-flex align-items-center justify-content-between">
-                <div className="placeholder-glow flex-grow-1">
-                  <span className="placeholder col-8 mb-2"></span>
-                  <span className="placeholder col-6"></span>
-                </div>
-                <div className="placeholder-glow">
-                  <span className="placeholder rounded-circle" style={{ width: 'clamp(35px, 8vw, 50px)', height: 'clamp(35px, 8vw, 50px)' }}></span>
-                </div>
+          <div key={index} className="bg-white rounded-xl shadow-sm border p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex-1 animate-pulse">
+                <div className="h-4 bg-gray-200 rounded mb-2 w-3/4"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/2"></div>
               </div>
+              <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
             </div>
           </div>
         ))}
@@ -201,40 +197,33 @@ export default function DashboardStats() {
   }
 
   return (
-    <div className="row g-3 g-md-4">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
       {statsCards.map((card, index) => {
         const Icon = card.icon
         return (
-          <div key={index} className="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6">
-            <div className="stats-card">
-              <div className="d-flex align-items-center justify-content-between flex-wrap">
-                <div className="flex-grow-1">
-                  <h3 className="mb-1 fw-bold" style={{ color: card.color, fontSize: 'clamp(1.2rem, 3vw, 1.8rem)' }}>
-                    {card.value}
-                  </h3>
-                  <p className="text-muted mb-1" style={{ fontSize: 'clamp(0.7rem, 2vw, 0.9rem)' }}>{card.title}</p>
-                  <div className="d-flex align-items-center gap-1 d-none d-sm-flex">
-                    <span 
-                      className={`fw-semibold ${
-                        card.changeType === 'positive' ? 'text-success' : 'text-danger'
-                      }`}
-                      style={{ fontSize: 'clamp(0.6rem, 1.5vw, 0.8rem)' }}
-                    >
-                      {card.change}
-                    </span>
-                    <span className="text-muted" style={{ fontSize: 'clamp(0.6rem, 1.5vw, 0.8rem)' }}>vs last month</span>
-                  </div>
+          <div key={index} className="bg-white rounded-xl shadow-sm border p-4 hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <h3 className="text-2xl font-bold mb-1" style={{ color: card.color }}>
+                  {card.value}
+                </h3>
+                <p className="text-gray-500 text-sm mb-1">{card.title}</p>
+                <div className="hidden sm:flex items-center gap-1">
+                  <span 
+                    className={`text-xs font-semibold ${
+                      card.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
+                    }`}
+                  >
+                    {card.change}
+                  </span>
+                  <span className="text-gray-400 text-xs">vs last month</span>
                 </div>
-                <div 
-                  className="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-                  style={{ 
-                    backgroundColor: card.bgColor,
-                    width: 'clamp(35px, 8vw, 50px)',
-                    height: 'clamp(35px, 8vw, 50px)'
-                  }}
-                >
-                  <Icon size={20} style={{ color: card.color }} />
-                </div>
+              </div>
+              <div 
+                className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                style={{ backgroundColor: card.bgColor }}
+              >
+                <Icon size={20} style={{ color: card.color }} />
               </div>
             </div>
           </div>

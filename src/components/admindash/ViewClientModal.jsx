@@ -36,7 +36,7 @@ export default function ViewClientModal({ client, modalId }) {
                         </div>
 
                         <div className="modal-footer d-flex justify-content-end gap-2">
-                            <button type="button" className="btn btn-danger" id='close-btn-edit' data-bs-dismiss="modal" style={{ width: '100px' }}>Close</button>
+                            <button type="button" id='close-btn-edit' className="w-[100px] px-4 py-2 bg-slate-700 text-white rounded-md hover:bg-slate-600 transition-colors">Close</button>
 
                         </div>
                     </div>

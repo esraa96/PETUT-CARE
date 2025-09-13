@@ -65,69 +65,62 @@ export default function Manageappointments() {
   }, []);
 
   return (
-    <Fragment>
+    <div className="p-4 sm:p-6 lg:p-8">
       {/* Page Header */}
-      <div className="breadcrumb-container d-flex align-items-center justify-content-between">
-        <div>
-          <h4 className='mb-1 fw-bold' style={{ color: '#495057' }}>Appointment Management</h4>
-          <nav aria-label="breadcrumb">
-            <ol className="breadcrumb mb-0">
-              <li className="breadcrumb-item">
-                <Link to="/doctor-dashboard" className='text-decoration-none' style={{ color: '#D9A741' }}>Dashboard</Link>
-              </li>
-              <li className="breadcrumb-item active" aria-current="page">Appointments</li>
+      <nav aria-label="breadcrumb" className='mb-6'>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className='font-bold text-xl text-gray-800 mb-1'>Appointment Management</h1>
+            <ol className="flex items-center space-x-2 text-sm">
+              <li><Link to="/doctor-dashboard" className='text-[#D9A741] hover:underline'>Dashboard</Link></li>
+              <li className="text-gray-500">/</li>
+              <li className="text-gray-700 font-medium">Appointments</li>
             </ol>
-          </nav>
+          </div>
+          <div className="flex items-center gap-2">
+            <MdSchedule size={24} className="text-[#D9A741]" />
+            <span className="font-semibold text-[#D9A741]">Schedule Overview</span>
+          </div>
         </div>
-        <div className="d-flex align-items-center gap-2">
-          <MdSchedule size={24} style={{ color: '#D9A741' }} />
-          <span className="fw-semibold" style={{ color: '#D9A741' }}>Schedule Overview</span>
-        </div>
-      </div>
+      </nav>
 
       {/* Quick Stats */}
       {loading ? (
-        <div className="text-center py-4">
+        <div className="text-center py-8">
           <BeatLoader color="#D9A741" size={15} />
         </div>
       ) : (
-        <div className="row g-3 mb-4">
-          <div className="col-md-4">
-            <div className="dashboard-card p-3">
-              <div className="d-flex align-items-center gap-3">
-                <div className="p-2 rounded-circle" style={{ backgroundColor: 'rgba(40, 167, 69, 0.1)' }}>
-                  <MdToday size={20} style={{ color: '#28a745' }} />
-                </div>
-                <div>
-                  <h6 className="mb-0">Today's Appointments</h6>
-                  <p className="text-muted mb-0 small">{appointmentStats.today} scheduled</p>
-                </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-white rounded-xl shadow-sm border p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-full bg-green-100">
+                <MdToday size={20} className="text-green-600" />
+              </div>
+              <div>
+                <h6 className="font-semibold text-gray-800">Today's Appointments</h6>
+                <p className="text-gray-500 text-sm">{appointmentStats.today} scheduled</p>
               </div>
             </div>
           </div>
-          <div className="col-md-4">
-            <div className="dashboard-card p-3">
-              <div className="d-flex align-items-center gap-3">
-                <div className="p-2 rounded-circle" style={{ backgroundColor: 'rgba(217, 167, 65, 0.1)' }}>
-                  <MdEvent size={20} style={{ color: '#D9A741' }} />
-                </div>
-                <div>
-                  <h6 className="mb-0">This Week</h6>
-                  <p className="text-muted mb-0 small">{appointmentStats.thisWeek} appointments</p>
-                </div>
+          <div className="bg-white rounded-xl shadow-sm border p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-full bg-yellow-100">
+                <MdEvent size={20} className="text-yellow-600" />
+              </div>
+              <div>
+                <h6 className="font-semibold text-gray-800">This Week</h6>
+                <p className="text-gray-500 text-sm">{appointmentStats.thisWeek} appointments</p>
               </div>
             </div>
           </div>
-          <div className="col-md-4">
-            <div className="dashboard-card p-3">
-              <div className="d-flex align-items-center gap-3">
-                <div className="p-2 rounded-circle" style={{ backgroundColor: 'rgba(23, 162, 184, 0.1)' }}>
-                  <MdSchedule size={20} style={{ color: '#17a2b8' }} />
-                </div>
-                <div>
-                  <h6 className="mb-0">All Appointments</h6>
-                  <p className="text-muted mb-0 small">{appointmentStats.total} total</p>
-                </div>
+          <div className="bg-white rounded-xl shadow-sm border p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-full bg-blue-100">
+                <MdSchedule size={20} className="text-blue-600" />
+              </div>
+              <div>
+                <h6 className="font-semibold text-gray-800">All Appointments</h6>
+                <p className="text-gray-500 text-sm">{appointmentStats.total} total</p>
               </div>
             </div>
           </div>
@@ -135,17 +128,17 @@ export default function Manageappointments() {
       )}
 
       {/* Calendar Section */}
-      <div className="dashboard-card">
-        <div className="p-4 border-bottom">
-          <h5 className="mb-0 d-flex align-items-center gap-2">
-            <MdSchedule size={20} style={{ color: '#D9A741' }} />
+      <div className="bg-white rounded-xl shadow-sm border">
+        <div className="p-6 border-b border-gray-200">
+          <h5 className="text-lg font-semibold flex items-center gap-2">
+            <MdSchedule size={20} className="text-[#D9A741]" />
             Appointment Calendar
           </h5>
         </div>
-        <div className="p-4">
+        <div className="p-6">
           <Calendar doctorId={auth.currentUser?.uid} />
         </div>
       </div>
-    </Fragment>
+    </div>
   )
 }

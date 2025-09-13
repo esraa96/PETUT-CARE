@@ -49,6 +49,7 @@ import Charts from './pages/admin-dashboard/Charts'
 import Reviews from './pages/admin-dashboard/Reviews'
 import Store from './pages/admin-dashboard/Store'
 import SupportPage from './pages/admin-dashboard/SupportPage'
+import AdminNotificationsPage from './pages/admin-dashboard/NotificationsPage'
 import ContactUsPage from './pages/ContactUsPage'
 import MyTicketsPage from './pages/MyTicketsPage'
 import SupportChatPage from './pages/SupportChatPage'
@@ -170,6 +171,7 @@ function App() {
           <Route path="reviews" element={<Reviews />} />
           <Route path="store" element={<Store />} />
           <Route path="charts" element={<Charts />} />
+          <Route path="notifications" element={<AdminNotificationsPage />} />
            <Route path="support" element={<SupportPage />} />
         </Route>
         <Route

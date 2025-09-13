@@ -15,7 +15,7 @@ const DoctorForm = () => {
         phone: auth.currentUser?.phone || '',
         gender: auth.currentUser?.gender || '',
         role: 'doctor',
-        status: "pending",
+        status: 'pending',
         doctorDetails: {
             cardBackImage: "",
             cardFrontImage: "",
@@ -102,9 +102,25 @@ const DoctorForm = () => {
         } else if (doctorDetails.experience <= 0) {
             errors['doctorDetails.experience'] = "Experience must be a positive number";
         }
-        if (!doctorDetails.cardFrontImage) errors['doctorDetails.cardFrontImage'] = "Syndicate card front image is required";
-        if (!doctorDetails.cardBackImage) errors['doctorDetails.cardBackImage'] = "Syndicate card back image is required";
-        if (!doctorDetails.idImage) errors['doctorDetails.idImage'] = "ID image is required";
+        
+        // Validate file uploads
+        if (!doctorDetails.cardFrontImage) {
+            errors['doctorDetails.cardFrontImage'] = "Syndicate card front image is required";
+        } else if (doctorDetails.cardFrontImage.size > 5 * 1024 * 1024) {
+            errors['doctorDetails.cardFrontImage'] = "Image size must be less than 5MB";
+        }
+        
+        if (!doctorDetails.cardBackImage) {
+            errors['doctorDetails.cardBackImage'] = "Syndicate card back image is required";
+        } else if (doctorDetails.cardBackImage.size > 5 * 1024 * 1024) {
+            errors['doctorDetails.cardBackImage'] = "Image size must be less than 5MB";
+        }
+        
+        if (!doctorDetails.idImage) {
+            errors['doctorDetails.idImage'] = "ID image is required";
+        } else if (doctorDetails.idImage.size > 5 * 1024 * 1024) {
+            errors['doctorDetails.idImage'] = "Image size must be less than 5MB";
+        }
 
         setFormErrors(errors);
         return Object.keys(errors).length === 0;
@@ -126,32 +142,52 @@ const DoctorForm = () => {
 
         const uploadToImgBB = async (file) => {
             // Use environment variable for API key
-            const apiKey = import.meta.env.VITE_IMGBB_API_KEY || process.env.REACT_APP_IMGBB_API_KEY;
+            const apiKey = import.meta.env.VITE_IMGBB_API_KEY;
             if (!apiKey) {
-                throw new Error('Image upload service not configured');
+                throw new Error('Image upload service not configured. Please check VITE_IMGBB_API_KEY.');
+            }
+            
+            if (!file) {
+                throw new Error('No file selected for upload');
             }
             
             const body = new FormData();
             body.append("image", file);
 
-            const response = await fetch(
-                `https://api.imgbb.com/1/upload?key=${apiKey}`,
-                {
-                    method: "POST",
-                    body: body,
+            try {
+                const response = await fetch(
+                    `https://api.imgbb.com/1/upload?key=${apiKey}`,
+                    {
+                        method: "POST",
+                        body: body,
+                    }
+                );
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
-            );
-            const data = await response.json();
-            if (!response.ok || !data.data.url) {
-                throw new Error(data.error?.message || 'Image upload failed');
+                
+                const data = await response.json();
+                if (!data.success || !data.data?.url) {
+                    throw new Error(data.error?.message || 'Image upload failed - no URL returned');
+                }
+                return data.data.url;
+            } catch (error) {
+                console.error('Image upload error:', error);
+                throw new Error(`Image upload failed: ${error.message}`);
             }
-            return data.data.url;
         };
 
         try {
+            console.log('Starting image uploads...');
             const cardFrontImageUrl = await uploadToImgBB(cardFrontImage);
+            console.log('Card front uploaded successfully');
+            
             const cardBackImageUrl = await uploadToImgBB(cardBackImage);
+            console.log('Card back uploaded successfully');
+            
             const idImageUrl = await uploadToImgBB(idImage);
+            console.log('ID image uploaded successfully');
 
             const finalFormData = {
                 ...formData,
@@ -167,12 +203,37 @@ const DoctorForm = () => {
                 ...finalFormData,
                 createdAt: serverTimestamp()
             })
+            
+            // Create notification for admin
+            await setDoc(doc(db, "notifications", `doctor_${uid}_${Date.now()}`), {
+                type: 'new_doctor_registration',
+                doctorId: uid,
+                doctorName: finalFormData.fullName,
+                doctorEmail: finalFormData.email,
+                message: `New doctor ${finalFormData.fullName} has registered and is pending approval`,
+                read: false,
+                createdAt: serverTimestamp(),
+                targetRole: 'admin'
+            })
+            
             navigate('/')
         } catch (err) {
-            console.error(err)
-            setError(`Failed to complete profile: ${err.message}`)
+            console.error('Profile completion error:', err);
+            let errorMessage = 'Failed to complete profile. ';
+            
+            if (err.message.includes('Image upload')) {
+                errorMessage += 'Please check your internet connection and try uploading smaller images.';
+            } else if (err.message.includes('permission-denied')) {
+                errorMessage += 'Permission denied. Please try logging out and back in.';
+            } else if (err.message.includes('network')) {
+                errorMessage += 'Network error. Please check your connection.';
+            } else {
+                errorMessage += err.message || 'Please try again later.';
+            }
+            
+            setError(errorMessage);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     }
     const loadingHandler = () => {

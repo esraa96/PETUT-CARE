@@ -1,31 +1,31 @@
-# 🐾 Petut App - تطبيق العناية بالحيوانات الأليفة
+# <i class="fas fa-paw"></i> Petut App - تطبيق العناية بالحيوانات الأليفة
 
 تطبيق شامل للعناية بالحيوانات الأليفة يوفر خدمات متنوعة للمالكين والأطباء البيطريين.
 
-## ✨ المميزات الرئيسية
+## <i class="fas fa-star"></i> المميزات الرئيسية
 
 ### للمستخدمين العاديين
-- 🛒 متجر المنتجات والإكسسوارات
-- 🏥 حجز المواعيد مع الأطباء البيطريين
-- 📱 نظام الإشعارات
-- ❤️ قائمة المفضلات
-- 🤖 تحديد سلالة الحيوان بالذكاء الاصطناعي
-- 💬 نظام الدردشة والمجتمع
-- 📍 خريطة العيادات القريبة
+- <i class="fas fa-shopping-cart"></i> متجر المنتجات والإكسسوارات
+- <i class="fas fa-hospital"></i> حجز المواعيد مع الأطباء البيطريين
+- <i class="fas fa-bell"></i> نظام الإشعارات
+- <i class="fas fa-heart"></i> قائمة المفضلات
+- <i class="fas fa-robot"></i> تحديد سلالة الحيوان بالذكاء الاصطناعي
+- <i class="fas fa-comments"></i> نظام الدردشة والمجتمع
+- <i class="fas fa-map-marker-alt"></i> خريطة العيادات القريبة
 
 ### للأطباء البيطريين
-- 📅 إدارة المواعيد والجدول الزمني
-- 👥 إدارة العملاء
-- 🏥 إدارة معلومات العيادة
-- 📊 تقارير وإحصائيات
+- <i class="fas fa-calendar-alt"></i> إدارة المواعيد والجدول الزمني
+- <i class="fas fa-users"></i> إدارة العملاء
+- <i class="fas fa-clinic-medical"></i> إدارة معلومات العيادة
+- <i class="fas fa-chart-bar"></i> تقارير وإحصائيات
 
 ### للإدارة
-- 👨💼 إدارة المستخدمين والأطباء
-- 🏪 إدارة المتجر والمنتجات
-- 📈 لوحة تحكم شاملة
-- 🎫 نظام الدعم الفني
+- <i class="fas fa-user-tie"></i> إدارة المستخدمين والأطباء
+- <i class="fas fa-store"></i> إدارة المتجر والمنتجات
+- <i class="fas fa-chart-line"></i> لوحة تحكم شاملة
+- <i class="fas fa-ticket-alt"></i> نظام الدعم الفني
 
-## 🚀 التشغيل السريع
+## <i class="fas fa-rocket"></i> التشغيل السريع
 
 ### المتطلبات
 - Node.js (الإصدار 16 أو أحدث)
@@ -57,7 +57,7 @@ npm run dev
 ./start-project.bat
 ```
 
-## 🔧 التكوين
+## <i class="fas fa-cog"></i> التكوين
 
 ### متغيرات البيئة المطلوبة
 ```env
@@ -73,25 +73,25 @@ VITE_FIREBASE_APP_ID=your_app_id
 VITE_IMGBB_API_KEY=your_imgbb_key
 ```
 
-## 🛡️ الأمان
+## <i class="fas fa-shield-alt"></i> الأمان
 
 تم إصلاح العديد من المشاكل الأمنية:
-- ✅ إصلاح Code Injection
-- ✅ إصلاح Hardcoded Credentials
-- ✅ إضافة فحوصات التفويض
-- ✅ إصلاح Log Injection
-- ✅ تحديث المكتبات الآمنة
+- <i class="fas fa-check-circle"></i> إصلاح Code Injection
+- <i class="fas fa-check-circle"></i> إصلاح Hardcoded Credentials
+- <i class="fas fa-check-circle"></i> إضافة فحوصات التفويض
+- <i class="fas fa-check-circle"></i> إصلاح Log Injection
+- <i class="fas fa-check-circle"></i> تحديث المكتبات الآمنة
 
 للمزيد من التفاصيل، راجع ملف [SECURITY_FIXES.md](./SECURITY_FIXES.md)
 
-## 🔧 إصلاح الثغرات
+## <i class="fas fa-tools"></i> إصلاح الثغرات
 
 لإصلاح الثغرات الأمنية تلقائياً:
 ```bash
 ./fix-vulnerabilities.bat
 ```
 
-## 📱 التقنيات المستخدمة
+## <i class="fas fa-mobile-alt"></i> التقنيات المستخدمة
 
 - **Frontend**: React 18, Vite, Tailwind CSS
 - **State Management**: Redux Toolkit
@@ -102,7 +102,7 @@ VITE_IMGBB_API_KEY=your_imgbb_key
 - **AI**: TeachableMachine
 - **Notifications**: OneSignal
 
-## 📁 هيكل المشروع
+## <i class="fas fa-folder-open"></i> هيكل المشروع
 
 ```
 src/
@@ -117,7 +117,7 @@ src/
 └── styles/             # ملفات التنسيق
 ```
 
-## 🚀 النشر
+## <i class="fas fa-cloud-upload-alt"></i> النشر
 
 ### Vercel (موصى به)
 ```bash
@@ -131,7 +131,7 @@ npm run build
 firebase deploy
 ```
 
-## 🤝 المساهمة
+## <i class="fas fa-handshake"></i> المساهمة
 
 1. Fork المشروع
 2. إنشاء branch جديد (`git checkout -b feature/AmazingFeature`)
@@ -139,18 +139,18 @@ firebase deploy
 4. Push إلى Branch (`git push origin feature/AmazingFeature`)
 5. فتح Pull Request
 
-## 📄 الترخيص
+## <i class="fas fa-file-contract"></i> الترخيص
 
 هذا المشروع مرخص تحت رخصة MIT - راجع ملف [LICENSE](LICENSE) للتفاصيل.
 
-## 📞 الدعم
+## <i class="fas fa-phone"></i> الدعم
 
 للحصول على الدعم:
-- 📧 البريد الإلكتروني: support@petut.com
-- 💬 Discord: [رابط الخادم]
-- 📱 WhatsApp: [رقم الهاتف]
+- <i class="fas fa-envelope"></i> البريد الإلكتروني: support@petut.com
+- <i class="fab fa-discord"></i> Discord: [رابط الخادم]
+- <i class="fab fa-whatsapp"></i> WhatsApp: [رقم الهاتف]
 
-## 🙏 شكر خاص
+## <i class="fas fa-heart"></i> شكر خاص
 
 - فريق التطوير في ITI
 - مجتمع React العربي

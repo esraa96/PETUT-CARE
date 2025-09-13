@@ -19,22 +19,61 @@ import {
 
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
+// Validate required environment variables
+if (!import.meta.env.VITE_FIREBASE_API_KEY) {
+  console.error('Missing VITE_FIREBASE_API_KEY');
+  throw new Error('Missing required environment variable: VITE_FIREBASE_API_KEY');
+}
+
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyDwbQz09uup2aSAbl381hJN2aH-_kjSIDg",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "petut-pet.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "petut-pet",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "petut-pet.firebasestorage.app",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "572292474316",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:572292474316:web:1280a277451ef13d6d6969",
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-S2BZ5ZZSE4"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-const app = initializeApp(firebaseConfig);
+console.log('Firebase config:', {
+  apiKey: firebaseConfig.apiKey ? '✅' : '❌',
+  authDomain: firebaseConfig.authDomain ? '✅' : '❌',
+  projectId: firebaseConfig.projectId ? '✅' : '❌'
+});
+
+let app;
+try {
+  app = initializeApp(firebaseConfig);
+  console.log('✅ Firebase app initialized');
+} catch (error) {
+  console.error('❌ Firebase initialization failed:', error);
+  throw error;
+}
 
 // Services
-const auth = getAuth(app);
-const db = getFirestore(app);
-const messaging = getMessaging(app);
+let auth, db, messaging;
+try {
+  auth = getAuth(app);
+  console.log('✅ Firebase Auth initialized');
+} catch (error) {
+  console.error('❌ Firebase Auth failed:', error);
+  throw error;
+}
+
+try {
+  db = getFirestore(app);
+  console.log('✅ Firestore initialized');
+} catch (error) {
+  console.error('❌ Firestore failed:', error);
+  throw error;
+}
+
+try {
+  messaging = getMessaging(app);
+  console.log('✅ Firebase Messaging initialized');
+} catch (error) {
+  console.warn('⚠️ Firebase Messaging failed (may not be available in dev):', error.message);
+}
 // Google Sign-in
 const googleProvider = new GoogleAuthProvider();
 export const signInWithGoogle = () => signInWithPopup(auth, googleProvider);

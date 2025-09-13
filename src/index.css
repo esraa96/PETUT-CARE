@@ -1,27 +1,129 @@
 @import url("https://fonts.googleapis.com/css2?family=Exo:wght@400;500;600;700&family=Exo+2:wght@400;500;600;700&display=swap");
-@import "./styles/tailwind-components.css";
+/* @import "./styles/tailwind-components.css"; */
+
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* 🟠 ORANGE SHADES */
+  --color-orange-50: 255 247 237;
+  --color-orange-100: 255 237 213;
+  --color-orange-200: 254 215 170;
+  --color-orange-300: 253 186 116;
+  --color-orange-400: 251 146 60;
+  --color-orange-500: 249 115 22;
+  --color-orange-600: 234 88 12;
+  --color-orange-700: 194 65 12;
+  --color-orange-800: 154 52 18;
+  --color-orange-900: 124 45 18;
+
+  /* ⚫ BLACK SHADES */
+  --color-black-50: 249 250 251;
+  --color-black-100: 243 244 246;
+  --color-black-200: 229 231 235;
+  --color-black-300: 209 213 219;
+  --color-black-400: 156 163 175;
+  --color-black-500: 107 114 128;
+  --color-black-600: 75 85 99;
+  --color-black-700: 55 65 81;
+  --color-black-800: 31 41 55;
+  --color-black-900: 17 24 39;
+
+  /* Chart Colors */
+  --tooltip-bg: #ffffff;
+  --tooltip-border: #e5e7eb;
+  --tooltip-text: #374151;
+  --legend-text: #374151;
+}
+
+/* 🌙 DARK MODE OVERRIDE */
+.dark {
+  --color-orange-50: 31 41 55;
+  --color-orange-100: 51 65 85;
+  --color-orange-200: 71 85 105;
+  --color-orange-300: 100 116 139;
+  --color-orange-400: 148 163 184;
+  --color-orange-500: 249 115 22; /* ثابت كبراند */
+  --color-orange-600: 251 146 60;
+  --color-orange-700: 253 186 116;
+  --color-orange-800: 254 215 170;
+  --color-orange-900: 255 237 213;
+
+  --color-black-50: 17 24 39;
+  --color-black-100: 31 41 55;
+  --color-black-200: 55 65 81;
+  --color-black-300: 75 85 99;
+  --color-black-400: 107 114 128;
+  --color-black-500: 156 163 175;
+  --color-black-600: 209 213 219;
+  --color-black-700: 229 231 235;
+  --color-black-800: 243 244 246;
+  --color-black-900: 249 250 251;
+
+  /* Chart Colors for Dark Mode */
+  --tooltip-bg: #374151;
+  --tooltip-border: #4b5563;
+  --tooltip-text: #f3f4f6;
+  --legend-text: #d1d5db;
+}
+
 
 @layer base {
   html {
     @apply font-exo no-underline scroll-smooth;
   }
   body {
-    @apply bg-white dark:bg-gray-900 text-neutral dark:text-white;
+    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen;
   }
   * {
     @apply transition-colors duration-200;
+  }
+  
+  /* إصلاح الدارك مود المحسن */
+  .dark {
+    color-scheme: dark;
+  }
+  
+  .dark body {
+    @apply bg-gray-900 text-gray-100;
+  }
+  
+  .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+    @apply text-gray-100;
+  }
+  
+  .dark p, .dark span, .dark div {
+    @apply text-gray-200;
+  }
+  
+  .dark input, .dark textarea, .dark select {
+    @apply bg-gray-700 text-gray-100 border-gray-600 placeholder-gray-400;
+  }
+  
+  .dark button:not(.admin-button):not(.admin-button-outline) {
+    @apply text-gray-100;
+  }
+
+  .dark .admin-sidebar {
+    @apply bg-slate-900 border-r border-gray-700;
+  }
+
+  .dark .admin-content {
+    @apply bg-gray-800;
   }
 }
 
 @layer components {
   /* Enhanced Buttons */
-  .btn-primary-app {
+  /* .btn-primary-app {
     @apply bg-primary_app text-white font-semibold py-2 px-4 rounded-lg hover:bg-primary_app/90 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105;
-  }
+  } */
 
   .btn-primary-app::before {
     @apply content-[''] absolute top-0 left-0 w-full h-full bg-gradient-to-r from-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300;
@@ -42,6 +144,40 @@
 
   .card::before {
     @apply content-[''] absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 opacity-0 hover:opacity-100 transition-opacity duration-300;
+  }
+
+  /* Modern Card Styles */
+  .modern-card {
+    @apply bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 dark:border-gray-700;
+  }
+
+  .modern-card:hover {
+    @apply shadow-2xl;
+  }
+
+  .modern-card::before {
+    @apply content-[''] absolute inset-0 bg-gradient-to-t from-black/5 via-transparent to-transparent opacity-0 transition-opacity duration-300 rounded-2xl;
+  }
+
+  .modern-card:hover::before {
+    @apply opacity-100;
+  }
+
+  /* Card Image Effects */
+  .card-image {
+    @apply transition-transform duration-700;
+  }
+
+  .card:hover .card-image {
+    @apply scale-110;
+  }
+
+  /* Line Clamp Utilities */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .product-card {
@@ -140,9 +276,9 @@
   }
 
   /* Enhanced Modals */
-  .modal-overlay {
+  /* .modal-overlay {
     @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4;
-  }
+  } */
 
   .modal-content {
     @apply bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full transform transition-all duration-300 border border-orange-100 dark:border-gray-700;
@@ -239,77 +375,57 @@
     @apply bg-blue-500;
   }
 
-  /* Dashboard Specific Classes - لا تتغير */
+  /* Dashboard Specific Classes - مع دعم الدارك مود المحسن */
   .dashboard-container {
-    @apply min-h-screen bg-gradient-to-br from-gray-50 to-gray-200;
+    @apply min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-300;
   }
 
-  .header-dash {
-    @apply bg-gradient-to-br from-white to-gray-50 shadow-lg backdrop-blur-sm;
+  .admin-sidebar {
+    @apply bg-slate-800 dark:bg-slate-900 text-white transition-all duration-300;
   }
 
-  .sidebar {
-    @apply bg-[#F7F3EB] transition-all duration-300 ease-in-out;
+  .admin-sidebar-item {
+    @apply text-slate-300 hover:bg-slate-700 hover:text-white dark:hover:bg-slate-800 transition-all duration-200;
   }
 
-  .sidebar-nav-item {
-    @apply mb-2 rounded-xl transition-all duration-300 relative overflow-hidden hover:bg-gradient-to-br hover:from-[#D9A741]/10 hover:to-[#D9A741]/5 hover:translate-x-1;
-  }
-  /* روابط الهوم والروابط العامة تعتمد فقط على تايلويند */
-  /* استخدم الكلاسات التالية في JSX:
-    className="no-underline border-0 text-inherit transition-colors duration-200 hover:text-[#d9a741] hover:underline"
-    وللروابط الرئيسية:
-    className="flex flex-wrap gap-4 justify-center sm:flex-row flex-col sm:gap-4 gap-2 items-center"
-  */
-
-  .sidebar-nav-item.active {
-    @apply bg-gradient-to-br from-[#D9A741] to-[#E6B84A] shadow-lg shadow-[#D9A741]/30;
+  .admin-sidebar-item.active {
+    @apply bg-petut-brown-300 text-white;
   }
 
-  .sidebar-nav-item a {
-    @apply p-4 rounded-xl font-semibold text-sm flex items-center gap-3 transition-all duration-300;
+  .admin-content {
+    @apply bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 transition-colors duration-300;
   }
 
-  .sidebar-nav-item.active a {
-    /* Responsive fix for home links */
-    .home-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: center;
-    }
-    @media (max-width: 768px) {
-      .home-links {
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-      }
-    }
-    @apply text-white;
+  .admin-card {
+    @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm hover:shadow-md transition-all duration-300;
   }
 
-  .content-area {
-    @apply p-8 ml-0;
+  .admin-button {
+    @apply bg-petut-brown-300 hover:bg-petut-brown-400 text-white px-4 py-2 rounded-lg transition-colors duration-200 font-medium;
   }
 
-  .dashboard-card {
-    @apply bg-white rounded-lg shadow-md relative overflow-hidden;
+  .admin-button-outline {
+    @apply border border-petut-brown-300 text-petut-brown-300 hover:bg-petut-brown-300 hover:text-white px-4 py-2 rounded-lg transition-all duration-200 font-medium;
   }
 
-  .breadcrumb-container {
-    @apply bg-white p-5 mb-5 rounded-lg;
+  .admin-input {
+    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-petut-brown-300 focus:border-petut-brown-300 transition-all duration-200;
   }
 
-  .custom-button {
-    @apply bg-[#D9A741] text-white py-2 px-3 rounded border border-[#D9A741] cursor-pointer transition-all duration-300 hover:bg-transparent hover:text-[#D9A741] relative overflow-hidden;
+  .admin-table {
+    @apply w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden;
   }
 
-  .welcome-section {
-    @apply bg-[#D9A741] text-white p-8 mb-8 rounded-lg relative overflow-hidden;
+  .admin-table th {
+    @apply bg-gray-50 dark:bg-gray-700 px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider;
   }
 
-  .stats-card {
-    @apply bg-white p-6 border-l-4 border-[#D9A741] rounded-lg shadow-sm relative overflow-hidden;
+  .admin-table td {
+    @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700;
+  }
+
+  .admin-table tr:hover {
+    @apply bg-gray-50 dark:bg-gray-700;
   }
 }
 

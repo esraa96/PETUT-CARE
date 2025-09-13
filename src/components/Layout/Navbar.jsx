@@ -58,18 +58,18 @@ const Navbar = () => {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             {/* Logo */}
-            <Link to="/" className="flex items-center group">
+            <Link to="/" className="flex items-center group flex-shrink-0">
               <img
                 src={logo}
-                width={85}
-                height={85}
+                width={60}
+                height={60}
                 alt="Petut Logo"
-                className="transition-transform duration-300 group-hover:scale-110"
+                className="transition-transform duration-300 group-hover:scale-110 flex-shrink-0"
               />
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-12">
+            <div className="hidden lg:flex items-center space-x-6">
               <Link
                 to="/"
                 className="relative px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-primary_app dark:hover:text-primary_app font-medium transition-colors duration-200 group"
@@ -117,7 +117,7 @@ const Navbar = () => {
             </div>
 
             {/* Desktop User Actions */}
-            <div className="hidden lg:flex items-center space-x-3">
+            <div className="hidden lg:flex items-center space-x-2">
               <button
                 onClick={() => navigate("/cart")}
                 className="relative p-3 text-gray-700 dark:text-gray-300 hover:text-primary_app dark:hover:text-primary_app hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
@@ -178,7 +178,7 @@ const Navbar = () => {
               <DarkModeToggle />
 
               {currentUser ? (
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
                   <Link
                     to="/profile"
                     className="p-3 text-gray-700 dark:text-gray-300 hover:text-primary_app dark:hover:text-primary_app hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-all duration-200"
@@ -206,16 +206,16 @@ const Navbar = () => {
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
                   <Link
                     to="/login"
-                    className="px-6 py-2.5 text-primary_app hover:bg-primary_app/10 rounded-full transition-all duration-200 font-semibold border border-primary_app hover:scale-105"
+                    className="px-4 py-2 text-primary_app hover:bg-primary_app/10 rounded-lg transition-all duration-200 font-medium border border-primary_app text-sm"
                   >
                     Log In
                   </Link>
                   <Link
                     to="/signup"
-                    className="px-6 py-2.5 bg-primary_app text-white rounded-full hover:bg-primary_app/90 transition-all duration-200 font-semibold shadow-lg hover:scale-105"
+                    className="px-4 py-2 bg-primary_app text-white rounded-lg hover:bg-primary_app/90 transition-all duration-200 font-medium text-sm"
                   >
                     Sign Up
                   </Link>

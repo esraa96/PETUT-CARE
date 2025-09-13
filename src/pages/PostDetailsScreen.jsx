@@ -6,6 +6,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Post, Comment } from '../models/Post';
 import SimpleChatService from '../services/SimpleChatService';
 import UserAvatar from '../components/UserAvatar';
+import UserProfileModal from '../components/UserProfileModal';
 
 const PostDetailsScreen = () => {
   const { postId } = useParams();
@@ -17,6 +18,8 @@ const PostDetailsScreen = () => {
   const [postData, setPostData] = useState(null);
   const [postLoading, setPostLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [showProfileModal, setShowProfileModal] = useState(false);
 
   useEffect(() => {
     if (!postId) return;
@@ -54,10 +57,13 @@ const PostDetailsScreen = () => {
               const userDoc = await getDoc(doc(db, 'users', comment.userId));
               if (userDoc.exists()) {
                 const userData = userDoc.data();
-                comment.authorName = userData.fullName || 'Unknown User';
+                comment.authorName = userData.fullName || userData.name || userData.displayName || 'Unknown User';
                 comment.authorImage = userData.profileImage;
+              } else {
+                comment.authorName = 'Unknown User';
               }
             } catch (e) {
+              console.error('Error fetching user data:', e);
               comment.authorName = 'Unknown User';
             }
             
@@ -80,7 +86,7 @@ const PostDetailsScreen = () => {
         const userData = userDoc.data();
         setPostData(prev => ({
           ...prev,
-          authorName: userData.fullName || 'Unknown User',
+          authorName: userData.fullName || userData.name || userData.displayName || 'Unknown User',
           authorImage: userData.profileImage
         }));
       }
@@ -100,7 +106,7 @@ const PostDetailsScreen = () => {
           selectedChat: {
             id: chatId,
             otherUserId,
-            otherUserName: userData?.fullName || 'Unknown User',
+            otherUserName: userData?.fullName || userData?.name || userData?.displayName || 'Unknown User',
             otherUserImage: userData?.profileImage
           }
         }
@@ -203,16 +209,33 @@ const PostDetailsScreen = () => {
             <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
               <div 
                 className="cursor-pointer hover:opacity-80 flex-shrink-0"
-                onClick={() => startChat(postData.userId)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (postData.userId && postData.userId !== user?.uid) {
+                    setSelectedUserId(postData.userId);
+                    setShowProfileModal(true);
+                  }
+                }}
               >
                 <UserAvatar 
                   imageData={postData.authorImage} 
-                  userName={postData.authorName} 
+                  userName={postData.authorName || 'Unknown User'} 
                   size="w-8 h-8 sm:w-10 sm:h-10" 
                 />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="font-semibold text-sm sm:text-base truncate text-neutral dark:text-white">{postData.authorName || 'Unknown'}</p>
+                <p 
+                  className="font-semibold text-sm sm:text-base truncate text-neutral dark:text-white cursor-pointer hover:text-primary_app"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (postData.userId && postData.userId !== user?.uid) {
+                      setSelectedUserId(postData.userId);
+                      setShowProfileModal(true);
+                    }
+                  }}
+                >
+                  {postData.authorName || 'Unknown User'}
+                </p>
                 <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{formatTime(postData.timestamp)}</p>
               </div>
             </div>
@@ -279,11 +302,17 @@ const PostDetailsScreen = () => {
                   <div className="flex items-start gap-2 sm:gap-3">
                     <div 
                       className="cursor-pointer hover:opacity-80 flex-shrink-0"
-                      onClick={() => startChat(comment.userId)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (comment.userId && comment.userId !== user?.uid) {
+                          setSelectedUserId(comment.userId);
+                          setShowProfileModal(true);
+                        }
+                      }}
                     >
                       <UserAvatar 
                         imageData={comment.authorImage} 
-                        userName={comment.authorName} 
+                        userName={comment.authorName || 'Unknown User'} 
                         size="w-6 h-6 sm:w-8 sm:h-8" 
                       />
                     </div>
@@ -293,10 +322,13 @@ const PostDetailsScreen = () => {
                           className="font-semibold text-xs sm:text-sm cursor-pointer hover:text-primary_app truncate"
                           onClick={(e) => {
                             e.stopPropagation();
-                            navigate(`/profile/${comment.userId}`);
+                            if (comment.userId && comment.userId !== user?.uid) {
+                              setSelectedUserId(comment.userId);
+                              setShowProfileModal(true);
+                            }
                           }}
                         >
-                          {comment.authorName || 'Unknown'}
+                          {comment.authorName || 'Unknown User'}
                         </span>
                         <span className="text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">
                           {formatTime(comment.timestamp)}
@@ -375,6 +407,16 @@ const PostDetailsScreen = () => {
           </div>
         </div>
       )}
+      
+      {/* Profile Modal */}
+      <UserProfileModal 
+        userId={selectedUserId}
+        isOpen={showProfileModal}
+        onClose={() => {
+          setShowProfileModal(false);
+          setSelectedUserId(null);
+        }}
+      />
     </div>
   );
 };

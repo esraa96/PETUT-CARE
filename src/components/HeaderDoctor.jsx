@@ -94,36 +94,25 @@ export default function HeaderDoctor({ toggleSidebar, doctorData }) {
 
   return (
     <Fragment>
-      <header className="header-dash">
-        <nav
-          className="navbar container-fluid py-3 px-4 align-items-center position-fixed top-0 start-0 end-0"
-          style={{ height: "100px", zIndex: "1001" }}
-        >
-          <div className="container-fluid d-flex align-items-center justify-content-between">
+      <header className="bg-white shadow-sm border-b border-gray-200 lg:hidden">
+        <nav className="h-16 px-4 flex items-center">
+          <div className="w-full flex items-center justify-between">
             {/* Left Section */}
-            <div className="d-flex align-items-center gap-4">
+            <div className="flex items-center gap-4">
               <button
-                className="btn btn-link p-0 border-0"
+                className="p-2 text-yellow-500 hover:bg-yellow-50 rounded-lg transition-colors lg:hidden"
                 onClick={toggleSidebar}
-                style={{ color: "#D9A741" }}
               >
                 <FaBars size={24} />
               </button>
 
-              <div className="d-flex align-items-center gap-2 gap-md-3">
+              <div className="flex items-center gap-3">
                 <img
                   src={petutLogo}
                   alt="Petut"
-                  style={{ width: "35px", height: "35px" }}
-                  className="d-block"
+                  className="w-9 h-9"
                 />
-                <h4
-                  className="mb-0 fw-bold d-none d-sm-block"
-                  style={{
-                    color: "#D9A741",
-                    fontSize: "clamp(1rem, 2.5vw, 1.5rem)",
-                  }}
-                >
+                <h4 className="text-xl font-bold text-yellow-500">
                   Petut Dashboard
                 </h4>
               </div>
@@ -132,143 +121,106 @@ export default function HeaderDoctor({ toggleSidebar, doctorData }) {
             {/* Center Section - Search */}
             <form
               onSubmit={handleSearch}
-              className="search-container d-none d-lg-flex"
-              style={{ maxWidth: "400px", flex: "1", margin: "0 1rem" }}
+              className="hidden lg:flex flex-1 max-w-md mx-4"
             >
-              <div className="input-group">
-                <span
-                  className="input-group-text bg-white border-end-0"
-                  style={{ borderColor: "#e9ecef" }}
-                >
-                  <FaSearch size={16} style={{ color: "#6c757d" }} />
-                </span>
+              <div className="relative w-full">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <FaSearch size={16} className="text-gray-400" />
+                </div>
                 <input
                   type="text"
-                  className="form-control border-start-0"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                   placeholder="Search patients, appointments..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  style={{ borderColor: "#e9ecef" }}
                 />
               </div>
             </form>
 
             {/* Right Section */}
-            <div className="d-flex align-items-center gap-3">
+            <div className="flex items-center gap-3">
               {/* Notifications */}
-              <div className="dropdown position-relative">
+              <div className="relative">
                 <button
-                  className="btn btn-link p-2 border-0 position-relative"
-                  style={{ color: "#6c757d" }}
-                  data-bs-toggle="dropdown"
+                  className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg relative transition-colors"
+                  onClick={() => setShowDropdown(!showDropdown)}
                 >
                   <FaBell size={20} />
                   {unreadCount > 0 && (
-                    <span
-                      className="position-absolute top-0 start-100 translate-middle badge rounded-pill"
-                      style={{ backgroundColor: "#dc3545", fontSize: "10px" }}
-                    >
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                       {unreadCount}
                     </span>
                   )}
                 </button>
-                <div
-                  className="dropdown-menu dropdown-menu-end"
-                  style={{
-                    width: "300px",
-                    maxHeight: "400px",
-                    overflowY: "auto",
-                  }}
-                >
-                  <h6 className="dropdown-header">Recent Notifications</h6>
-                  {notifications.length > 0 ? (
-                    notifications.map((notification) => (
-                      <div
-                        key={notification.id}
-                        className="dropdown-item-text p-3 border-bottom"
-                      >
-                        <div className="d-flex align-items-center gap-2">
-                          <div className="flex-grow-1">
-                            <small className="fw-semibold">
-                              Upcoming Appointment
-                            </small>
-                            <div className="text-muted small">
-                              {notification.patientName} - {notification.time}
-                            </div>
-                            <div className="text-muted small">
-                              {new Date(
-                                notification.date?.toDate
-                                  ? notification.date.toDate()
-                                  : notification.date
-                              ).toLocaleDateString()}
+                
+                {showDropdown && (
+                  <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                    <div className="p-4 border-b border-gray-200">
+                      <h6 className="font-semibold text-gray-800">Recent Notifications</h6>
+                    </div>
+                    <div className="max-h-96 overflow-y-auto">
+                      {notifications.length > 0 ? (
+                        notifications.map((notification) => (
+                          <div key={notification.id} className="p-4 border-b border-gray-100 last:border-b-0">
+                            <div className="flex items-start gap-3">
+                              <div className="flex-1">
+                                <p className="font-semibold text-sm text-gray-800">Upcoming Appointment</p>
+                                <p className="text-sm text-gray-600">{notification.patientName} - {notification.time}</p>
+                                <p className="text-xs text-gray-500">
+                                  {new Date(
+                                    notification.date?.toDate
+                                      ? notification.date.toDate()
+                                      : notification.date
+                                  ).toLocaleDateString()}
+                                </p>
+                              </div>
                             </div>
                           </div>
+                        ))
+                      ) : (
+                        <div className="p-6 text-center">
+                          <p className="text-gray-500 text-sm">No new notifications</p>
                         </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="dropdown-item-text text-center p-3">
-                      <small className="text-muted">No new notifications</small>
+                      )}
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
 
               {/* Doctor Profile Dropdown */}
-              <div className="dropdown">
+              <div className="relative">
                 <button
-                  className="btn btn-link p-0 border-0 d-flex align-items-center gap-2 text-decoration-none"
+                  className="flex items-center gap-2 p-1 hover:bg-gray-50 rounded-lg transition-colors"
                   onClick={() => setShowDropdown(!showDropdown)}
-                  style={{ color: "#495057" }}
                 >
-                  <div className="text-end d-none d-md-block">
-                    <div
-                      className="fw-semibold"
-                      style={{ fontSize: "clamp(12px, 2vw, 14px)" }}
-                    >
+                  <div className="text-right hidden md:block">
+                    <div className="text-sm font-semibold text-gray-800">
                       Dr. {doctorData?.fullName}
                     </div>
-                    <div
-                      className="text-muted"
-                      style={{ fontSize: "clamp(10px, 1.5vw, 12px)" }}
-                    >
+                    <div className="text-xs text-gray-500">
                       Veterinarian
                     </div>
                   </div>
                   <img
                     src={doctorData?.profileImage || petutLogo}
                     alt="Doctor"
-                    className="rounded-circle border"
-                    style={{
-                      width: "45px",
-                      height: "45px",
-                      objectFit: "cover",
-                      borderColor: "#D9A741 !important",
-                    }}
+                    className="w-11 h-11 rounded-full border-2 border-yellow-400 object-cover"
                   />
                 </button>
 
                 {showDropdown && (
-                  <div
-                    className="dropdown-menu dropdown-menu-end show position-absolute"
-                    style={{
-                      top: "100%",
-                      right: "0",
-                      minWidth: "200px",
-                      zIndex: "1050",
-                    }}
-                  >
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                     <Link
                       to="/doctor-dashboard/manage-profile"
-                      className="dropdown-item d-flex align-items-center gap-2"
+                      className="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors"
                       onClick={() => setShowDropdown(false)}
                     >
                       <MdSettings size={16} />
                       Profile Settings
                     </Link>
-                    <hr className="dropdown-divider" />
+                    <hr className="border-gray-200" />
                     <button
-                      className="dropdown-item d-flex align-items-center gap-2 text-danger border-0 bg-transparent w-100"
+                      className="flex items-center gap-2 px-4 py-3 text-red-600 hover:bg-red-50 w-full text-left transition-colors"
                       onClick={() => {
                         setShowDropdown(false);
                         handleLogout();
@@ -284,8 +236,6 @@ export default function HeaderDoctor({ toggleSidebar, doctorData }) {
           </div>
         </nav>
       </header>
-      {/* spacer to offset fixed header height */}
-      <div style={{ height: "100px" }} />
     </Fragment>
   );
 }

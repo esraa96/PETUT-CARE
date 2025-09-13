@@ -19,6 +19,8 @@ export default function Clinic({ clinic, onDelete, fetchClinics }) {
 
     const [showConfirm, setShowConfirm] = useState(false);
     const [selectedClinicId, setSelectedClinicId] = useState(null);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [showAppointmentsModal, setShowAppointmentsModal] = useState(false);
 
 
 
@@ -68,6 +70,21 @@ export default function Clinic({ clinic, onDelete, fetchClinics }) {
                     {showConfirm && (
                         <ConfirmModal onDelete={() => onDelete(selectedClinicId)} setShowConfirm={setShowConfirm} setSelectedClinicId={setSelectedClinicId} whatDelete={"clinic"} />
                     )}
+                    {showEditModal && (
+                        <Editclinicmodal 
+                            clinic={clinic} 
+                            onClose={() => setShowEditModal(false)} 
+                            onUpdate={fetchClinics}
+                            showModal={showEditModal}
+                        />
+                    )}
+                    {showAppointmentsModal && (
+                        <AppointmentsModal 
+                            clinic={clinic} 
+                            onClose={() => setShowAppointmentsModal(false)}
+                            showModal={showAppointmentsModal}
+                        />
+                    )}
                 </div>
                 
                 <hr className='border-gray-200 my-4' />
@@ -75,10 +92,9 @@ export default function Clinic({ clinic, onDelete, fetchClinics }) {
                 <div className="flex items-center justify-between text-sm">
                     <div className="flex items-center gap-2">
                         <IoTimer className='text-[#D9A741]' />
-                        <button type="button" className="text-[#D9A741] hover:text-[#C19635] font-medium" data-bs-toggle="modal" data-bs-target={`#appointments-${clinic.id}`}>
+                        <button type="button" className="text-[#D9A741] hover:text-[#C19635] font-medium" onClick={() => setShowAppointmentsModal(true)}>
                             Appointments
                         </button>
-                        <AppointmentsModal clinic={clinic} modalId={clinic.id} />
                     </div>
                     <div className="flex items-center gap-2">
                         <HiMiniUserGroup className='text-[#D9A741]' />
@@ -87,10 +103,9 @@ export default function Clinic({ clinic, onDelete, fetchClinics }) {
                         </button>
                     </div>
                     <div className="flex items-center gap-2">
-                        <button type="button" className="flex items-center gap-1 text-[#D9A741] hover:text-[#C19635] font-medium" data-bs-toggle="modal" data-bs-target={`#editclinic-${clinic.id}`}>
+                        <button type="button" className="flex items-center gap-1 text-[#D9A741] hover:text-[#C19635] font-medium" onClick={() => setShowEditModal(true)}>
                             <TbEdit />Edit data
                         </button>
-                        <Editclinicmodal clinic={clinic} modalId={clinic.id} fetchClinics={fetchClinics} />
                     </div>
                 </div>
             </div>
