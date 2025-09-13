@@ -138,7 +138,7 @@ export default function ManageUsers() {
                 <p className='text-sm sm:text-base text-gray-600 dark:text-gray-300'>Manage all doctors, clients and admins in the system</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6 mb-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6 mb-8">
                 {statistics.map((statistic, index) => (
                     <div key={index} className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 lg:p-6 border hover:shadow-md transition-shadow ${
                         statistic.highlight ? 'border-yellow-400 bg-yellow-50 dark:bg-yellow-900/20' : 'border-gray-200 dark:border-gray-600'
@@ -173,7 +173,7 @@ export default function ManageUsers() {
                         className={`flex items-center px-6 py-3 border-b-2 font-medium text-sm transition-colors ${
                             activeTab === 'doctors'
                                 ? 'border-petut-brown-300 text-petut-brown-300'
-                                : 'border-transparent text-gray-500 hover:text-gray-700'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
                         }`}
                     >
                         <FaUserMd className='mr-2' size={20} />
@@ -184,7 +184,7 @@ export default function ManageUsers() {
                         className={`flex items-center px-6 py-3 border-b-2 font-medium text-sm transition-colors ${
                             activeTab === 'clients'
                                 ? 'border-petut-brown-300 text-petut-brown-300'
-                                : 'border-transparent text-gray-500 hover:text-gray-700'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
                         }`}
                     >
                         <FaUsers className='mr-2' size={20} />
@@ -195,7 +195,7 @@ export default function ManageUsers() {
                         className={`flex items-center px-6 py-3 border-b-2 font-medium text-sm transition-colors ${
                             activeTab === 'admins'
                                 ? 'border-petut-brown-300 text-petut-brown-300'
-                                : 'border-transparent text-gray-500 hover:text-gray-700'
+                                : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
                         }`}
                     >
                         <FaUserTie className='mr-2' size={20} />
@@ -211,7 +211,7 @@ export default function ManageUsers() {
                             className={`flex flex-col items-center py-3 px-2 rounded-lg text-xs font-medium transition-colors ${
                                 activeTab === 'doctors'
                                     ? 'bg-petut-brown-300 text-white'
-                                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-gray-700'
                             }`}
                         >
                             <FaUserMd size={16} className='mb-1' />
@@ -222,7 +222,7 @@ export default function ManageUsers() {
                             className={`flex flex-col items-center py-3 px-2 rounded-lg text-xs font-medium transition-colors ${
                                 activeTab === 'clients'
                                     ? 'bg-petut-brown-300 text-white'
-                                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-gray-700'
                             }`}
                         >
                             <FaUsers size={16} className='mb-1' />
@@ -233,7 +233,7 @@ export default function ManageUsers() {
                             className={`flex flex-col items-center py-3 px-2 rounded-lg text-xs font-medium transition-colors ${
                                 activeTab === 'admins'
                                     ? 'bg-petut-brown-300 text-white'
-                                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-gray-700'
                             }`}
                         >
                             <FaUserTie size={16} className='mb-1' />
@@ -244,10 +244,10 @@ export default function ManageUsers() {
 
                 <div className="p-4 sm:p-6">
                     {activeTab === 'doctors' && stats.pendingDoctors > 0 && (
-                        <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                        <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-600 rounded-lg">
                             <div className="flex items-center">
-                                <FaBell className="text-yellow-600 mr-2" />
-                                <p className="text-yellow-800 font-medium">
+                                <FaBell className="text-yellow-600 dark:text-yellow-400 mr-2" />
+                                <p className="text-yellow-800 dark:text-yellow-300 font-medium">
                                     You have {stats.pendingDoctors} doctor{stats.pendingDoctors > 1 ? 's' : ''} waiting for approval.
                                 </p>
                             </div>
